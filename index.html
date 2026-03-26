@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MITGEUL AI — 플레이스 진단 시스템</title>
+<title>MITGEUL AI — 통합 진단 시스템</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=DM+Mono:wght@400;500&family=Pretendard:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -635,9 +635,9 @@
       </svg>
       <span class="mitgeul-wordmark">MITGEUL<span>AI</span></span>
     </div>
-    <div class="header-badge">PLACE DIAGNOSIS SYSTEM · v2.0</div>
-    <h1>네이버 플레이스<br><span>AI 통합 진단 시스템</span></h1>
-    <p>MITGEUL AI가 분석하는 플레이스 완전 최적화<br>자가진단 · AI 점수 · 벤치마크 · 실행 솔루션 · 리포트</p>
+    <div class="header-badge">AI DIAGNOSIS SYSTEM · v2.0</div>
+    <h1>AI 통합 진단 시스템<br><span>매장 완전 최적화</span></h1>
+    <p>MITGEUL AI가 분석하는 매장 완전 최적화<br>자가진단 · AI점수 · 벤치마크 · 실행 솔루션 · 리포트</p>
   </div>
 
   <!-- STEP NAV -->
@@ -652,7 +652,7 @@
       <span class="step-num">3</span> AI 기준 진단
     </button>
     <button class="step-btn" onclick="goStep(3)">
-      <span class="step-num">4</span> 벤치마크 기준표
+      <span class="step-num">4</span> 업종별 기준표
     </button>
     <button class="step-btn" onclick="goStep(4)">
       <span class="step-num">5</span> 실행 솔루션
@@ -668,7 +668,7 @@
       <div class="section-icon">📋</div>
       <div>
         <div class="section-title">매장 기본 정보</div>
-        <div class="section-sub">진단할 네이버 플레이스 매장 정보를 입력해주세요</div>
+        <div class="section-sub">진단할 매장 정보를 입력해주세요</div>
       </div>
     </div>
 
@@ -693,7 +693,7 @@
           </select>
         </div>
         <div class="form-group">
-          <label>네이버 플레이스 URL</label>
+          <label>매장 URL <span style="font-size:11px;color:var(--text3)">(플레이스)</span></label>
           <input type="text" id="storeUrl" placeholder="https://map.naver.com/v5/entry/..." />
         </div>
         <div class="form-group">
@@ -740,12 +740,12 @@
       <div class="section-icon">✅</div>
       <div>
         <div class="section-title">자가진단 체크리스트</div>
-        <div class="section-sub">플레이스를 직접 열고 각 항목을 확인하며 YES / NO로 체크하세요</div>
+        <div class="section-sub">매장 운영 현황을 직접 확인하며 YES / NO로 체크하세요</div>
       </div>
     </div>
 
     <div class="alert alert-info">
-      💡 <div>체크하기 전 네이버 플레이스 앱 또는 PC에서 내 매장 페이지를 열어두세요. 각 항목을 직접 눈으로 확인하며 체크합니다.</div>
+      💡 <div>체크 전 매장 관리 앱 또는 PC에서 내 매장 페이지를 열어두세요. 각 항목을 직접 눈으로 확인하며 체크합니다.</div>
     </div>
 
     <div id="checklistContainer"></div>
@@ -753,7 +753,7 @@
     <div class="card">
       <div class="progress-header">
         <span class="progress-label">체크리스트 진행률</span>
-        <span class="progress-val" id="checkProgress">0 / 30</span>
+        <span class="progress-val" id="checkProgress">0 / 35</span>
       </div>
       <div class="progress-track">
         <div class="progress-fill" id="checkProgressBar" style="width:0%"></div>
@@ -793,22 +793,22 @@
     </div>
 
     <div class="btn-row">
-      <button class="btn btn-primary" onclick="goStep(3)">벤치마크 기준표 보기 →</button>
+      <button class="btn btn-primary" onclick="goStep(3)">업종별 기준표 보기 →</button>
     </div>
   </div>
 
-  <!-- SECTION 3: 벤치마크 기준표 -->
+  <!-- SECTION 3: 업종별 기준표 -->
   <div class="section" id="sec3">
     <div class="section-header">
       <div class="section-icon">📊</div>
       <div>
-        <div class="section-title">플레이스 기준표 대조</div>
-        <div class="section-sub">업종별 상위 노출 매장 기준과 내 매장 비교</div>
+        <div class="section-title">업종별 기준표 대조</div>
+        <div class="section-sub">업종별 상위 매장 기준과 내 매장 비교</div>
       </div>
     </div>
 
     <div id="benchmarkContainer">
-      <div class="alert alert-info">💡 업종을 선택하면 벤치마크 기준표가 표시됩니다.</div>
+      <div class="alert alert-info">💡 업종을 선택하면 업종별 기준표가 표시됩니다.</div>
     </div>
 
     <div class="btn-row">
@@ -948,8 +948,18 @@ const CHECKLIST_DATA = [
     cat: "응답 / 활동성", icon: "💬",
     items: [
       { id:"c28", text:"문의/메시지에 48시간 내 답변하고 있다", sub:"응답률이 노출 점수에 반영됨", score:3 },
-      { id:"c29", text:"플레이스 관리자 앱을 주 1회 이상 확인한다", sub:"꾸준한 관리 = 활성도 신호", score:2 },
+      { id:"c29", text:"매장 관리 앱을 주 1회 이상 확인한다", sub:"꾸준한 관리 = 활성도 신호", score:2 },
       { id:"c30", text:"통계 데이터(조회수·클릭률)를 주기적으로 확인한다", sub:"데이터 기반 개선 여부", score:2 },
+    ]
+  },
+  {
+    cat: "블로그 / 외부 채널 연동", icon: "📝",
+    items: [
+      { id:"c31", text:"운영 중인 네이버 블로그가 있다", sub:"블로그 보유 여부 확인", score:3 },
+      { id:"c32", text:"블로그에 매장 관련 포스팅이 3개 이상 있다", sub:"직접 작성 블로그 리뷰 효과", score:3 },
+      { id:"c33", text:"블로그와 매장 정보가 연동(링크)되어 있다", sub:"블로그 → 매장 URL 연결 여부", score:2 },
+      { id:"c34", text:"최근 1달 내 블로그 포스팅을 작성했다", sub:"꾸준한 블로그 활동 = 신뢰도 상승", score:3 },
+      { id:"c35", text:"인스타그램·유튜브 등 SNS 채널을 운영 중이다", sub:"외부 채널 연동으로 유입 다변화", score:2 },
     ]
   }
 ];
@@ -1111,7 +1121,7 @@ function setCheck(id, val, score, cat) {
 }
 
 function updateCheckProgress() {
-  const total = 30;
+  const total = 35;
   const done = Object.keys(state.checks).length;
   document.getElementById('checkProgress').textContent = `${done} / ${total}`;
   document.getElementById('checkProgressBar').style.width = `${(done/total)*100}%`;
@@ -1256,7 +1266,7 @@ function renderBenchmark() {
 
   container.innerHTML = `
     <div class="alert alert-info">
-      📊 <div><strong>${bdata.title}</strong> 업종 기준표입니다. 상위 노출 매장의 평균 수치와 내 매장을 비교하세요.</div>
+      📊 <div><strong>${bdata.title}</strong> 업종 기준표입니다. 상위 매장의 평균 수치와 내 매장을 비교하세요.</div>
     </div>
     <div class="card" style="padding:0;overflow:hidden">
       <table class="bench-table">
@@ -1373,12 +1383,12 @@ async function generateReport() {
         <svg width="28" height="28" viewBox="0 0 42 42" fill="none"><rect width="42" height="42" rx="12" fill="#252c8a"/><rect width="42" height="42" rx="12" stroke="#3DFFC0" stroke-width="1.5" stroke-opacity="0.4" fill="none"/><text x="21" y="30" text-anchor="middle" font-family="DM Mono,monospace" font-size="22" font-weight="700" fill="#3DFFC0">M</text><circle cx="34" cy="9" r="3.5" fill="#3DFFC0" opacity="0.9"/></svg>
         <span style="font-family:'DM Mono',monospace;font-size:13px;letter-spacing:3px;color:var(--accent)">MITGEUL AI REPORT</span>
       </div>
-      <div class="report-title">네이버 플레이스 통합 진단 리포트</div>
+      <div class="report-title">AI 통합 진단 리포트</div>
       <div class="report-meta" style="margin-top:10px;display:flex;flex-wrap:wrap;gap:14px">
         <span>📌 ${info.storeName || '—'}</span>
         <span>🏷 ${info.category || '—'}</span>
         <span>📅 ${dateStr}</span>
-        <span>🔗 ${info.storeUrl ? '<a href="'+info.storeUrl+'" target="_blank" style="color:var(--accent);text-decoration:none">플레이스 링크</a>' : '미입력'}</span>
+        <span>🔗 ${info.storeUrl ? '<a href="'+info.storeUrl+'" target="_blank" style="color:var(--accent);text-decoration:none">매장 링크 <span style="font-size:10px;opacity:0.7">(플레이스)</span></a>' : '미입력'}</span>
       </div>
     </div>
 
@@ -1442,27 +1452,27 @@ async function generateReport() {
 
   // 등급별 종합 진단 요약
   const summaryMap = {
-    S: `${info.storeName||'해당 매장'}은 네이버 플레이스 관리 전반에서 최상위 수준을 유지하고 있습니다. 기본 정보부터 리뷰 관리, 콘텐츠 업데이트까지 고르게 잘 운영되고 있어 상위 노출 경쟁력이 매우 높습니다. 현재 강점을 유지하면서 최신성 관리에 집중하면 1위 노출을 안정적으로 유지할 수 있습니다.`,
-    A: `${info.storeName||'해당 매장'}은 네이버 플레이스 관리에서 상위권 수준을 보여주고 있습니다. 전반적으로 잘 관리되고 있으나 몇 가지 핵심 항목을 보완하면 최상위 노출이 가능합니다. 특히 ${worstCats[0]?.name||'약점 영역'} 부분을 집중 개선하면 단기간 내 큰 효과를 볼 수 있습니다.`,
-    B: `${info.storeName||'해당 매장'}은 플레이스 기본 관리는 되어있으나 경쟁 매장 대비 개선이 필요한 영역이 있습니다. 현재 ${score}점으로 평균 수준이며, ${worstCats[0]?.name||'약점 영역'}과 ${worstCats[1]?.name||'리뷰 관리'} 부분의 집중 개선이 노출 순위 상승에 직결됩니다. 체계적인 관리 루틴을 만들면 한 달 내 눈에 띄는 변화가 가능합니다.`,
-    C: `${info.storeName||'해당 매장'}은 현재 플레이스 관리에 개선이 시급한 상태입니다. ${score}점으로 경쟁 매장 대비 노출 경쟁력이 낮으며, 특히 ${worstCats[0]?.name||'기본 정보'}와 ${worstCats[1]?.name||'리뷰 관리'} 영역이 취약합니다. 기본기부터 차근차근 채워나가면 빠른 개선 효과를 기대할 수 있습니다.`,
-    D: `${info.storeName||'해당 매장'}은 네이버 플레이스 관리가 전반적으로 미흡한 상태입니다. 현재 ${score}점으로 상위 노출을 위한 기본 요건이 충족되지 않고 있습니다. 기본 정보 완성, 사진 등록, 리뷰 관리부터 즉시 시작하면 단기간 내 큰 폭의 점수 향상이 가능합니다.`
+    S: `${info.storeName||'해당 매장'}은 매장 온라인 관리 전반에서 최상위 수준을 유지하고 있습니다. 기본 정보부터 리뷰 관리, 콘텐츠 업데이트까지 고르게 잘 운영되고 있어 상위 노출 경쟁력이 매우 높습니다. 현재 강점을 유지하면서 최신성 관리에 집중하면 1위 노출을 안정적으로 유지할 수 있습니다.`,
+    A: `${info.storeName||'해당 매장'}은 매장 온라인 관리에서 상위권 수준을 보여주고 있습니다. 전반적으로 잘 관리되고 있으나 몇 가지 핵심 항목을 보완하면 최상위 노출이 가능합니다. 특히 ${worstCats[0]?.name||'약점 영역'} 부분을 집중 개선하면 단기간 내 큰 효과를 볼 수 있습니다.`,
+    B: `${info.storeName||'해당 매장'}은 매장 기본 관리는 되어있으나 경쟁 매장 대비 개선이 필요한 영역이 있습니다. 현재 ${score}점으로 평균 수준이며, ${worstCats[0]?.name||'약점 영역'}과 ${worstCats[1]?.name||'리뷰 관리'} 부분의 집중 개선이 노출 순위 상승에 직결됩니다. 체계적인 관리 루틴을 만들면 한 달 내 눈에 띄는 변화가 가능합니다.`,
+    C: `${info.storeName||'해당 매장'}은 현재 매장 온라인 관리에 개선이 시급한 상태입니다. ${score}점으로 경쟁 매장 대비 노출 경쟁력이 낮으며, 특히 ${worstCats[0]?.name||'기본 정보'}와 ${worstCats[1]?.name||'리뷰 관리'} 영역이 취약합니다. 기본기부터 차근차근 채워나가면 빠른 개선 효과를 기대할 수 있습니다.`,
+    D: `${info.storeName||'해당 매장'}은 매장 온라인 관리가 전반적으로 미흡한 상태입니다. 현재 ${score}점으로 상위 노출을 위한 기본 요건이 충족되지 않고 있습니다. 기본 정보 완성, 사진 등록, 리뷰 관리부터 즉시 시작하면 단기간 내 큰 폭의 점수 향상이 가능합니다.`
   };
 
   // 핵심 문제점 TOP3 — 점수 낮은 카테고리 기반
   const problemTemplates = {
     '리뷰 관리':       `블로그 리뷰 ${blogR}개·방문자 리뷰 ${visitR}개로 상위 노출 기준에 미달합니다. 리뷰 수와 답글 관리가 노출 알고리즘에 직접 영향을 줍니다.`,
     '사진 / 미디어':   `등록 사진 ${photos}장으로 경쟁 매장 대비 부족합니다. 대표 사진 품질과 다양한 카테고리 사진이 클릭률을 결정합니다.`,
-    '소식 / 공지':     `소식 업데이트가 부족하여 플레이스 활성도 점수가 낮습니다. 월 2회 이상 정기 업데이트가 노출 유지에 필수입니다.`,
+    '소식 / 공지':     `소식 업데이트가 부족하여 매장 활성도 점수가 낮습니다. 월 2회 이상 정기 업데이트가 노출 유지에 필수입니다.`,
     '메뉴 / 서비스 정보': `메뉴·서비스 정보가 불완전합니다. 상세한 메뉴 정보와 가격은 방문 전환율에 직접 영향을 미칩니다.`,
     'SEO / 키워드 최적화': `키워드 최적화가 부족하여 검색 노출 기회를 놓치고 있습니다. 지역명+업종명 키워드를 소개글에 자연스럽게 포함해야 합니다.`,
     '편의 정보':       `주차·예약 등 편의 정보가 미완성입니다. 검색 필터 노출 기회를 놓치고 있습니다.`,
     '기본 정보 완성도': `영업시간·전화번호 등 기본 정보에 오류나 누락이 있습니다. 잘못된 정보는 고객 이탈과 신뢰도 하락으로 직결됩니다.`,
-    '응답 / 활동성':   `플레이스 관리 활동성이 낮습니다. 정기적인 관리와 빠른 응답이 플레이스 점수에 반영됩니다.`
+    '응답 / 활동성':   `매장 관리 활동성이 낮습니다. 정기적인 관리와 빠른 응답이 매장 점수에 반영됩니다.`
   };
 
   const problems = worstCats.map(c => problemTemplates[c.name] || `${c.name} 영역이 ${c.pct}% 수준으로 개선이 필요합니다.`);
-  if (problems.length < 3) problems.push(`전반적인 콘텐츠 업데이트 주기를 늘려 플레이스 활성도를 높여야 합니다.`);
+  if (problems.length < 3) problems.push(`전반적인 콘텐츠 업데이트 주기를 늘려 매장 활성도를 높여야 합니다.`);
 
   // 업종별 특화 조언
   const adviceMap = {
@@ -1481,9 +1491,9 @@ async function generateReport() {
   const predictionMap = {
     S: `현재 최상위 수준을 유지하면서 리뷰 최신성 관리를 강화하면 30일 내 상위 3위 이내 안정적 노출이 가능합니다. 신규 방문자 유입이 월 15~20% 증가할 것으로 예측됩니다.`,
     A: `약점 영역을 집중 개선하면 30일 내 노출 순위가 현재보다 3~5단계 상승할 것으로 예측됩니다. 특히 리뷰 수 증가와 소식 업데이트를 병행하면 방문자 수 20~30% 증가 효과를 기대할 수 있습니다.`,
-    B: `오늘부터 실행 솔루션을 따라 개선하면 2주 내 플레이스 점수가 10~15점 상승하고, 30일 내 노출 빈도가 40~50% 증가할 것으로 예측됩니다. 리뷰 관리와 사진 보강을 우선하면 클릭률이 빠르게 개선됩니다.`,
+    B: `오늘부터 실행 솔루션을 따라 개선하면 2주 내 매장 점수가 10~15점 상승하고, 30일 내 노출 빈도가 40~50% 증가할 것으로 예측됩니다. 리뷰 관리와 사진 보강을 우선하면 클릭률이 빠르게 개선됩니다.`,
     C: `기본 정보 완성과 사진 10장 이상 등록만 해도 2주 내 검색 노출이 시작됩니다. 30일 내 꾸준히 관리하면 방문자 수 2배 증가와 함께 지역 검색 상위 노출이 가능합니다.`,
-    D: `지금 당장 기본 정보와 사진을 보강하면 1주일 내 플레이스가 검색에 노출되기 시작합니다. 30일 내 집중 관리 시 현재 대비 방문자 수 3배 이상 증가가 가능하며 경쟁 매장 추월이 현실적입니다.`
+    D: `지금 당장 기본 정보와 사진을 보강하면 1주일 내 매장이 검색에 노출되기 시작합니다. 30일 내 집중 관리 시 현재 대비 방문자 수 3배 이상 증가가 가능하며 경쟁 매장 추월이 현실적입니다.`
   };
 
   // 최우선 실행 과제
@@ -1493,9 +1503,9 @@ async function generateReport() {
     '소식 / 공지':     `지금 바로 이번 주 특별 메뉴, 이벤트, 또는 매장 소식 1건을 작성하여 소식에 업로드하세요.`,
     '메뉴 / 서비스 정보': `오늘 메뉴·서비스 항목 전체를 점검하고 가격·설명을 최신화하세요. 누락된 항목은 즉시 추가하세요.`,
     'SEO / 키워드 최적화': `지금 매장 소개글을 열고 지역명+업종명+특징 키워드를 포함한 100자 이상의 소개글로 수정하세요.`,
-    '기본 정보 완성도': `지금 플레이스 관리자에서 영업시간·전화번호·주소를 확인하고 오류가 있다면 즉시 수정하세요.`,
+    '기본 정보 완성도': `지금 매장 관리 앱에서 영업시간·전화번호·주소를 확인하고 오류가 있다면 즉시 수정하세요.`,
     '편의 정보':       `주차 가능 여부, 예약 기능, 포장·배달 여부를 오늘 바로 설정하세요.`,
-    '응답 / 활동성':   `플레이스 관리자 앱을 설치하고 알림을 켜서 문의·리뷰에 즉시 응답할 수 있는 환경을 만드세요.`
+    '응답 / 활동성':   `매장 관리 앱을 설치하고 알림을 켜서 문의·리뷰에 즉시 응답할 수 있는 환경을 만드세요.`
   };
   const topWeak = worstCats[0]?.name || '리뷰 관리';
   const action = actionMap[topWeak] || `오늘 ${topWeak} 영역부터 집중적으로 개선을 시작하세요.`;
