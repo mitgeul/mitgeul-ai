@@ -1370,60 +1370,103 @@ async function generateReport() {
       <div class="report-sec-body" id="rBody5" style="opacity:0.3"><span class="cursor-blink">▋</span></div>
     </div>`;
 
-  // ── JSON 구조화 프롬프트 ──
-  const prompt = `당신은 네이버 플레이스 마케팅 전문가입니다. 아래 진단 데이터를 분석하여 반드시 아래 JSON 형식으로만 응답하세요. JSON 외 다른 텍스트는 절대 포함하지 마세요.
+  // ── 템플릿 기반 자동 리포트 생성 (API 없이 즉시 생성) ──
+  const catNames = Object.keys(catScores);
+  const sortedCats = Object.entries(catScores).sort((a,b)=>a[1].pct-b[1].pct);
+  const worstCats  = sortedCats.slice(0,3).map(([k,v])=>({name:k,pct:v.pct}));
+  const bestCats   = sortedCats.slice(-2).reverse().map(([k,v])=>({name:k,pct:v.pct}));
 
-[매장 정보]
-매장명: ${info.storeName||'미입력'}, 업종: ${info.category||'미입력'}, 운영기간: ${info.storeAge||'미입력'}
-블로그리뷰: ${info.blogReviews||0}개, 방문자리뷰: ${info.visitorReviews||0}개, 사진: ${info.photoCount||0}장
-종합점수: ${score}/100, 강점영역: ${strongAreas||'없음'}, 약점영역: ${weakAreas||'없음'}
+  const blogR  = parseInt(info.blogReviews)||0;
+  const visitR = parseInt(info.visitorReviews)||0;
+  const photos = parseInt(info.photoCount)||0;
 
-{"summary":"(2~3문장 종합 진단)","problems":["문제1","문제2","문제3"],"advice":["조언1","조언2","조언3"],"prediction":"(30일 노출·방문자 예측 2문장)","action":"(이번 주 최우선 실행 과제 1가지 구체적으로)"}`;
+  const catMap = {
+    cafe:'카페·디저트', restaurant:'음식점', beauty:'미용·뷰티',
+    fitness:'운동·헬스', medical:'병원·의원', retail:'소매점',
+    edu:'교육·학원', service:'생활서비스'
+  };
+  const catLabel = catMap[info.category] || info.category || '해당 업종';
 
-  try {
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: "claude-haiku-4-5-20251001",
-        max_tokens: 800,
-        stream: true,
-        messages: [{ role: "user", content: prompt }]
-      })
-    });
+  // 등급별 종합 진단 요약
+  const summaryMap = {
+    S: `${info.storeName||'해당 매장'}은 네이버 플레이스 관리 전반에서 최상위 수준을 유지하고 있습니다. 기본 정보부터 리뷰 관리, 콘텐츠 업데이트까지 고르게 잘 운영되고 있어 상위 노출 경쟁력이 매우 높습니다. 현재 강점을 유지하면서 최신성 관리에 집중하면 1위 노출을 안정적으로 유지할 수 있습니다.`,
+    A: `${info.storeName||'해당 매장'}은 네이버 플레이스 관리에서 상위권 수준을 보여주고 있습니다. 전반적으로 잘 관리되고 있으나 몇 가지 핵심 항목을 보완하면 최상위 노출이 가능합니다. 특히 ${worstCats[0]?.name||'약점 영역'} 부분을 집중 개선하면 단기간 내 큰 효과를 볼 수 있습니다.`,
+    B: `${info.storeName||'해당 매장'}은 플레이스 기본 관리는 되어있으나 경쟁 매장 대비 개선이 필요한 영역이 있습니다. 현재 ${score}점으로 평균 수준이며, ${worstCats[0]?.name||'약점 영역'}과 ${worstCats[1]?.name||'리뷰 관리'} 부분의 집중 개선이 노출 순위 상승에 직결됩니다. 체계적인 관리 루틴을 만들면 한 달 내 눈에 띄는 변화가 가능합니다.`,
+    C: `${info.storeName||'해당 매장'}은 현재 플레이스 관리에 개선이 시급한 상태입니다. ${score}점으로 경쟁 매장 대비 노출 경쟁력이 낮으며, 특히 ${worstCats[0]?.name||'기본 정보'}와 ${worstCats[1]?.name||'리뷰 관리'} 영역이 취약합니다. 기본기부터 차근차근 채워나가면 빠른 개선 효과를 기대할 수 있습니다.`,
+    D: `${info.storeName||'해당 매장'}은 네이버 플레이스 관리가 전반적으로 미흡한 상태입니다. 현재 ${score}점으로 상위 노출을 위한 기본 요건이 충족되지 않고 있습니다. 기본 정보 완성, 사진 등록, 리뷰 관리부터 즉시 시작하면 단기간 내 큰 폭의 점수 향상이 가능합니다.`
+  };
 
-    // ── 스트리밍 처리 ──
-    const reader = response.body.getReader();
-    const decoder = new TextDecoder();
-    let rawText = '';
+  // 핵심 문제점 TOP3 — 점수 낮은 카테고리 기반
+  const problemTemplates = {
+    '리뷰 관리':       `블로그 리뷰 ${blogR}개·방문자 리뷰 ${visitR}개로 상위 노출 기준에 미달합니다. 리뷰 수와 답글 관리가 노출 알고리즘에 직접 영향을 줍니다.`,
+    '사진 / 미디어':   `등록 사진 ${photos}장으로 경쟁 매장 대비 부족합니다. 대표 사진 품질과 다양한 카테고리 사진이 클릭률을 결정합니다.`,
+    '소식 / 공지':     `소식 업데이트가 부족하여 플레이스 활성도 점수가 낮습니다. 월 2회 이상 정기 업데이트가 노출 유지에 필수입니다.`,
+    '메뉴 / 서비스 정보': `메뉴·서비스 정보가 불완전합니다. 상세한 메뉴 정보와 가격은 방문 전환율에 직접 영향을 미칩니다.`,
+    'SEO / 키워드 최적화': `키워드 최적화가 부족하여 검색 노출 기회를 놓치고 있습니다. 지역명+업종명 키워드를 소개글에 자연스럽게 포함해야 합니다.`,
+    '편의 정보':       `주차·예약 등 편의 정보가 미완성입니다. 검색 필터 노출 기회를 놓치고 있습니다.`,
+    '기본 정보 완성도': `영업시간·전화번호 등 기본 정보에 오류나 누락이 있습니다. 잘못된 정보는 고객 이탈과 신뢰도 하락으로 직결됩니다.`,
+    '응답 / 활동성':   `플레이스 관리 활동성이 낮습니다. 정기적인 관리와 빠른 응답이 플레이스 점수에 반영됩니다.`
+  };
 
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      const chunk = decoder.decode(value, { stream: true });
-      const lines = chunk.split('\n').filter(l => l.startsWith('data: '));
-      for (const line of lines) {
-        const jsonStr = line.slice(6).trim();
-        if (jsonStr === '[DONE]') break;
-        try {
-          const evt = JSON.parse(jsonStr);
-          if (evt.type === 'content_block_delta' && evt.delta?.text) {
-            rawText += evt.delta.text;
-            // 실시간으로 파싱 시도하여 채워진 섹션부터 표시
-            tryRenderSections(rawText);
-          }
-        } catch {}
-      }
-    }
+  const problems = worstCats.map(c => problemTemplates[c.name] || `${c.name} 영역이 ${c.pct}% 수준으로 개선이 필요합니다.`);
+  if (problems.length < 3) problems.push(`전반적인 콘텐츠 업데이트 주기를 늘려 플레이스 활성도를 높여야 합니다.`);
 
-    // 최종 렌더
-    renderAllSections(rawText);
+  // 업종별 특화 조언
+  const adviceMap = {
+    cafe: ['시즌 음료·디저트 출시 때마다 소식 업데이트 → 검색 유입 급증 효과', '인스타그램 감성 사진 5장 이상 등록 → 2030 여성 타겟 클릭률 향상', '주말 웨이팅 정보·포장 가능 여부 명시 → 방문 전환율 30% 향상'],
+    restaurant: ['런치 메뉴·가격 명시 + 주차 정보 → 직장인 점심 수요 확보', '메뉴별 사진 등록 필수 → 음식 사진이 없으면 클릭 자체가 안 됨', '네이버 예약 기능 연동 → 예약 전환율 상위 노출에 유리'],
+    beauty: ['시술 전후 사진(동의 받은) 등록 → 신뢰도 및 클릭률 대폭 향상', '가격표 명시 필수 → 가격 미공개 매장은 이탈률이 높음', '네이버 예약 필수 연동 → 미용 업종 예약률이 노출 순위에 직결'],
+    fitness: ['프로그램별 상세 설명·가격 등록 → 비교 검색 고객 유입', '강사 소개·자격증 정보 등록 → 신뢰도 향상', '무료 체험 이벤트 소식 정기 업데이트 → 신규 회원 유입'],
+    medical: ['진료 과목·전문의 정보 상세 등록 → 검색 정확도 향상', '대기시간·예약 방법 명시 → 방문 전 불안감 해소', '주차·대중교통 정보 상세 기재 → 병원 선택 시 접근성 중요'],
+    retail: ['신상품·할인 행사 소식 주 1회 업데이트', '영업시간·공휴일 운영 여부 정확히 기재', '주차·접근성 정보 상세 기재'],
+    edu: ['강사 소개·커리큘럼 상세 등록', '수강생 후기·성과 사진 등록', '무료 상담·체험 이벤트 정기 등록'],
+    service: ['서비스 가격표 명시', '작업 전후 사진 등록', '빠른 응답률 유지 → 즉시 문의 고객 확보']
+  };
+  const advice = adviceMap[info.category] || ['메뉴·서비스 정보 상세 등록', '정기적인 소식 업데이트', '리뷰 답글 관리 강화'];
+
+  // 30일 성과 예측
+  const predictionMap = {
+    S: `현재 최상위 수준을 유지하면서 리뷰 최신성 관리를 강화하면 30일 내 상위 3위 이내 안정적 노출이 가능합니다. 신규 방문자 유입이 월 15~20% 증가할 것으로 예측됩니다.`,
+    A: `약점 영역을 집중 개선하면 30일 내 노출 순위가 현재보다 3~5단계 상승할 것으로 예측됩니다. 특히 리뷰 수 증가와 소식 업데이트를 병행하면 방문자 수 20~30% 증가 효과를 기대할 수 있습니다.`,
+    B: `오늘부터 실행 솔루션을 따라 개선하면 2주 내 플레이스 점수가 10~15점 상승하고, 30일 내 노출 빈도가 40~50% 증가할 것으로 예측됩니다. 리뷰 관리와 사진 보강을 우선하면 클릭률이 빠르게 개선됩니다.`,
+    C: `기본 정보 완성과 사진 10장 이상 등록만 해도 2주 내 검색 노출이 시작됩니다. 30일 내 꾸준히 관리하면 방문자 수 2배 증가와 함께 지역 검색 상위 노출이 가능합니다.`,
+    D: `지금 당장 기본 정보와 사진을 보강하면 1주일 내 플레이스가 검색에 노출되기 시작합니다. 30일 내 집중 관리 시 현재 대비 방문자 수 3배 이상 증가가 가능하며 경쟁 매장 추월이 현실적입니다.`
+  };
+
+  // 최우선 실행 과제
+  const actionMap = {
+    '리뷰 관리':       `오늘 당장 미답변 리뷰 전체에 답글을 달고, 최근 방문한 단골 고객 3명에게 솔직한 방문자 리뷰를 부탁하세요.`,
+    '사진 / 미디어':   `오늘 스마트폰으로 매장 내·외부, 대표 메뉴·서비스 사진을 10장 이상 촬영하여 즉시 등록하세요. 밝은 자연광 활용이 핵심입니다.`,
+    '소식 / 공지':     `지금 바로 이번 주 특별 메뉴, 이벤트, 또는 매장 소식 1건을 작성하여 소식에 업로드하세요.`,
+    '메뉴 / 서비스 정보': `오늘 메뉴·서비스 항목 전체를 점검하고 가격·설명을 최신화하세요. 누락된 항목은 즉시 추가하세요.`,
+    'SEO / 키워드 최적화': `지금 매장 소개글을 열고 지역명+업종명+특징 키워드를 포함한 100자 이상의 소개글로 수정하세요.`,
+    '기본 정보 완성도': `지금 플레이스 관리자에서 영업시간·전화번호·주소를 확인하고 오류가 있다면 즉시 수정하세요.`,
+    '편의 정보':       `주차 가능 여부, 예약 기능, 포장·배달 여부를 오늘 바로 설정하세요.`,
+    '응답 / 활동성':   `플레이스 관리자 앱을 설치하고 알림을 켜서 문의·리뷰에 즉시 응답할 수 있는 환경을 만드세요.`
+  };
+  const topWeak = worstCats[0]?.name || '리뷰 관리';
+  const action = actionMap[topWeak] || `오늘 ${topWeak} 영역부터 집중적으로 개선을 시작하세요.`;
+
+  // 섹션별 채우기 (타이핑 효과)
+  const sections = [
+    { id:'rBody1', html: summaryMap[grade] || summaryMap['B'] },
+    { id:'rBody2', html: problems.map((p,i)=>`<div class="r-list-item"><span class="r-num">${i+1}</span>${p}</div>`).join('') },
+    { id:'rBody3', html: advice.map((a,i)=>`<div class="r-list-item"><span class="r-num">${i+1}</span>${a}</div>`).join('') },
+    { id:'rBody4', html: predictionMap[grade] || predictionMap['B'] },
+    { id:'rBody5', html: `<div class="r-action-box">🎯 ${action}</div>` }
+  ];
+
+  // 순차적으로 섹션 표시 (300ms 간격)
+  sections.forEach((sec, idx) => {
+    setTimeout(() => {
+      fillSection(sec.id, sec.html);
+    }, idx * 300);
+  });
+
+  setTimeout(() => {
     document.getElementById('reportBtns').style.display = 'flex';
     document.getElementById('gformBanner').style.display = 'block';
-
-  } catch(e) {
-    container.innerHTML += `<div class="alert alert-warn" style="margin-top:16px">⚠️ 리포트 생성 오류: ${e.message}</div>`;
-  }
+  }, sections.length * 300 + 200);
 }
 
 function tryRenderSections(raw) {
