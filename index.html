@@ -720,11 +720,15 @@
         <div class="form-group">
           <label>현재 주요 고민 (선택)</label>
           <select id="mainConcern">
-            <option value="visibility">노출이 안 됨</option>
-            <option value="ctr">클릭은 되지만 방문 안 됨</option>
-            <option value="review">리뷰가 너무 적음</option>
-            <option value="photo">사진 품질 개선 필요</option>
-            <option value="info">정보 관리가 어려움</option>
+            <option value="">주요 고민을 선택해주세요</option>
+            <option value="visibility">🔍 검색해도 내 매장이 안 보여요 (노출 부재)</option>
+            <option value="ctr">👀 노출은 되는데 클릭·문의가 없어요</option>
+            <option value="visit">📍 온라인엔 보이는데 실제 방문이 없어요</option>
+            <option value="review">⭐ 리뷰가 적거나 나쁜 리뷰가 많아요</option>
+            <option value="photo">📸 사진이 없거나 매장이 잘 안 보여요</option>
+            <option value="blog">📝 블로그·체험단을 어떻게 운영하는지 몰라요</option>
+            <option value="competitor">🏆 경쟁 매장보다 항상 밀려요</option>
+            <option value="manage">⚙️ 매장 정보 관리·업데이트가 어려워요</option>
           </select>
         </div>
       </div>
@@ -965,67 +969,83 @@ const CHECKLIST_DATA = [
 ];
 
 const BENCHMARK_DATA = {
-  cafe: {
-    title: "카페 / 디저트",
-    items: [
-      { metric: "블로그 리뷰 수", top: "50개+", avg: "20개+", min: "10개", unit: "개" },
-      { metric: "방문자 리뷰 수", top: "200개+", avg: "80개+", min: "30개", unit: "개" },
-      { metric: "평균 별점", top: "4.5+", avg: "4.2+", min: "4.0", unit: "점" },
-      { metric: "등록 사진 수", top: "40장+", avg: "20장+", min: "10장", unit: "장" },
-      { metric: "월간 소식 업데이트", top: "4회+", avg: "2회+", min: "1회", unit: "회" },
-      { metric: "메뉴 등록 수", top: "15개+", avg: "8개+", min: "5개", unit: "개" },
-      { metric: "리뷰 답글 비율", top: "90%+", avg: "60%+", min: "30%", unit: "%" },
-    ]
-  },
   restaurant: {
     title: "음식점 / 식당",
+    desc: "한식·중식·일식·양식·분식 등 외식업 전체",
     items: [
-      { metric: "블로그 리뷰 수", top: "60개+", avg: "25개+", min: "10개", unit: "개" },
-      { metric: "방문자 리뷰 수", top: "300개+", avg: "100개+", min: "40개", unit: "개" },
-      { metric: "평균 별점", top: "4.4+", avg: "4.2+", min: "3.9", unit: "점" },
-      { metric: "등록 사진 수", top: "50장+", avg: "25장+", min: "12장", unit: "장" },
-      { metric: "월간 소식 업데이트", top: "4회+", avg: "2회+", min: "1회", unit: "회" },
-      { metric: "메뉴 등록 수", top: "20개+", avg: "10개+", min: "5개", unit: "개" },
-      { metric: "리뷰 답글 비율", top: "80%+", avg: "50%+", min: "20%", unit: "%" },
+      { metric: "블로그 리뷰 수",       top: "60개+",  avg: "25개+", min: "10개", unit: "개" },
+      { metric: "방문자 리뷰 수",       top: "300개+", avg: "100개+",min: "40개", unit: "개" },
+      { metric: "평균 별점",           top: "4.4+",   avg: "4.2+",  min: "3.9",  unit: "점" },
+      { metric: "등록 사진 수",         top: "50장+",  avg: "25장+", min: "12장", unit: "장" },
+      { metric: "메뉴 등록 수",         top: "20개+",  avg: "10개+", min: "5개",  unit: "개" },
+      { metric: "월간 소식 업데이트",   top: "4회+",   avg: "2회+",  min: "1회",  unit: "회" },
+      { metric: "리뷰 답글 비율",       top: "80%+",   avg: "50%+",  min: "20%",  unit: "%" },
+      { metric: "포장·배달 정보 입력",  top: "완비",   avg: "일부",  min: "미입력",unit: "" },
+      { metric: "블로그 체험단 수",     top: "월 2건+", avg: "월 1건",min: "분기 1건",unit: "" },
+    ]
+  },
+  cafe: {
+    title: "카페 / 디저트",
+    desc: "카페·베이커리·아이스크림·버블티 등",
+    items: [
+      { metric: "블로그 리뷰 수",       top: "50개+",  avg: "20개+", min: "10개", unit: "개" },
+      { metric: "방문자 리뷰 수",       top: "200개+", avg: "80개+", min: "30개", unit: "개" },
+      { metric: "평균 별점",           top: "4.5+",   avg: "4.2+",  min: "4.0",  unit: "점" },
+      { metric: "등록 사진 수",         top: "40장+",  avg: "20장+", min: "10장", unit: "장" },
+      { metric: "메뉴 등록 수",         top: "15개+",  avg: "8개+",  min: "5개",  unit: "개" },
+      { metric: "월간 소식 업데이트",   top: "4회+",   avg: "2회+",  min: "1회",  unit: "회" },
+      { metric: "리뷰 답글 비율",       top: "90%+",   avg: "60%+",  min: "30%",  unit: "%" },
+      { metric: "포장·배달 정보 입력",  top: "완비",   avg: "일부",  min: "미입력",unit: "" },
+      { metric: "블로그 체험단 수",     top: "월 3건+", avg: "월 1건",min: "분기 1건",unit: "" },
     ]
   },
   beauty: {
     title: "미용 / 뷰티",
+    desc: "헤어·네일·피부·속눈썹·왁싱 등",
     items: [
-      { metric: "블로그 리뷰 수", top: "40개+", avg: "15개+", min: "5개", unit: "개" },
-      { metric: "방문자 리뷰 수", top: "150개+", avg: "60개+", min: "20개", unit: "개" },
-      { metric: "평균 별점", top: "4.6+", avg: "4.3+", min: "4.0", unit: "점" },
-      { metric: "등록 사진 수", top: "30장+", avg: "15장+", min: "8장", unit: "장" },
-      { metric: "월간 소식 업데이트", top: "6회+", avg: "3회+", min: "1회", unit: "회" },
-      { metric: "시술 메뉴 등록 수", top: "20개+", avg: "10개+", min: "5개", unit: "개" },
-      { metric: "예약 기능 활성화", top: "활성", avg: "활성", min: "미활성", unit: "" },
+      { metric: "블로그 리뷰 수",       top: "40개+",  avg: "15개+", min: "5개",  unit: "개" },
+      { metric: "방문자 리뷰 수",       top: "150개+", avg: "60개+", min: "20개", unit: "개" },
+      { metric: "평균 별점",           top: "4.6+",   avg: "4.3+",  min: "4.0",  unit: "점" },
+      { metric: "등록 사진 수",         top: "30장+",  avg: "15장+", min: "8장",  unit: "장" },
+      { metric: "시술 메뉴 등록 수",    top: "20개+",  avg: "10개+", min: "5개",  unit: "개" },
+      { metric: "월간 소식 업데이트",   top: "6회+",   avg: "3회+",  min: "1회",  unit: "회" },
+      { metric: "예약 기능 활성화",     top: "활성",   avg: "활성",  min: "미활성",unit: "" },
+      { metric: "리뷰 답글 비율",       top: "90%+",   avg: "65%+",  min: "30%",  unit: "%" },
+      { metric: "블로그 체험단 수",     top: "월 2건+", avg: "월 1건",min: "분기 1건",unit: "" },
+    ]
+  },
+  edu: {
+    title: "학원 / 교육",
+    desc: "입시·어학·예체능·자격증·보습학원 등",
+    items: [
+      { metric: "블로그 리뷰 수",       top: "30개+",  avg: "12개+", min: "5개",  unit: "개" },
+      { metric: "방문자 리뷰 수",       top: "80개+",  avg: "30개+", min: "10개", unit: "개" },
+      { metric: "평균 별점",           top: "4.7+",   avg: "4.4+",  min: "4.0",  unit: "점" },
+      { metric: "등록 사진 수",         top: "20장+",  avg: "10장+", min: "5장",  unit: "장" },
+      { metric: "강좌·프로그램 등록 수",top: "10개+",  avg: "5개+",  min: "3개",  unit: "개" },
+      { metric: "월간 소식 업데이트",   top: "4회+",   avg: "2회+",  min: "1회",  unit: "회" },
+      { metric: "예약·상담 기능 활성화",top: "활성",   avg: "활성",  min: "미활성",unit: "" },
+      { metric: "리뷰 답글 비율",       top: "85%+",   avg: "55%+",  min: "25%",  unit: "%" },
+      { metric: "블로그 체험단 수",     top: "월 1건+", avg: "분기 1건",min: "없음",unit: "" },
     ]
   },
   fitness: {
     title: "운동 / 헬스",
+    desc: "헬스장·필라테스·요가·PT·크로스핏 등",
     items: [
-      { metric: "블로그 리뷰 수", top: "30개+", avg: "10개+", min: "3개", unit: "개" },
-      { metric: "방문자 리뷰 수", top: "100개+", avg: "40개+", min: "15개", unit: "개" },
-      { metric: "평균 별점", top: "4.7+", avg: "4.4+", min: "4.0", unit: "점" },
-      { metric: "등록 사진 수", top: "25장+", avg: "12장+", min: "6장", unit: "장" },
-      { metric: "프로그램 등록 수", top: "15개+", avg: "7개+", min: "3개", unit: "개" },
-      { metric: "월간 소식 업데이트", top: "4회+", avg: "2회+", min: "1회", unit: "회" },
-      { metric: "예약 기능 활성화", top: "활성", avg: "활성", min: "미활성", unit: "" },
+      { metric: "블로그 리뷰 수",       top: "30개+",  avg: "10개+", min: "3개",  unit: "개" },
+      { metric: "방문자 리뷰 수",       top: "100개+", avg: "40개+", min: "15개", unit: "개" },
+      { metric: "평균 별점",           top: "4.7+",   avg: "4.4+",  min: "4.0",  unit: "점" },
+      { metric: "등록 사진 수",         top: "25장+",  avg: "12장+", min: "6장",  unit: "장" },
+      { metric: "프로그램·수업 등록 수",top: "15개+",  avg: "7개+",  min: "3개",  unit: "개" },
+      { metric: "월간 소식 업데이트",   top: "4회+",   avg: "2회+",  min: "1회",  unit: "회" },
+      { metric: "예약 기능 활성화",     top: "활성",   avg: "활성",  min: "미활성",unit: "" },
+      { metric: "리뷰 답글 비율",       top: "85%+",   avg: "55%+",  min: "25%",  unit: "%" },
+      { metric: "블로그 체험단 수",     top: "월 1건+", avg: "분기 1건",min: "없음",unit: "" },
     ]
   },
-  medical: {
-    title: "병원 / 의원",
-    items: [
-      { metric: "블로그 리뷰 수", top: "30개+", avg: "12개+", min: "5개", unit: "개" },
-      { metric: "방문자 리뷰 수", top: "100개+", avg: "40개+", min: "15개", unit: "개" },
-      { metric: "평균 별점", top: "4.5+", avg: "4.2+", min: "4.0", unit: "점" },
-      { metric: "등록 사진 수", top: "20장+", avg: "10장+", min: "5장", unit: "장" },
-      { metric: "진료과목 등록 수", top: "10개+", avg: "5개+", min: "3개", unit: "개" },
-      { metric: "진료시간 정확도", top: "완벽", avg: "대부분", min: "부분", unit: "" },
-      { metric: "예약 기능 활성화", top: "활성", avg: "활성", min: "미활성", unit: "" },
-    ]
-  }
 };
+
 
 const ACTION_PLANS = {
   today: {
@@ -1226,8 +1246,19 @@ function renderAIScore() {
 
 function renderBenchmark() {
   const cat = state.info.category;
-  const bdata = BENCHMARK_DATA[cat] || BENCHMARK_DATA.cafe;
   const container = document.getElementById('benchmarkContainer');
+
+  // 미지원 업종 처리
+  if (!cat || !BENCHMARK_DATA[cat]) {
+    container.innerHTML = `
+      <div class="alert alert-warn" style="margin-top:0">
+        ⚠️ <div>선택하신 업종은 현재 준비 중입니다.<br>
+        <strong>음식점·카페·미용·학원·운동</strong> 업종은 지금 바로 이용 가능해요!<br>
+        다른 업종은 순차적으로 업데이트 예정입니다 😊</div>
+      </div>`;
+    return;
+  }
+  const bdata = BENCHMARK_DATA[cat];
   
   const blogReviews = parseInt(state.info.blogReviews) || 0;
   const visitorReviews = parseInt(state.info.visitorReviews) || 0;
@@ -1483,6 +1514,7 @@ async function generateReport() {
     medical: ['진료 과목·전문의 정보 상세 등록 → 검색 정확도 향상', '대기시간·예약 방법 명시 → 방문 전 불안감 해소', '주차·대중교통 정보 상세 기재 → 병원 선택 시 접근성 중요'],
     retail: ['신상품·할인 행사 소식 주 1회 업데이트', '영업시간·공휴일 운영 여부 정확히 기재', '주차·접근성 정보 상세 기재'],
     edu: ['강사 소개·커리큘럼 상세 등록', '수강생 후기·성과 사진 등록', '무료 상담·체험 이벤트 정기 등록'],
+    fitness: ['무료 체험 수업·PT 이벤트 소식을 월 2회 이상 업데이트하여 신규 회원 유입 극대화', '강사 프로필·자격증·수업 후기 사진 등록으로 신뢰도 향상', '네이버 예약 연동 필수 — 즉시 예약 가능 매장이 노출 우선순위 높음'],
     service: ['서비스 가격표 명시', '작업 전후 사진 등록', '빠른 응답률 유지 → 즉시 문의 고객 확보']
   };
   const advice = adviceMap[info.category] || ['메뉴·서비스 정보 상세 등록', '정기적인 소식 업데이트', '리뷰 답글 관리 강화'];
