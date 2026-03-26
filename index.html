@@ -1628,6 +1628,7 @@ function saveInfo() {
     mainConcern: document.getElementById('mainConcern').value,
   };
   state.stepDone[0] = true;
+  renderChecklist(); // 업종 선택 후 업종별 문구 반영
   goStep(1);
 }
 
