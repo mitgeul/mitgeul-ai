@@ -901,7 +901,7 @@ const CHECKLIST_DATA = [
     items: [
       { id:"c6", text:"대표 사진이 매력적이고 화질이 선명하다", sub:"800px 이상, 실제 매장·메뉴 사진", score:4 },
       { id:"c7", text:"사진이 10장 이상 등록되어 있다", sub:"내부·외부·메뉴·서비스 다양하게", score:3 },
-      { id:"c8", text:"사진에 물·음식·사람이 적절히 포함되어 있다", sub:"분위기 전달이 중요", score:2 },
+      { id:"c8", text:"대표 사진에 매장 분위기가 잘 담겨있다", sub:"업종에 맞는 콘텐츠 사진 포함 여부", score:2, dynamic:true },
       { id:"c9", text:"메뉴/서비스 항목별 사진이 등록되어 있다", sub:"각 메뉴에 사진 1장 이상", score:3 },
     ]
   },
@@ -1109,10 +1109,28 @@ function renderChecklist() {
       const itemDiv = document.createElement('div');
       itemDiv.className = 'check-item';
       itemDiv.id = 'ci_' + item.id;
+
+      // 업종별 동적 문구 처리
+      let itemText = item.text;
+      let itemSub  = item.sub;
+      if (item.dynamic && item.id === 'c8') {
+        const cat = state.info.category;
+        const c8map = {
+          restaurant: { text:"음식·재료·조리 과정 사진이 적절히 포함되어 있다",   sub:"메뉴별 음식 사진이 식욕을 자극하는지 확인" },
+          cafe:       { text:"음료·디저트·인테리어 감성 사진이 포함되어 있다",    sub:"SNS 공유될 만한 감성 사진 여부 확인" },
+          beauty:     { text:"시술 전후·작업 과정·결과물 사진이 포함되어 있다",   sub:"비포&애프터 사진이 신뢰도에 직결됨" },
+          edu:        { text:"수업 현장·강의실·교재·학생 활동 사진이 포함되어 있다", sub:"학습 환경과 분위기 전달이 중요" },
+          fitness:    { text:"운동 공간·기구·수업 진행·강사 사진이 포함되어 있다", sub:"시설 청결도와 공간감 전달이 핵심" },
+        };
+        const mapped = c8map[cat];
+        if (mapped) { itemText = mapped.text; itemSub = mapped.sub; }
+        else { itemText = "매장 분위기와 서비스가 잘 담긴 사진이 포함되어 있다"; itemSub = "업종 특성에 맞는 콘텐츠 사진 여부 확인"; }
+      }
+
       itemDiv.innerHTML = `
         <div>
-          <div class="check-item-text">${item.text}</div>
-          <div class="check-item-sub">${item.sub}</div>
+          <div class="check-item-text">${itemText}</div>
+          <div class="check-item-sub">${itemSub}</div>
         </div>
         <div style="display:flex;align-items:center;gap:8px">
           <span class="check-item-score">+${item.score}점</span>
