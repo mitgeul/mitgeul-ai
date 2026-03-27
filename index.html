@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MITGEUL AI — 통합 진단 시스템</title>
+<title>MITGEUL AI — 사업 기준 · 자가진단 AI 통합 시스템</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=DM+Mono:wght@400;500&family=Pretendard:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -518,23 +518,121 @@
 
   /* PRINT */
   @media print {
-    body { background: white !important; color: #1a1a2e; margin: 0; }
+    @page { size: A4; margin: 15mm 15mm 18mm 15mm; }
 
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+
+    body { background: #fff !important; color: #1a1a2e !important; font-size: 11pt; }
     .header, .step-nav, .btn-row, #reportBtns, #gformBanner { display: none !important; }
     #sec0, #sec1, #sec2, #sec3, #sec4, #sec5 { display: none !important; }
     #sec6 { display: block !important; margin: 0; padding: 0; }
 
-    /* 페이지 여백 */
-    @page { margin: 15mm 12mm; }
-
-    /* 카드 스타일 인쇄용 */
+    /* 리포트 헤더 */
     .report-header {
-      background: #f0f4ff !important;
-      border: 1px solid #c0c8e8 !important;
-      border-radius: 8px;
-      padding: 16px 20px;
+      background: #1E2370 !important;
+      color: #fff !important;
+      border-radius: 8px !important;
+      padding: 16px 20px !important;
       margin-bottom: 12px;
+      page-break-inside: avoid;
+      break-inside: avoid;
     }
+    .report-title { font-size: 18pt !important; color: #fff !important; }
+    .report-meta { color: #ccd !important; }
+    .report-meta a { color: #99f !important; }
+
+    /* 카드 공통 */
+    .card {
+      background: #fff !important;
+      border: 1px solid #c8cce8 !important;
+      border-radius: 6px !important;
+      padding: 12px 16px !important;
+      page-break-inside: avoid;
+      break-inside: avoid;
+      margin-bottom: 10px;
+    }
+
+    /* 리포트 섹션 */
+    .report-card-section {
+      background: #fff !important;
+      border: 1px solid #b0b8e0 !important;
+      border-left: 4px solid #1E2370 !important;
+      border-radius: 0 6px 6px 0 !important;
+      padding: 12px 16px 12px 14px !important;
+      margin-bottom: 12px;
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+    .report-sec-label {
+      font-size: 10pt !important;
+      font-weight: 700 !important;
+      color: #1E2370 !important;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+    .report-sec-body {
+      font-size: 10pt !important;
+      color: #333 !important;
+      line-height: 1.8 !important;
+    }
+
+    /* 실행 아이템 */
+    .r-action-box {
+      background: #f0fff8 !important;
+      border: 1px solid #3DFFC0 !important;
+      border-radius: 6px !important;
+      padding: 10px 14px !important;
+      color: #0a4030 !important;
+      font-weight: 600;
+    }
+    .r-list-item {
+      border-bottom: 1px solid #eee !important;
+      padding: 7px 0 !important;
+      color: #222 !important;
+      display: flex !important;
+      gap: 8px !important;
+    }
+    .r-num {
+      background: #e8f0ff !important;
+      color: #1E2370 !important;
+      border-radius: 4px;
+      padding: 1px 6px;
+      font-size: 9pt;
+      flex-shrink: 0;
+    }
+    .strength-item {
+      background: #f0fff8 !important;
+      border: 1px solid #3DFFC0 !important;
+      color: #0a4030 !important;
+      border-radius: 4px;
+      padding: 4px 10px;
+      font-size: 10pt;
+    }
+    .weakness-item {
+      background: #fff0f0 !important;
+      border: 1px solid #f43f5e !important;
+      color: #8b1a2a !important;
+      border-radius: 4px;
+      padding: 4px 10px;
+      font-size: 10pt;
+    }
+
+    /* 페이지 나누기 */
+    .report-card-section:nth-child(3) { page-break-after: always; }
+
+    :root {
+      --accent: #1E2370;
+      --accent2: #0a7a4a;
+      --accent3: #f59e0b;
+      --accent4: #e53e5e;
+      --text: #1a1a2e;
+      --text2: #444;
+      --text3: #777;
+      --card: #fff;
+      --border: #c8cce8;
+    }
+  }
     .report-card-section {
       background: white !important;
       border: 1px solid #c0c8e0 !important;
@@ -651,8 +749,8 @@
       <span class="mitgeul-wordmark">MITGEUL<span>AI</span></span>
     </div>
     <div class="header-badge">AI DIAGNOSIS SYSTEM · v2.0</div>
-    <h1>AI 통합 진단 시스템<br><span>매장 완전 최적화</span></h1>
-    <p>MITGEUL AI가 분석하는 매장 완전 최적화<br>자가진단 · AI점수 · 벤치마크 · 실행 솔루션 · 리포트</p>
+    <h1>사업 기준 · 자가진단<br><span>AI 통합 시스템</span></h1>
+    <p>MITGEUL AI가 분석하는 사업 기준 진단<br>매장 자가진단 · AI점수 · 벤치마크 · 실행 솔루션 · 리포트</p>
   </div>
 
     <!-- STEP NAV -->
@@ -954,6 +1052,8 @@
 <script>
 
 
+
+
 // ===================== DATA =====================
 const CHECKLIST_DATA = [
   {
@@ -1013,7 +1113,7 @@ const CHECKLIST_DATA = [
   {
     cat: "SEO / 키워드 최적화", icon: "🔍",
     items: [
-      { id:"c25", text:"매장 소개글에 주요 키워드가 자연스럽게 포함", sub:"지역명 + 업종명 + 특징 키워드", score:3 },
+      { id:"c25", text:"매장 소개글에 주요 키워드가 자연스럽게 포함되어 있다", sub:"지역명 + 업종명 + 특징 키워드", score:3 },
       { id:"c26", text:"해시태그가 10개 이상 적절하게 등록되어 있다", sub:"과도한 반복 태그 금지", score:2 },
       { id:"c27", text:"소개글이 100자 이상 충분히 작성되어 있다", sub:"매장 스토리·특징 담기", score:2 },
     ]
@@ -1554,6 +1654,7 @@ function renderAIScore() {
   var aiCont = document.getElementById('aiAnalysisContainer');
   if (aiCont) aiCont.innerHTML = html;
 
+  state.stepDone[3] = true;
   renderBenchmark();
   renderActionPlan();
 }
@@ -1592,6 +1693,12 @@ function renderBenchmark() {
     '<div class="card" style="padding:0;overflow:hidden"><table class="bench-table"><thead><tr>' +
     '<th>항목</th><th>권장 목표치<span style="font-size:10px;font-weight:400;color:var(--text3)"> (참고)</span></th><th>평균 수준</th><th>최소 기준</th><th>내 매장</th><th>수준</th>' +
     '</tr></thead><tbody>' + rows + '</tbody></table></div>';
+  state.stepDone[4] = true;
+  document.querySelectorAll('.step-btn').forEach(function(b,i){
+    b.classList.remove('active','done');
+    if(i===3) b.classList.add('active');
+    else if(state.stepDone[i]) b.classList.add('done');
+  });
 }
 
 // ===================== STEP 5: 실행 솔루션 =====================
@@ -1603,6 +1710,7 @@ function loadPlanTabs() {
   renderPlanContent('today', ACTION_PLANS.today, 'planToday');
   renderPlanContent('week', ACTION_PLANS.week, 'planWeek');
   renderPlanContent('month', ACTION_PLANS.month, 'planMonth');
+  state.stepDone[5] = true;
 }
 
 function renderPlanContent(period, data, containerId) {
@@ -1712,6 +1820,7 @@ function getReportSections(grade, score, strong, weak, info, yesCount, noCount) 
   var blogR = parseInt(info.blogReviews)||0;
   var visitR = parseInt(info.visitorReviews)||0;
   var photos = parseInt(info.photoCount)||0;
+  var storeName = info.storeName || '매장';
 
   var hasBlog = state.checks['c31']&&state.checks['c31'].val==='yes';
   var blogLinked = state.checks['c33']&&state.checks['c33'].val==='yes';
@@ -1719,62 +1828,237 @@ function getReportSections(grade, score, strong, weak, info, yesCount, noCount) 
   var hasSNS = state.checks['c35']&&state.checks['c35'].val==='yes';
   var blogScore = [hasBlog,blogLinked,blogRecent,hasSNS].filter(Boolean).length;
 
-  var blogSummary = blogScore>=3 ? '블로그·SNS 채널이 잘 갖춰져 있어 외부 유입 경쟁력이 높습니다.' :
-    hasBlog ? '블로그는 있으나 연동·포스팅 관리가 더 필요합니다.' :
-    '블로그·SNS 채널이 없거나 미운영 상태로 외부 유입 경로가 부족합니다.';
+  var blogStatus = blogScore>=3 ? '블로그·SNS 채널이 잘 갖춰져 있어 외부 유입 경쟁력이 높습니다.' :
+    hasBlog ? '블로그는 운영 중이지만 매장 연동이나 포스팅 관리를 더 강화할 필요가 있습니다.' :
+    '블로그·SNS 채널이 없거나 미운영 상태로 외부 유입 경로가 부족한 상황입니다.';
 
-  var summaryMap = {
-    S: info.storeName+'은 온라인 관리 전반에서 최상위 수준을 유지하고 있습니다. '+blogSummary+' 현재 강점을 유지하면서 최신성 관리에 집중하면 1위 노출을 안정적으로 유지할 수 있습니다.',
-    A: info.storeName+'은 상위권 수준을 보여주고 있습니다. '+blogSummary+' 약점 영역을 집중 개선하면 단기간 내 큰 효과를 볼 수 있습니다.',
-    B: info.storeName+'은 기본 관리는 되어있으나 개선이 필요한 영역이 있습니다. '+blogSummary+' 체계적인 관리 루틴을 만들면 한 달 내 변화가 가능합니다.',
-    C: info.storeName+'은 현재 개선이 시급한 상태입니다. '+blogSummary+' 기본기부터 차근차근 채워나가면 빠른 개선 효과를 기대할 수 있습니다.',
-    D: info.storeName+'은 온라인 관리가 전반적으로 미흡한 상태입니다. '+blogSummary+' 기본 정보 완성, 사진 등록, 리뷰 관리부터 즉시 시작하세요.'
+  // 사업기준 결과 요약
+  var bizSection = '';
+  if (state.bizResult) {
+    var r = state.bizResult;
+    var bizSol = '';
+    if (state.bizYesCount >= 16) {
+      bizSol = '대표님의 사업 기준은 비교적 안정적으로 작동하고 있습니다. 지금 필요한 것은 머릿속 감각으로만 있는 기준을 문장과 원칙으로 정리하여 팀과 운영에서도 동일하게 작동할 수 있도록 구조화하는 작업입니다. 매장 플레이스 운영에서도 이 기준이 일관되게 반영되고 있는지 점검하고, 콘텐츠 방향과 메시지가 기준에 맞게 정렬되어 있는지 확인해보세요.';
+    } else if (state.bizYesCount >= 10) {
+      bizSol = '방향은 있지만 실행을 묶어줄 기준이 아직 충분히 정리되지 않은 상태입니다. 지금 가장 먼저 해야 할 일은 고객이 왜 우리 매장을 선택해야 하는지를 한 문장으로 정리하는 것입니다. 플레이스 소개글, 사진 방향, 리뷰 응답 톤이 모두 이 한 문장에서 출발해야 합니다. 더 많은 실행보다 기준 정리가 먼저입니다.';
+    } else {
+      bizSol = '지금의 불안은 노력 부족이 아니라 기준 부족에서 옵니다. 당장 광고나 콘텐츠를 늘리기 전에 우리 사업이 누구를 위한 것인지, 어떤 문제를 해결하는지를 먼저 정리해야 합니다. 기준이 생기면 플레이스 소개글, 사진 선택, 소식 작성 방향이 모두 자연스럽게 결정됩니다. 지금 가장 중요한 한 가지는 기준을 세우는 것입니다.';
+    }
+    bizSection = '<div class="report-card-section">' +
+      '<div class="report-sec-label">🧭 STEP 1-A · 사업 기준 점검 결과 및 솔루션</div>' +
+      '<div class="report-sec-body">' +
+      '<div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap">' +
+      '<div style="font-family:DM Mono,monospace;font-size:28px;font-weight:700;color:'+r.color+'">YES '+state.bizYesCount+'<span style="font-size:13px;color:var(--text3)">/20</span></div>' +
+      '<div style="display:inline-block;padding:4px 12px;border-radius:12px;font-size:12px;font-weight:700;background:rgba(61,255,192,0.08);color:'+r.color+';border:1px solid '+r.color+'">'+r.grade+'</div>' +
+      '<div style="font-size:14px;font-weight:600;color:#fff">'+r.title+'</div>' +
+      '</div>' +
+      '<div style="font-size:13px;color:var(--text2);line-height:1.85;margin-bottom:10px;white-space:pre-line">'+r.desc+'</div>' +
+      '<div style="padding:14px 16px;background:rgba(61,255,192,0.06);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;margin-bottom:10px">' +
+      '<div style="font-size:11px;font-family:DM Mono,monospace;color:var(--accent);letter-spacing:1px;margin-bottom:6px">✅ 실행 솔루션</div>' +
+      '<div style="font-size:13px;color:var(--text2);line-height:1.85">'+bizSol+'</div>' +
+      '</div>' +
+      '<div style="margin-top:10px">' +
+      '<div style="font-size:11px;font-family:DM Mono,monospace;color:var(--accent);letter-spacing:1px;margin-bottom:8px">하루에 하나씩 떠올려보세요</div>' +
+      r.questions.map(function(q,i){ return '<div style="display:flex;gap:8px;margin-bottom:6px;font-size:12px;color:var(--text2);line-height:1.6"><span style="width:18px;height:18px;border-radius:4px;background:rgba(61,255,192,0.12);color:var(--accent);font-size:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+(i+1)+'</span><span>'+q+'</span></div>'; }).join('') +
+      '</div>' +
+      '</div></div>';
+  }
+
+  // 종합 진단 요약 (5줄 이상)
+  var gradeDesc = {
+    S: storeName+'은 온라인 매장 관리 전반에서 최상위 수준을 유지하고 있습니다. 기본 정보, 사진, 리뷰, 소식 등 모든 영역에서 높은 완성도를 보여주고 있으며 검색 노출과 클릭률 모두 우수한 상태입니다. '+blogStatus+' 지금 강점을 유지하면서 최신성 관리와 경쟁 매장 모니터링을 정기적으로 실행하면 상위 노출을 안정적으로 유지할 수 있습니다. 방문자 리뷰에 대한 성의 있는 답글 운영은 재방문율과 신뢰도 모두에 긍정적인 영향을 줍니다. 현재 수준을 유지하면서 분기별로 전체 점검을 진행하는 루틴을 만드는 것을 권장합니다.',
+    A: storeName+'은 전반적으로 상위권 수준의 매장 관리를 보여주고 있습니다. 강점 영역인 '+strong+'에서 높은 완성도를 갖추고 있으며 검색 노출 경쟁력도 상당한 수준입니다. '+blogStatus+' 다만 '+weak+' 영역에서 개선 여지가 있으며, 이 부분을 집중적으로 보완하면 단기간 내 눈에 띄는 효과를 기대할 수 있습니다. 특히 리뷰 관리와 소식 업데이트는 검색 알고리즘에 직접적인 영향을 주는 항목으로 꾸준한 관리가 중요합니다. 지금 한 단계 더 올라가기 위한 집중 개선 시점입니다.',
+    B: storeName+'은 기본적인 온라인 관리는 이루어지고 있지만 경쟁 매장과 비교했을 때 개선이 필요한 영역이 있습니다. 현재 '+score+'점으로 평균 수준이며 '+strong+' 영역에서는 잘 관리되고 있습니다. '+blogStatus+' 반면 '+weak+' 영역에서 개선이 시급하며 이 부분이 현재 검색 노출을 제한하는 주요 원인으로 분석됩니다. 체계적인 관리 루틴을 만들고 우선순위를 정해 하나씩 개선해나가면 한 달 내 눈에 띄는 변화가 가능합니다. 지금이 매장 온라인 경쟁력을 높이기 가장 적절한 시점입니다.',
+    C: storeName+'은 현재 여러 영역에서 개선이 시급한 상태입니다. '+score+'점으로 평균 이하 수준이며 검색 노출 경쟁에서 밀리고 있을 가능성이 높습니다. '+blogStatus+' 기본 정보 완성도, 사진 품질·수량, 리뷰 관리 등 기초 항목부터 차근차근 채워나가는 것이 중요합니다. 한꺼번에 모든 것을 바꾸려 하지 말고 오늘 당장 실행 가능한 것 1가지부터 시작하세요. 기본기를 갖추면 2주 내 검색 노출 변화를 느낄 수 있습니다.',
+    D: storeName+'은 온라인 매장 관리가 전반적으로 미흡한 상태로 즉각적인 개선이 필요합니다. '+score+'점으로 검색 노출 자체가 어려운 상태일 수 있으며 잠재 고객이 매장을 찾지 못하고 이탈하고 있을 가능성이 높습니다. '+blogStatus+' 지금 당장 기본 정보 완성, 대표 사진 등록, 미답변 리뷰 답글 작성부터 시작하세요. 이 세 가지만 해도 일주일 내 검색 노출이 개선됩니다. 포기하지 말고 오늘부터 하나씩 실행하는 것이 가장 중요합니다.'
   };
 
+  // 직접 실행 체크리스트
+  var doNow = {
+    restaurant: [
+      { task:'지금 바로 플레이스 앱 열어서 미답변 리뷰에 답글 달기', time:'10분', level:'즉시' },
+      { task:'스마트폰으로 대표 음식 사진 3장 촬영 후 플레이스 업로드', time:'15분', level:'즉시' },
+      { task:'영업시간·전화번호·주소 최신 정보로 수정 확인', time:'5분', level:'즉시' }
+    ],
+    cafe: [
+      { task:'시그니처 음료·디저트 인스타 감성 사진 3장 촬영 후 업로드', time:'15분', level:'즉시' },
+      { task:'미답변 리뷰 전체 답글 달기', time:'10분', level:'즉시' },
+      { task:'이번 주 신메뉴·이벤트 소식 1건 작성 업로드', time:'10분', level:'즉시' }
+    ],
+    beauty: [
+      { task:'시술 전후 사진 1세트 찍어서 업로드 (고객 동의 후)', time:'20분', level:'즉시' },
+      { task:'가격표 최신화 및 시술별 설명 보강', time:'15분', level:'즉시' },
+      { task:'미답변 리뷰 답글 달기', time:'10분', level:'즉시' }
+    ],
+    edu: [
+      { task:'강사 프로필·자격증 사진 업로드', time:'10분', level:'즉시' },
+      { task:'이번 달 수강 모집 소식 작성 업로드', time:'10분', level:'즉시' },
+      { task:'미답변 리뷰 답글 달기', time:'5분', level:'즉시' }
+    ],
+    fitness: [
+      { task:'운동 공간·기구 사진 5장 이상 촬영 후 업로드', time:'15분', level:'즉시' },
+      { task:'무료 체험 이벤트 소식 1건 작성 업로드', time:'10분', level:'즉시' },
+      { task:'미답변 리뷰 답글 달기', time:'5분', level:'즉시' }
+    ]
+  };
+  var nowTasks = doNow[info.category] || doNow['restaurant'];
+  var doNowHTML = nowTasks.map(function(t,i){
+    return '<div style="display:flex;align-items:flex-start;gap:12px;padding:12px 14px;background:rgba(61,255,192,0.05);border:1px solid rgba(61,255,192,0.12);border-radius:8px;margin-bottom:8px">' +
+      '<span style="width:24px;height:24px;border-radius:6px;background:rgba(61,255,192,0.15);color:var(--accent);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+(i+1)+'</span>' +
+      '<div style="flex:1"><div style="font-size:13px;color:#fff;font-weight:500;margin-bottom:4px">'+t.task+'</div>' +
+      '<div style="font-size:11px;color:var(--text3)">⏱ 약 '+t.time+' · <span style="color:var(--accent)">'+t.level+' 실행 가능</span></div></div>' +
+      '</div>';
+  }).join('');
+
+  // 업종별 특화 조언
   var adviceMap = {
-    cafe: ['시즌 메뉴 출시 때마다 소식 업데이트 → 검색 유입 급증 효과','인스타그램 감성 사진 5장 이상 등록 → 클릭률 향상','포장·웨이팅 정보 명시 → 방문 전환율 향상'],
-    restaurant: ['런치 메뉴·가격 명시 + 주차 정보 → 직장인 점심 수요 확보','메뉴별 사진 등록 필수 → 음식 사진 없으면 클릭이 안 됨','예약 기능 연동 → 상위 노출에 유리'],
-    beauty: ['시술 전후 사진 등록 → 신뢰도 및 클릭률 향상','가격표 명시 필수 → 가격 미공개 매장은 이탈률이 높음','예약 기능 필수 연동 → 노출 순위에 직결'],
-    edu: ['강사 소개·커리큘럼 상세 등록','수강생 후기·성과 사진 등록','무료 상담·체험 이벤트 정기 등록'],
-    fitness: ['무료 체험·PT 이벤트 소식 월 2회 이상 업데이트','강사 프로필·자격증·수업 사진 등록','예약 연동 필수 → 즉시 예약 가능 매장이 노출 우선']
+    restaurant: [
+      '런치 메뉴·가격 명시 + 주차 정보 기재 → 직장인 점심 수요 직접 확보',
+      '메뉴별 음식 사진 등록 필수 → 사진 없는 메뉴는 주문율이 현저히 낮음',
+      '예약 기능 연동 → 즉시 예약 가능 매장이 검색 상위 노출에 유리',
+      '📝 블로그: ' + (hasBlog ? (blogRecent?'최근 포스팅 중. 매장 플레이스 URL 연동 여부 확인하세요.':'블로그가 있으나 최근 포스팅이 없습니다. 월 2회 이상 런치·메뉴 소개 포스팅을 올리세요.') : '네이버 블로그 개설 후 매장 대표 메뉴 소개 포스팅 3개 이상 작성 → 검색 유입 즉시 증가')
+    ],
+    cafe: [
+      '시즌 한정 메뉴 출시마다 소식 업데이트 → 재방문율과 검색 유입 동시 향상',
+      '인스타그램 감성 사진 5장 이상 등록 → 클릭률 직접적 향상 효과',
+      '포장 가능 여부·웨이팅 정보 명시 → 방문 전환율 향상',
+      '📝 블로그: ' + (hasBlog ? (blogRecent?'최근 포스팅 중. 신메뉴 출시 시마다 포스팅을 올려 검색 노출을 강화하세요.':'블로그 포스팅이 뜸합니다. 음료·케이크 소개 포스팅 월 2회 이상 업로드하세요.') : '네이버 블로그 개설 후 시그니처 음료·분위기 소개 포스팅 작성 → 카페 검색 상위 노출 핵심')
+    ],
+    beauty: [
+      '시술 전후 사진 등록 → 신뢰도 및 클릭률 가장 직접적인 향상 요소',
+      '가격표 완전 공개 → 가격 미표시 매장은 이탈률이 2배 이상 높음',
+      '예약 기능 필수 연동 → 네이버 예약 연동 매장이 노출 순위 우선',
+      '📝 블로그: ' + (hasBlog ? (blogRecent?'최근 포스팅 중. 시술별 전문 정보 포스팅으로 검색 유입을 늘리세요.':'블로그 포스팅을 재개하세요. 시술 후기·관리 팁 포스팅은 검색 유입에 매우 효과적입니다.') : '네이버 블로그 개설 후 시술 전후 사진·후기 포스팅 작성 → 뷰티 키워드 검색 노출 필수')
+    ],
+    edu: [
+      '강사 소개·자격증·커리큘럼 상세 등록 → 교육 매장 신뢰도의 핵심',
+      '수강생 후기 사진·성과 등록 → 등록 전환율 직접 향상',
+      '무료 상담·체험 이벤트 소식 월 1회 이상 등록 → 신규 문의 유입 증가',
+      '📝 블로그: ' + (hasBlog ? '블로그 운영 중. 수업 내용·커리큘럼 소개 포스팅을 정기적으로 올리세요.' : '네이버 블로그 개설 후 수업 소개·수강 후기 포스팅 작성 → 교육 키워드 검색 유입 증가')
+    ],
+    fitness: [
+      '무료 체험·PT 이벤트 소식 월 2회 이상 업데이트 → 신규 회원 문의 증가',
+      '강사 프로필·자격증·수업 사진 상세 등록 → 전문성 신뢰도 향상',
+      '예약·등록 기능 연동 필수 → 즉시 신청 가능 매장이 전환율 2배',
+      '📝 블로그: ' + (hasBlog ? '블로그 운영 중. PT 성과·운동 팁 포스팅으로 전문성을 강화하세요.' : '네이버 블로그 개설 후 운동 팁·회원 성과 소개 포스팅 작성 → 피트니스 키워드 검색 노출')
+    ]
   };
-  var advice = adviceMap[info.category] || ['메뉴·서비스 정보 상세 등록','정기적인 소식 업데이트','리뷰 답글 관리 강화'];
-  advice.push('📝 블로그 채널: ' + (hasBlog ? (blogRecent?'최근 업데이트 중. 매장 URL 연동을 확인하세요.':'블로그가 있으나 최근 포스팅이 없습니다. 월 1회 이상 업데이트하세요.') : '네이버 블로그를 개설하고 매장 소개 포스팅 3개 이상을 작성하세요.'));
+  var advice = adviceMap[info.category] || adviceMap['restaurant'];
+  var adviceHTML = advice.map(function(a,i){
+    return '<div class="r-list-item"><span class="r-num">'+(i+1)+'</span>'+a+'</div>';
+  }).join('');
 
+  // 30일 성과 예측 (상세)
   var predMap = {
-    S: '현재 수준을 유지하면서 리뷰 최신성을 강화하면 30일 내 상위 3위 이내 안정적 노출이 가능합니다. 신규 방문자 유입이 월 15~20% 증가할 것으로 예측됩니다.',
-    A: '약점 영역을 집중 개선하면 30일 내 노출 순위가 3~5단계 상승할 것으로 예측됩니다. 방문자 수 20~30% 증가 효과를 기대할 수 있습니다.',
-    B: '오늘부터 개선하면 2주 내 점수가 10~15점 상승하고 30일 내 노출 빈도가 40~50% 증가할 것으로 예측됩니다.',
-    C: '기본 정보 완성과 사진 10장 이상 등록만 해도 2주 내 검색 노출이 시작됩니다. 30일 내 방문자 수 2배 증가가 가능합니다.',
-    D: '지금 당장 기본 정보와 사진을 보강하면 1주일 내 검색에 노출되기 시작합니다. 30일 내 방문자 수 3배 이상 증가가 가능합니다.'
+    S: '현재 최상위 수준을 유지하면서 리뷰 최신성과 소식 정기 업데이트를 강화하면 30일 내 상위 3위 이내 안정적 노출이 지속됩니다. 신규 방문자 유입이 월 15~20% 증가하고, 기존 고객 재방문율도 10% 이상 향상될 것으로 예측됩니다. 블로그 채널을 병행 운영하면 검색 노출 키워드가 2~3배 확장되어 신규 고객 유입 채널이 다변화됩니다. 지금 수준을 유지하는 것 자체가 경쟁 우위이며, 분기별 전체 점검 루틴을 정착시키는 것을 권장합니다.',
+    A: '약점 영역인 '+weak+'를 집중 개선하면 2주 내 매장 점수가 8~12점 상승하고 30일 내 검색 노출 순위가 3~5단계 향상될 것으로 예측됩니다. 방문자 수 20~30% 증가 효과가 예상되며, 리뷰 수와 답글 관리를 병행하면 클릭률도 함께 올라갑니다. 블로그 포스팅을 월 2회 이상 유지하면 외부 유입 채널이 강화되어 장기적으로 안정적인 상위 노출을 유지할 수 있습니다.',
+    B: '오늘부터 최우선 실행과제를 실행하면 2주 내 매장 점수가 10~15점 상승할 것으로 예측됩니다. 30일 내 검색 노출 빈도 40~50% 증가가 가능하며, 특히 사진 보강과 소식 업데이트를 병행하면 클릭률이 눈에 띄게 향상됩니다. '+blogStatus+' 블로그 체험단을 이번 달 안에 진행하면 외부 유입이 20~30% 추가로 늘어납니다. 꾸준한 실행이 핵심이며, 이번 달이 변화의 가장 좋은 시점입니다.',
+    C: '기본 정보 완성과 사진 10장 이상 등록만 해도 1~2주 내 검색 노출이 시작됩니다. 30일 내 방문자 수 2배 증가가 가능하며 리뷰 5개 이상 확보 시 클릭률이 크게 향상됩니다. 지금 당장 실행 가능한 것부터 하나씩 시작하면 한 달 후 매장이 달라집니다. 기본기를 갖추는 것이 지금 가장 중요한 투자입니다.',
+    D: '지금 당장 기본 정보와 사진을 보강하면 1주일 내 검색에 노출되기 시작합니다. 30일 내 방문자 수 3배 이상 증가가 가능하며, 리뷰 답글 관리만 시작해도 기존 고객 재방문율이 향상됩니다. 첫 1주일이 가장 중요합니다. 오늘 실행 체크리스트 3가지를 완료하면 즉시 변화가 시작됩니다.'
   };
 
+  // 최우선 실행과제 3개
   var catScores = state.catScores;
-  var worstCat = Object.entries(catScores).sort(function(a,b){ return a[1].pct-b[1].pct; })[0];
-  var actionMap = {
-    '리뷰 관리': '오늘 당장 미답변 리뷰 전체에 답글을 달고, 단골 고객 3명에게 방문자 리뷰를 부탁하세요.',
-    '사진 / 미디어': '오늘 스마트폰으로 매장 사진 10장 이상 촬영하여 즉시 등록하세요.',
-    '소식 / 공지': '지금 바로 이번 주 특별 소식 1건을 작성하여 업로드하세요.',
-    '메뉴 / 서비스 정보': '오늘 메뉴·서비스 항목 전체를 점검하고 가격·설명을 최신화하세요.',
-    'SEO / 키워드 최적화': '지금 소개글을 열고 지역명+업종명+특징 키워드를 포함한 100자 이상으로 수정하세요.',
-    '기본 정보 완성도': '지금 매장 관리 앱에서 영업시간·전화번호·주소를 확인하고 오류를 즉시 수정하세요.',
-    '블로그 / 외부 채널 연동': hasBlog ? '블로그에 매장 URL을 연결하고 이번 주 포스팅 1건을 작성하세요.' : '지금 바로 네이버 블로그를 개설하고 매장 소개 포스팅을 작성하세요.'
+  var sorted = Object.entries(catScores).sort(function(a,b){ return a[1].pct-b[1].pct; });
+  var top3Weak = sorted.slice(0,3);
+  
+  var actionDetailMap = {
+    '리뷰 관리': {
+      what: '미답변 리뷰 전체 답글 + 단골 고객 3명에게 방문자 리뷰 요청',
+      how: '플레이스 앱 → 리뷰 관리 → 미답변 항목 필터 → 답글 작성. 답글은 고객명을 넣어 개인화하면 효과 2배',
+      when: '오늘 당장'
+    },
+    '사진 / 미디어': {
+      what: '스마트폰으로 매장 대표 사진 10장 이상 촬영 후 즉시 업로드',
+      how: '자연광 시간대(오전 10~12시) 촬영 권장. 음식·공간·외부 간판 포함. 가로 방향 1:1 비율로 촬영',
+      when: '오늘 당장'
+    },
+    '소식 / 공지': {
+      what: '이번 주 특별 메뉴·이벤트·변경 사항 소식 1건 즉시 업로드',
+      how: '플레이스 앱 → 소식 → 작성. 사진 1장 + 50자 이상 내용 + 해시태그 5개 포함',
+      when: '오늘 당장'
+    },
+    'SEO / 키워드 최적화': {
+      what: '매장 소개글에 지역명+업종명+특징 키워드 3개 이상 자연스럽게 삽입',
+      how: '예: "강남 [업종] 전문 [특징]" 형태로 소개글 첫 문장에 배치. 100자 이상 작성 권장',
+      when: '오늘 당장'
+    },
+    '기본 정보 완성도': {
+      what: '영업시간·전화번호·주소·편의시설 정보 전체 최신화',
+      how: '플레이스 앱 → 정보 수정 → 전체 항목 점검. 특히 주차 가능 여부·예약 가능 여부 필수 입력',
+      when: '오늘 당장'
+    },
+    '편의 정보': {
+      what: '주차·예약·단체석·반려동물 등 편의 정보 전체 입력',
+      how: '플레이스 앱 → 편의 정보 → 해당 항목 모두 체크. 검색 필터에 직접 노출되는 중요 항목',
+      when: '오늘 당장'
+    },
+    '메뉴 / 서비스 정보': {
+      what: '메뉴·서비스 전체 항목 사진+가격+설명 완성',
+      how: '플레이스 앱 → 메뉴 관리 → 사진 없는 항목 우선 사진 추가. 가격·설명 50자 이상 작성',
+      when: '오늘 당장'
+    },
+    '블로그 / 외부 채널 연동': {
+      what: hasBlog ? '블로그에 매장 플레이스 URL 연결 + 이번 주 포스팅 1건 작성' : '네이버 블로그 개설 후 매장 소개 포스팅 3건 작성',
+      how: hasBlog ? '블로그 포스팅 본문에 플레이스 URL 삽입. 제목에 지역명+업종명 포함' : '블로그.naver.com 개설 → 매장명·위치·대표 메뉴 소개 포스팅 작성 → 플레이스 URL 삽입',
+      when: '이번 주'
+    },
+    '응답 / 활동성': {
+      what: '미답변 리뷰 전체 답글 + 소식 1건 업로드',
+      how: '리뷰 답글은 24시간 이내 응답이 활동성 점수를 높임. 소식은 주 1회 이상이 이상적',
+      when: '오늘 당장'
+    }
   };
-  var topWeak = worstCat ? worstCat[0] : '리뷰 관리';
-  var action = actionMap[topWeak] || '오늘 ' + topWeak + ' 영역부터 집중적으로 개선을 시작하세요.';
+
+  var defaultAction = {
+    what: '매장 관리 앱 열어서 전체 항목 점검 후 미완성 항목 1개 즉시 완성',
+    how: '플레이스 앱 → 내 정보 → 완성도 점검 → 부족한 항목부터 하나씩',
+    when: '오늘 당장'
+  };
+
+  var action3HTML = '';
+  for (var ai = 0; ai < Math.min(3, top3Weak.length); ai++) {
+    var catName = top3Weak[ai][0];
+    var catPct = top3Weak[ai][1].pct;
+    var act = actionDetailMap[catName] || defaultAction;
+    action3HTML += '<div style="border:1px solid rgba(61,255,192,0.15);border-radius:10px;padding:14px 16px;margin-bottom:10px;background:rgba(15,20,60,0.4)">' +
+      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">' +
+      '<span style="width:22px;height:22px;border-radius:6px;background:var(--accent4);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+(ai+1)+'</span>' +
+      '<span style="font-size:13px;font-weight:600;color:#fff">'+catName+' ('+catPct+'% 달성)</span>' +
+      '</div>' +
+      '<div style="font-size:13px;color:var(--accent);font-weight:600;margin-bottom:4px">🎯 ' + act.what + '</div>' +
+      '<div style="font-size:12px;color:var(--text2);line-height:1.7;margin-bottom:4px">📋 ' + act.how + '</div>' +
+      '<div style="font-size:11px;color:var(--accent3);font-family:DM Mono,monospace">⏰ ' + act.when + '</div>' +
+      '</div>';
+  }
 
   return (
-    '<div class="report-card-section"><div class="report-sec-label">01 · 종합 진단 요약</div>' +
-    '<div class="report-sec-body">' + (summaryMap[grade]||summaryMap['B']) + '</div></div>' +
+    bizSection +
 
-    '<div class="report-card-section"><div class="report-sec-label">02 · 업종별 특화 조언</div>' +
-    '<div class="report-sec-body">' + advice.map(function(a,i){ return '<div class="r-list-item"><span class="r-num">'+(i+1)+'</span>'+a+'</div>'; }).join('') + '</div></div>' +
+    '<div class="report-card-section">' +
+    '<div class="report-sec-label">01 · 종합 진단 요약</div>' +
+    '<div class="report-sec-body">' + (gradeDesc[grade]||gradeDesc['B']) + '</div>' +
+    '</div>' +
 
-    '<div class="report-card-section"><div class="report-sec-label">03 · 30일 성과 예측</div>' +
-    '<div class="report-sec-body">' + (predMap[grade]||predMap['B']) + '</div></div>' +
+    '<div class="report-card-section">' +
+    '<div class="report-sec-label">02 · 지금 당장 실행 가능한 것 (오늘 완료 목표)</div>' +
+    '<div class="report-sec-body">' + doNowHTML + '</div>' +
+    '</div>' +
 
-    '<div class="report-card-section"><div class="report-sec-label">04 · 최우선 실행 과제</div>' +
-    '<div class="report-sec-body"><div class="r-action-box">🎯 ' + action + '</div></div></div>'
+    '<div class="report-card-section">' +
+    '<div class="report-sec-label">03 · 업종별 특화 조언</div>' +
+    '<div class="report-sec-body">' + adviceHTML + '</div>' +
+    '</div>' +
+
+    '<div class="report-card-section">' +
+    '<div class="report-sec-label">04 · 30일 성과 예측</div>' +
+    '<div class="report-sec-body">' + (predMap[grade]||predMap['B']) + '</div>' +
+    '</div>' +
+
+    '<div class="report-card-section">' +
+    '<div class="report-sec-label">05 · 최우선 실행 과제 TOP 3</div>' +
+    '<div class="report-sec-body">' + action3HTML + '</div>' +
+    '</div>'
   );
 }
 
@@ -1853,12 +2137,15 @@ function submitToGoogleForm() {
   if (statusEl) { statusEl.style.display = 'block'; statusEl.textContent = '구글 스프레드시트에 저장 중...'; }
 
   // fetch no-cors 방식으로 구글폼 제출 (CORS 우회)
+  console.log('폼 제출 시도:', GFORM_URL);
+  console.log('params:', params.toString().substring(0, 200));
   fetch(GFORM_URL, {
     method: 'POST',
     mode: 'no-cors',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body: params.toString()
   }).then(function() {
+    console.log('폼 제출 완료 (no-cors - opaque response)');
     btn.textContent = '✅ 저장 완료!';
     btn.style.background = 'var(--accent2)';
     btn.style.opacity = '1';
@@ -1891,6 +2178,8 @@ window.onload = function() {
   renderChecklist();
   loadPlanTabs();
 };
+
+
 
 
 </script>
