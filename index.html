@@ -794,19 +794,7 @@
     </div>
   </div>
 
-  <!-- 사업 기준 결과 오버레이 -->
-  <div id="bizResultOverlay" style="display:none;position:fixed;inset:0;background:rgba(10,15,26,0.95);z-index:9999;overflow-y:auto;padding:40px 20px">
-    <div style="max-width:620px;margin:0 auto;padding-bottom:40px">
-      <div id="bizResultCard" class="report-header" style="margin-bottom:14px"></div>
-      <div id="bizResultBody" class="card" style="margin-bottom:14px"></div>
-      <div id="bizResultQ" class="card" style="margin-bottom:24px"></div>
-      <button class="btn btn-primary" style="width:100%;justify-content:center;font-size:15px;padding:16px" onclick="closeBizResult()">
-        확인했습니다 → STEP 1-B 매장 자가진단 시작 →
-      </button>
-    </div>
-  </div>
-
-  <div class="section" id="sec2">
+<div class="section" id="sec2">
     <div class="section-header">
       <div class="section-icon">✅</div>
       <div>
@@ -2164,5 +2152,17 @@ function copyReport() {
   });
 }
 </script>
+
+  <!-- 사업 기준 결과 오버레이 (전역) -->
+  <div id="bizResultOverlay" style="display:none;position:fixed;inset:0;background:rgba(10,15,26,0.95);z-index:9999;overflow-y:auto;padding:40px 20px">
+    <div style="max-width:620px;margin:0 auto;padding-bottom:40px">
+      <div id="bizResultCard" class="report-header" style="margin-bottom:14px"></div>
+      <div id="bizResultBody" class="card" style="margin-bottom:14px"></div>
+      <div id="bizResultQ" class="card" style="margin-bottom:24px"></div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;font-size:15px;padding:16px" onclick="closeBizResult()">
+        확인했습니다 → STEP 1-B 매장 자가진단 시작 →
+      </button>
+    </div>
+  </div>
 </body>
 </html>
