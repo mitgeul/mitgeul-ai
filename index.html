@@ -640,25 +640,28 @@
     <p>MITGEUL AI가 분석하는 매장 완전 최적화<br>자가진단 · AI점수 · 벤치마크 · 실행 솔루션 · 리포트</p>
   </div>
 
-  <!-- STEP NAV -->
+    <!-- STEP NAV -->
   <div class="step-nav">
     <button class="step-btn active" onclick="goStep(0)">
-      <span class="step-num">1</span> 기본 정보 입력
+      <span class="step-num">1</span> 기본 정보
     </button>
     <button class="step-btn" onclick="goStep(1)">
-      <span class="step-num">2</span> 자가진단 체크리스트
+      <span class="step-num">2</span> 사업 기준 점검
     </button>
     <button class="step-btn" onclick="goStep(2)">
-      <span class="step-num">3</span> AI 기준 진단
+      <span class="step-num">3</span> 매장 자가진단
     </button>
     <button class="step-btn" onclick="goStep(3)">
-      <span class="step-num">4</span> 업종별 기준표
+      <span class="step-num">4</span> AI 진단
     </button>
     <button class="step-btn" onclick="goStep(4)">
-      <span class="step-num">5</span> 실행 솔루션
+      <span class="step-num">5</span> 기준표
     </button>
     <button class="step-btn" onclick="goStep(5)">
-      <span class="step-num">6</span> 통합 리포트
+      <span class="step-num">6</span> 실행 솔루션
+    </button>
+    <button class="step-btn" onclick="goStep(6)">
+      <span class="step-num">7</span> 통합 리포트
     </button>
   </div>
 
@@ -739,12 +742,76 @@
   </div>
 
   <!-- SECTION 1: 자가진단 체크리스트 -->
+  <!-- SECTION 1: STEP 1-A 사업 기준 점검 -->
   <div class="section" id="sec1">
+    <div class="section-header">
+      <div class="section-icon">🧭</div>
+      <div>
+        <div class="section-title">STEP 1-A · 사업 기준 점검</div>
+        <div class="section-sub">운영 중인 사업에 기준이 있는지 점검하는 과정입니다</div>
+      </div>
+    </div>
+
+    <div class="card" style="background:linear-gradient(135deg,rgba(61,255,192,0.07),rgba(30,35,112,0.35));border-color:rgba(61,255,192,0.25)">
+      <div style="font-size:15px;font-weight:600;color:#fff;margin-bottom:16px">시작 전, 아래 3가지 질문 앞에서 잠깐 멈춰보세요</div>
+      <div style="display:flex;flex-direction:column;gap:13px">
+        <div style="display:flex;gap:12px;align-items:flex-start">
+          <span style="color:var(--accent);font-family:'DM Mono',monospace;font-size:11px;letter-spacing:1px;flex-shrink:0;padding-top:2px">Q 01</span>
+          <span style="font-size:14px;color:var(--text2);line-height:1.6">대표님의 사업은 한 문장으로 설명할 수 있습니까?</span>
+        </div>
+        <div style="display:flex;gap:12px;align-items:flex-start">
+          <span style="color:var(--accent);font-family:'DM Mono',monospace;font-size:11px;letter-spacing:1px;flex-shrink:0;padding-top:2px">Q 02</span>
+          <span style="font-size:14px;color:var(--text2);line-height:1.6">고객은 왜 대표님을 선택해야 합니까?</span>
+        </div>
+        <div style="display:flex;gap:12px;align-items:flex-start">
+          <span style="color:var(--accent);font-family:'DM Mono',monospace;font-size:11px;letter-spacing:1px;flex-shrink:0;padding-top:2px">Q 03</span>
+          <span style="font-size:14px;color:var(--text2);line-height:1.6">지금 하고 있는 마케팅은 사업 방향과 맞습니까?</span>
+        </div>
+      </div>
+      <div style="margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.06);font-size:12px;color:var(--text3);line-height:1.7">
+        답을 적지 않아도 됩니다. 질문 앞에서 잠깐 멈추는 것만으로 충분합니다.
+      </div>
+    </div>
+
+    <div class="alert alert-info">
+      💡 <div style="line-height:1.7">이 점검은 실행력 테스트가 아닙니다. 답이 바로 떠오르지 않거나 <strong style="color:var(--accent)">멈칫하는 문항</strong>이 있다면, 그 지점이 지금 상태입니다. 지금 상황에 더 가까운 쪽을 직관적으로 체크해주세요.</div>
+    </div>
+
+    <div id="bizCheckContainer"></div>
+
+    <div class="card">
+      <div class="progress-header">
+        <span class="progress-label">사업 기준 점검 진행률</span>
+        <span class="progress-val" id="bizCheckProgress">0 / 20</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="bizCheckProgressBar" style="width:0%"></div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="calcBizCheck()">20문항 완료 → 결과 확인 →</button>
+    </div>
+  </div>
+
+  <!-- 사업 기준 결과 오버레이 -->
+  <div id="bizResultOverlay" style="display:none;position:fixed;inset:0;background:rgba(10,15,26,0.95);z-index:9999;overflow-y:auto;padding:40px 20px">
+    <div style="max-width:620px;margin:0 auto;padding-bottom:40px">
+      <div id="bizResultCard" class="report-header" style="margin-bottom:14px"></div>
+      <div id="bizResultBody" class="card" style="margin-bottom:14px"></div>
+      <div id="bizResultQ" class="card" style="margin-bottom:24px"></div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;font-size:15px;padding:16px" onclick="closeBizResult()">
+        확인했습니다 → STEP 1-B 매장 자가진단 시작 →
+      </button>
+    </div>
+  </div>
+
+  <div class="section" id="sec2">
     <div class="section-header">
       <div class="section-icon">✅</div>
       <div>
-        <div class="section-title">자가진단 체크리스트</div>
-        <div class="section-sub">매장 운영 현황을 직접 확인하며 YES / NO로 체크하세요</div>
+        <div class="section-title">STEP 1-B · 매장 자가진단</div>
+        <div class="section-sub">매장 운영 현황을 직접 확인하며 YES / NO로 체크합니다</div>
       </div>
     </div>
 
@@ -756,7 +823,7 @@
 
     <div class="card">
       <div class="progress-header">
-        <span class="progress-label">체크리스트 진행률</span>
+        <span class="progress-label">매장 자가진단 진행률</span>
         <span class="progress-val" id="checkProgress">0 / 35</span>
       </div>
       <div class="progress-track">
@@ -765,12 +832,12 @@
     </div>
 
     <div class="btn-row">
-      <button class="btn btn-primary" onclick="calcChecklist()">체크리스트 완료 → AI 진단으로 →</button>
+      <button class="btn btn-primary" onclick="calcChecklist()">매장 자가진단 완료 → AI 진단으로 →</button>
     </div>
   </div>
 
   <!-- SECTION 2: AI 기준 진단 -->
-  <div class="section" id="sec2">
+  <div class="section" id="sec3">
     <div class="section-header">
       <div class="section-icon">🤖</div>
       <div>
@@ -797,12 +864,12 @@
     </div>
 
     <div class="btn-row">
-      <button class="btn btn-primary" onclick="goStep(3)">업종별 기준표 보기 →</button>
+      <button class="btn btn-primary" onclick="goStep(4)">업종별 기준표 보기 →</button>
     </div>
   </div>
 
   <!-- SECTION 3: 업종별 기준표 -->
-  <div class="section" id="sec3">
+  <div class="section" id="sec4">
     <div class="section-header">
       <div class="section-icon">📊</div>
       <div>
@@ -816,12 +883,12 @@
     </div>
 
     <div class="btn-row">
-      <button class="btn btn-primary" onclick="goStep(4)">맞춤 실행 솔루션 보기 →</button>
+      <button class="btn btn-primary" onclick="goStep(5)">맞춤 실행 솔루션 보기 →</button>
     </div>
   </div>
 
   <!-- SECTION 4: 실행 솔루션 -->
-  <div class="section" id="sec4">
+  <div class="section" id="sec5">
     <div class="section-header">
       <div class="section-icon">🚀</div>
       <div>
@@ -846,8 +913,7 @@
   </div>
 
   <!-- SECTION 5: 통합 리포트 -->
-  <div class="section" id="sec5">
-    <div class="section-header">
+  <div class="section" id="sec6">   <div class="section-header">
       <div class="section-icon">📄</div>
       <div>
         <div class="section-title">통합 진단 리포트</div>
@@ -876,7 +942,6 @@
 
     <div class="btn-row" id="reportBtns" style="display:none">
       <button class="btn btn-outline" onclick="window.print()">🖨️ 인쇄 / PDF 저장</button>
-      <button class="btn btn-green" onclick="copyReport()">📋 리포트 복사</button>
       <button class="btn btn-outline" onclick="goStep(0)">🔄 새 진단 시작</button>
     </div>
   </div>
@@ -1087,13 +1152,238 @@ const ACTION_PLANS = {
 let state = {
   info: {},
   checks: {},
+  bizChecks: {},
+  bizYesCount: 0,
+  bizResult: null,
   score: 0,
   catScores: {},
-  stepDone: [false,false,false,false,false,false]
+  stepDone: [false,false,false,false,false,false,false]
 };
 
 // ===================== INIT =====================
+// ===================== STEP 1-A 사업 기준 점검 =====================
+const BIZ_CHECK_DATA = [
+  {
+    cat: "사업 기준", icon: "🎯",
+    items: [
+      { id:"b1",  text:"우리 사업을 한 문장으로 설명할 수 있다" },
+      { id:"b2",  text:"우리 사업이 누구에게 필요한지 알고 있다" },
+      { id:"b3",  text:"고객이 왜 우리를 선택해야 하는지 설명할 수 있다" },
+      { id:"b4",  text:"우리 매장이 해결하는 고객 문제를 알고 있다" },
+      { id:"b5",  text:"경쟁 매장과 차이를 설명할 수 있다" },
+    ]
+  },
+  {
+    cat: "고객 기준", icon: "👥",
+    items: [
+      { id:"b6",  text:"우리 매장의 핵심 고객이 누구인지 알고 있다" },
+      { id:"b7",  text:"고객이 어떤 이유로 우리 매장을 찾는지 알고 있다" },
+      { id:"b8",  text:"고객이 우리 매장을 선택하는 이유를 설명할 수 있다" },
+      { id:"b9",  text:"고객이 방문 전에 어떤 정보를 찾는지 알고 있다" },
+      { id:"b10", text:"고객의 대표 질문을 알고 있다" },
+    ]
+  },
+  {
+    cat: "운영 기준", icon: "⚙️",
+    items: [
+      { id:"b11", text:"지금 하고 있는 마케팅이 왜 필요한지 설명할 수 있다" },
+      { id:"b12", text:"지금 하고 있는 블로그 운영이 매장 방향과 맞다" },
+      { id:"b13", text:"매장 정보가 매장의 특징을 잘 설명한다" },
+      { id:"b14", text:"매장의 강점을 콘텐츠로 설명할 수 있다" },
+      { id:"b15", text:"매장의 메시지가 일관되게 전달되고 있다" },
+    ]
+  },
+  {
+    cat: "판단 기준", icon: "⚖️",
+    items: [
+      { id:"b16", text:"새로운 마케팅 제안을 받으면 우리 기준으로 판단할 수 있다" },
+      { id:"b17", text:"지금 하고 있는 일 중 멈춰야 할 것을 알고 있다" },
+      { id:"b18", text:"줄여도 되는 일을 구분할 수 있다" },
+      { id:"b19", text:"반복되는 문제의 원인을 알고 있다" },
+      { id:"b20", text:"앞으로 사업을 어떤 방향으로 운영할지 설명할 수 있다" },
+    ]
+  }
+];
+
+const BIZ_RESULTS = {
+  high: {
+    range: "YES 16–20개",
+    grade: "기준 안정",
+    color: "var(--accent2)",
+    title: "기준이 작동하고 있습니다. 이제 구조로 고정할 차례입니다.",
+    desc: `대표님은 이미 사업의 방향과 판단 기준을 어느 정도 갖추고 있습니다. 결정을 내릴 때 흔들리지 않고, 마케팅 제안을 받았을 때도 기준으로 먼저 걸러낼 수 있는 상태에 가깝습니다. 많은 시행착오를 지나왔고, 그 경험이 지금의 감각으로 축적되어 있을 가능성이 높습니다.
+
+지금 확인이 필요한 한 가지가 있습니다. 그 기준이 '머릿속 감각'인지, '반복 적용 가능한 원칙'인지입니다. 대표님이 바쁘거나 자리를 비웠을 때도 같은 기준으로 판단이 이루어질 수 있는지 — 이 부분이 다음 단계입니다.`,
+    summary: `지금 당장 무언가를 바꿔야 하는 상태는 아닙니다. 운영은 비교적 안정적입니다. 다만 이미 있는 기준을 문장으로 정리하고 구조로 고정해두면, 흔들릴 때도 사업은 함께 흔들리지 않습니다. STEP 1-B 매장 진단을 통해 그 기준이 실제 매장 운영에 얼마나 반영되고 있는지 함께 확인해보세요.`,
+    questions: [
+      "지금의 기준은 느낌으로 아는 것인가, 문장으로 설명할 수 있는 것인가.",
+      "내가 잠시 자리를 비워도 이 기준이 팀과 운영에서 그대로 작동할 수 있을까.",
+      "지금 하고 있는 일 중 우리 기준과 맞지 않지만 관성으로 계속하고 있는 것은 무엇인가."
+    ]
+  },
+  mid: {
+    range: "YES 10–15개",
+    grade: "기준 점검 필요",
+    color: "var(--accent3)",
+    title: "방향은 있습니다. 그런데 그 방향을 지탱하는 기준이 흔들리고 있습니다.",
+    desc: `대표님은 열심히 하고 있습니다. 블로그도 해보고, 광고도 해보고, 매장도 계속 손보면서 사업을 살리기 위해 많이 움직여 오셨을 겁니다. 그런데 왜 정리된 느낌이 없을까요.
+
+문제는 실행량이 아닙니다. 실행을 묶어줄 기준이 아직 충분히 정리되지 않은 것입니다. 이것도 해야 할 것 같고, 저것도 해야 할 것 같은 느낌. 새로운 제안이 오면 순간적으로 흔들리는 경험. 콘텐츠 방향이 자주 달라지는 현상. 이것이 능력 부족이 아니라 기준 부족에서 오는 신호입니다.`,
+    summary: `방향 자체가 완전히 잘못된 건 아닙니다. 조각들은 이미 대표님 안에 있습니다. 기준이 정리되면 어떤 고객에 집중할지, 어떤 콘텐츠를 만들지, 어떤 제안을 거절할지가 훨씬 빠르게 결정됩니다. 지금 필요한 건 더 많은 방법이 아니라, 판단의 기준입니다. STEP 1-B에서 그 기준이 매장 운영에 어떻게 반영되고 있는지 점검해보세요.`,
+    questions: [
+      "나는 지금 더 많은 방법을 찾고 있는 걸까, 아니면 기준 없이 실행을 반복하고 있는 걸까.",
+      "고객이 우리를 선택하는 이유를 지금 한 문장으로 말할 수 있는가.",
+      "지금 하고 있는 마케팅 중 방향과 맞지 않지만 멈추지 못하고 있는 것은 무엇일까."
+    ]
+  },
+  low: {
+    range: "YES 0–9개",
+    grade: "기준 정립 시작",
+    color: "var(--accent4)",
+    title: "지금의 불안은 노력 부족이 아닙니다. 기준이 없어서입니다.",
+    desc: `많이 바쁘셨을 겁니다. 그런데 앞으로 나아가는 느낌보다 그때그때 막고 버티는 느낌이 더 강했던 적이 있으셨다면, 그건 노력이 부족해서가 아닙니다.
+
+기준이 없는 상태의 실행은 쌓이지 않습니다. 콘텐츠를 써도 방향이 없고, 광고를 해도 메시지가 흐리고, 매장을 관리해도 차별점이 보이지 않습니다. 이 상태에서 더 열심히 하면 잠깐 움직이는 것처럼 보여도 다시 흔들릴 가능성이 큽니다. 지금 대표님에게 필요한 건 더 빠른 실행이 아니라 더 정확한 기준입니다.`,
+    summary: `자신을 몰아붙이지 않아도 됩니다. 지금 상태는 능력의 문제가 아닙니다. 기준이 생기면 무엇을 멈춰야 하는지, 무엇을 계속해야 하는지가 보이기 시작합니다. STEP 1-B 매장 진단을 통해 지금 매장의 현황을 먼저 명확하게 파악하고, 거기서부터 기준을 세워나가세요.`,
+    questions: [
+      "나는 지금 결정을 못 하는 걸까, 아니면 기준이 없어서 미루고 있는 걸까.",
+      "이 불안은 노력이 부족해서가 아니라 판단 기준이 없기 때문은 아닐까.",
+      "지금 하고 있는 실행 중 멈추고 다시 생각해봐야 할 것은 무엇일까."
+    ]
+  }
+};
+
+let bizChecks = {};
+
+function renderBizCheck() {
+  const container = document.getElementById('bizCheckContainer');
+  container.innerHTML = '';
+  BIZ_CHECK_DATA.forEach(cat => {
+    const catDiv = document.createElement('div');
+    catDiv.className = 'check-category';
+    catDiv.innerHTML = `<div class="check-cat-title">${cat.icon} ${cat.cat}</div>`;
+    cat.items.forEach(item => {
+      const itemDiv = document.createElement('div');
+      itemDiv.className = 'check-item';
+      itemDiv.id = 'bi_' + item.id;
+      itemDiv.innerHTML = `
+        <div style="flex:1">
+          <div class="check-item-text">${item.text}</div>
+        </div>
+        <div class="yn-btns">
+          <button class="yn-btn yes" onclick="setBizCheck('${item.id}','yes')">YES</button>
+          <button class="yn-btn no"  onclick="setBizCheck('${item.id}','no')">NO</button>
+        </div>`;
+      catDiv.appendChild(itemDiv);
+    });
+    const cardDiv = document.createElement('div');
+    cardDiv.className = 'card';
+    cardDiv.style.padding = '20px';
+    cardDiv.appendChild(catDiv);
+    container.appendChild(cardDiv);
+  });
+}
+
+function setBizCheck(id, val) {
+  bizChecks[id] = val;
+  const el = document.getElementById('bi_' + id);
+  el.className = 'check-item ' + val;
+  el.querySelectorAll('.yn-btn').forEach(b => b.classList.remove('active'));
+  el.querySelector('.yn-btn.' + val).classList.add('active');
+  const done = Object.keys(bizChecks).length;
+  document.getElementById('bizCheckProgress').textContent = `${done} / 20`;
+  document.getElementById('bizCheckProgressBar').style.width = `${(done/20)*100}%`;
+}
+
+function calcBizCheck() {
+  const yesCount = Object.values(bizChecks).filter(v=>v==='yes').length;
+  state.bizYesCount = yesCount;
+  state.bizChecks = bizChecks;
+
+  const result = yesCount >= 16 ? BIZ_RESULTS.high
+               : yesCount >= 10 ? BIZ_RESULTS.mid
+               : BIZ_RESULTS.low;
+  state.bizResult = result;
+  state.bizYesCount = yesCount;
+
+  // ── 결과 오버레이 렌더 ──
+  document.getElementById('bizResultCard').innerHTML = `
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+      <span style="font-family:'DM Mono',monospace;font-size:11px;letter-spacing:2px;color:var(--accent)">MITGEUL AI · STEP 1-A · 사업 기준 점검 결과</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:14px">
+      <div style="font-family:'DM Mono',monospace;font-size:52px;font-weight:700;color:${result.color};line-height:1">
+        ${yesCount}<span style="font-size:20px;color:var(--text3);font-weight:400">/20</span>
+      </div>
+      <div>
+        <div style="font-size:11px;font-family:'DM Mono',monospace;color:var(--text3);margin-bottom:4px">${result.range}</div>
+        <div style="display:inline-block;padding:5px 14px;border-radius:20px;font-size:12px;font-weight:700;font-family:'DM Mono',monospace;background:rgba(61,255,192,0.08);color:${result.color};border:1px solid ${result.color}">${result.grade}</div>
+      </div>
+    </div>
+    <div style="font-size:17px;font-weight:700;color:#fff;line-height:1.5">${result.title}</div>`;
+
+  document.getElementById('bizResultBody').innerHTML = `
+    <div style="font-size:14px;color:var(--text2);line-height:1.9;white-space:pre-line">${result.desc}</div>
+    <div style="margin-top:18px;padding:16px 18px;background:rgba(61,255,192,0.05);border:1px solid rgba(61,255,192,0.15);border-radius:12px;font-size:13px;color:var(--text2);line-height:1.85">
+      <div style="font-size:11px;font-family:'DM Mono',monospace;color:var(--accent);letter-spacing:1px;margin-bottom:8px">STEP 1-B 연결 안내</div>
+      ${result.summary}
+    </div>`;
+
+  document.getElementById('bizResultQ').innerHTML = `
+    <div style="font-size:11px;font-family:'DM Mono',monospace;color:var(--accent);letter-spacing:1px;margin-bottom:14px">하루에 하나씩 떠올려보세요</div>
+    ${result.questions.map((q,i)=>`
+      <div style="display:flex;gap:12px;margin-bottom:12px;align-items:flex-start">
+        <span style="width:22px;height:22px;border-radius:6px;background:rgba(61,255,192,0.12);color:var(--accent);font-family:'DM Mono',monospace;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">${i+1}</span>
+        <span style="font-size:13px;color:var(--text2);line-height:1.75">${q}</span>
+      </div>`).join('')}`;
+
+  document.getElementById('bizResultOverlay').style.display = 'block';
+  document.body.style.overflow = 'hidden';
+}
+
+
+function getBizBannerSmall() {
+  if (!state.bizResult) return '';
+  const r = state.bizResult;
+  return `<div class="card" style="margin-bottom:16px;border-color:rgba(61,255,192,0.15);background:linear-gradient(135deg,rgba(30,35,112,0.5),rgba(15,20,60,0.5))">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+      <div style="flex:1;min-width:180px">
+        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--text3);margin-bottom:6px">STEP 1-A · 사업 기준 점검</div>
+        <div style="font-size:14px;font-weight:600;color:#fff;line-height:1.5">${r.title}</div>
+        <div style="font-size:12px;color:var(--text2);margin-top:4px">${r.summary.slice(0,120)}...</div>
+      </div>
+      <div style="text-align:right;flex-shrink:0">
+        <div style="font-family:'DM Mono',monospace;font-size:32px;font-weight:700;color:${r.color};line-height:1">YES ${state.bizYesCount}</div>
+        <div style="font-size:11px;font-family:'DM Mono',monospace;color:var(--text3)">/20 · ${r.grade}</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function getBizBannerFull() {
+  if (!state.bizResult) return '';
+  const r = state.bizResult;
+  return `<div class="card" style="margin-bottom:16px;background:rgba(30,35,112,0.4);border-color:rgba(61,255,192,0.15)">
+    <div style="font-family:'DM Mono',monospace;font-size:11px;letter-spacing:1px;color:var(--accent);margin-bottom:10px">STEP 1-A · 사업 기준 점검</div>
+    <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+      <div style="font-family:'DM Mono',monospace;font-size:32px;font-weight:700;color:${r.color}">${state.bizYesCount}<span style="font-size:14px;color:var(--text3);font-weight:400">/20</span></div>
+      <div style="flex:1;min-width:180px">
+        <div style="font-size:14px;font-weight:600;color:#fff;margin-bottom:4px">${r.title}</div>
+        <div style="font-size:12px;color:var(--text2)">${r.range} · <span style="color:${r.color}">${r.grade}</span></div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function closeBizResult() {
+  document.getElementById('bizResultOverlay').style.display = 'none';
+  document.body.style.overflow = '';
+  renderChecklist();
+  goStep(2);
+}
+
 window.onload = function() {
+  renderBizCheck();
   renderChecklist();
   loadPlanTabs();
 };
@@ -1181,7 +1471,7 @@ function calcChecklist() {
   });
   
   renderAIScore();
-  goStep(2);
+  goStep(3);
 }
 
 function renderAIScore() {
@@ -1322,7 +1612,7 @@ function renderBenchmark() {
         <thead>
           <tr>
             <th>항목</th>
-            <th>상위 10% 기준</th>
+            <th>권장 목표치</th>
             <th>평균 수준</th>
             <th>최소 기준</th>
             <th>내 매장</th>
@@ -1404,7 +1694,7 @@ function renderActionPlan() {
 }
 
 async function generateReport() {
-  goStep(5);
+  goStep(6);
   const container = document.getElementById('reportContainer');
   const info = state.info;
   const score = state.score;
@@ -1440,6 +1730,12 @@ async function generateReport() {
         <span>🔗 ${info.storeUrl ? '<a href="'+info.storeUrl+'" target="_blank" style="color:var(--accent);text-decoration:none">매장 링크 <span style="font-size:10px;opacity:0.7">(플레이스)</span></a>' : '미입력'}</span>
       </div>
     </div>
+
+    <!-- STEP 1-A 사업기준 점검 결과 배너 -->
+    ${getBizBannerSmall()}
+
+    <!-- 사업 기준 점검 결과 배너 -->
+    ${getBizBannerFull()}
 
     <!-- 점수 요약 배너 -->
     <div class="card" style="display:flex;align-items:center;gap:20px;flex-wrap:wrap;margin-bottom:16px;background:linear-gradient(135deg,rgba(61,255,192,0.08),rgba(30,35,112,0.4))">
@@ -1608,8 +1904,10 @@ async function generateReport() {
   });
 
   setTimeout(() => {
-    document.getElementById('reportBtns').style.display = 'flex';
-    document.getElementById('gformBanner').style.display = 'block';
+    const btns = document.getElementById('reportBtns');
+    const banner = document.getElementById('gformBanner');
+    if (btns) { btns.style.display = 'flex'; btns.style.visibility = 'visible'; }
+    if (banner) { banner.style.display = 'block'; banner.style.visibility = 'visible'; }
   }, sections.length * 300 + 200);
 }
 
@@ -1659,7 +1957,7 @@ function saveInfo() {
     mainConcern: document.getElementById('mainConcern').value,
   };
   state.stepDone[0] = true;
-  renderChecklist(); // 업종 선택 후 업종별 문구 반영
+  renderBizCheck();
   goStep(1);
 }
 
@@ -1680,20 +1978,75 @@ function goStep(n) {
 // ===================== GOOGLE FORM SUBMIT =====================
 const GFORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSdf_YdllSh4QIxyeoaZ080xBeDTw8aZnG3LxleJbpthGAzf2w/formResponse";
 const GFORM_ENTRIES = {
-  name:          "entry.878763656",    // Q1 성함
-  phone:         "entry.113765409",    // Q2 연락처
-  storeName:     "entry.1420994413",   // Q3 매장명
-  category:      "entry.1237505260",   // Q4 업종
-  storeUrl:      "entry.901578069",    // Q5 플레이스 URL
-  score:         "entry.2118039398",   // Q6 종합 점수
-  grade:         "entry.1798312993",   // Q7 등급
-  strongAreas:   "entry.1241736923",   // Q8 강점 영역
-  weakAreas:     "entry.1323910111",   // Q9 약점 영역
-  blogReviews:   "entry.1740745028",   // Q10 블로그 리뷰 수
-  yesCount:      "entry.2001984606",   // Q13 YES 체크 수
-  noCount:       "entry.1122554635",   // Q14 NO 체크 수
-  diagDate:      "entry.146067543",    // Q15 진단일
+  name:           "entry.878763656",    // Q1  성함
+  phone:          "entry.113765409",    // Q2  연락처
+  storeName:      "entry.1420994413",   // Q3  매장명
+  category:       "entry.1237505260",   // Q4  업종
+  storeUrl:       "entry.901578069",    // Q5  매장 URL (플레이스)
+  mainConcern:    "entry.2118039398",   // Q6  주요 고민
+  bizYesCount:    "entry.1798312993",   // Q7  사업기준 YES 체크 수
+  bizGrade:       "entry.1241736923",   // Q8  사업 기준 구간
+  blogReviews:    "entry.1323910111",   // Q9  블로그 리뷰 수
+  photoCount:     "entry.1740745028",   // Q10 사진 수
+  visitorReviews: "entry.2001984606",   // Q11 방문자 리뷰 수
+  yesCount:       "entry.1122554635",   // Q12 매장 YES 체크 수
+  noCount:        "entry.146067543",    // Q13 매장 NO 체크 수
+  score:          "entry.638185962",    // Q14 매장 종합 점수
+  grade:          "entry.658539265",    // Q15 매장 등급
+  strongAreas:    "entry.979102149",    // Q16 매장 강점 영역
+  weakAreas:      "entry.2117050293",   // Q17 매장 약점 영역
+  finalSolution:  "entry.268675284",    // Q18 최종 솔루션
+  diagDate:       "entry.1059587411",   // Q19 진단일
 };
+
+
+function getSolutionText() {
+  // 실행 솔루션에서 완료된 항목 + 미완료 항목 요약
+  const allTasks = {
+    today: [
+      '오늘 당장 미답변 리뷰 전체에 답글 달기',
+      '대표 사진 교체 또는 신규 등록',
+      '영업시간 최신화 확인 및 수정',
+      '메뉴·서비스 가격 정보 업데이트',
+      '소식(포스트) 1건 작성 업로드'
+    ],
+    week: [
+      '사진 10장 이상으로 채우기',
+      '지인 5명에게 방문자 리뷰 요청',
+      '매장 소개글 키워드 최적화',
+      '해시태그 10개 이상 추가',
+      '편의 정보 완성'
+    ],
+    month: [
+      '블로그 체험단 모집 또는 운영',
+      '월별 이벤트/프로모션 등록',
+      '경쟁 상위 매장 3곳 정기 분석',
+      '통계 데이터 월간 리뷰',
+      '소식 4건 이상 정기 발행'
+    ]
+  };
+
+  const catScores = state.catScores;
+  const weakAreas = Object.entries(catScores)
+    .filter(([,v]) => v.pct < 50)
+    .map(([k]) => k)
+    .join(', ');
+  const strongAreas = Object.entries(catScores)
+    .filter(([,v]) => v.pct >= 70)
+    .map(([k]) => k)
+    .join(', ');
+
+  return [
+    '[매장 자가진단 요약]',
+    '강점: ' + (strongAreas || '없음'),
+    '약점: ' + (weakAreas  || '없음'),
+    '',
+    '[핵심 실행 과제]',
+    '오늘: 미답변 리뷰 답글, 대표사진 점검, 영업시간 확인',
+    '이번주: 사진 보강, 리뷰 요청, 소개글 키워드 최적화',
+    '이번달: 블로그 체험단, 이벤트 등록, 경쟁매장 분석'
+  ].join('\n');
+}
 
 function submitToGoogleForm() {
   const btn = document.getElementById('gformBtn');
@@ -1715,6 +2068,17 @@ function submitToGoogleForm() {
   const checks = state.checks;
   const catScores = state.catScores;
   const score = state.score;
+  const yesCount = Object.values(checks).filter(c=>c.val==='yes').length;
+  const noCount  = Object.values(checks).filter(c=>c.val==='no').length;
+  let grade;
+  if      (score>=85) grade='S등급';
+  else if (score>=70) grade='A등급';
+  else if (score>=55) grade='B등급';
+  else if (score>=40) grade='C등급';
+  else                grade='D등급';
+
+  const strong   = Object.entries(catScores).filter(([,v])=>v.pct>=70).map(([k])=>k).join(', ');
+  const weak     = Object.entries(catScores).filter(([,v])=>v.pct<50).map(([k])=>k).join(', ');
 
   let grade;
   if      (score>=85) grade='S등급';
@@ -1732,40 +2096,35 @@ function submitToGoogleForm() {
 
   // Build form data
   const params = new URLSearchParams();
-  params.append(GFORM_ENTRIES.name,        userName.trim());
-  params.append(GFORM_ENTRIES.phone,       userPhone.trim());
-  params.append(GFORM_ENTRIES.storeName,   info.storeName   || '미입력');
-  params.append(GFORM_ENTRIES.category,    info.category    || '미입력');
-  params.append(GFORM_ENTRIES.storeUrl,    info.storeUrl    || '미입력');
-  params.append(GFORM_ENTRIES.score,       score + '점');
-  params.append(GFORM_ENTRIES.grade,       grade);
-  params.append(GFORM_ENTRIES.strongAreas, strong);
-  params.append(GFORM_ENTRIES.weakAreas,   weak);
-  params.append(GFORM_ENTRIES.blogReviews, (info.blogReviews || '0') + '개');
-  params.append(GFORM_ENTRIES.yesCount,    yesCount + '개');
-  params.append(GFORM_ENTRIES.noCount,     noCount  + '개');
-  params.append(GFORM_ENTRIES.diagDate,    diagDate);
+  // ── 신청자 정보
+  params.append(GFORM_ENTRIES.name,           userName.trim());
+  params.append(GFORM_ENTRIES.phone,          userPhone.trim());
 
-  // Disable button
-  btn.disabled = true;
-  btn.textContent = '⏳ 저장 중...';
-  btn.style.opacity = '0.7';
-  statusEl.style.display = 'block';
-  statusEl.style.color = 'var(--text3)';
-  statusEl.textContent = '구글 스프레드시트에 저장하고 있습니다...';
+  // ── 매장 기본 정보
+  params.append(GFORM_ENTRIES.storeName,      info.storeName    || '미입력');
+  params.append(GFORM_ENTRIES.category,       info.category     || '미입력');
+  params.append(GFORM_ENTRIES.storeUrl,       info.storeUrl     || '미입력');
+  params.append(GFORM_ENTRIES.mainConcern,    info.mainConcern  || '미입력');
 
-  // Submit via hidden iframe (CORS-free)
-  const iframe = document.createElement('iframe');
-  iframe.name = 'gform_iframe';
-  iframe.style.display = 'none';
-  document.body.appendChild(iframe);
+  // ── STEP 1-A 사업기준 점검
+  params.append(GFORM_ENTRIES.bizYesCount,    '사업기준 YES ' + state.bizYesCount + '개 / 20개');
+  params.append(GFORM_ENTRIES.bizGrade,       state.bizResult ? state.bizResult.grade : '미완료');
 
-  const form = document.createElement('form');
-  form.method = 'POST';
-  form.action = GFORM_URL;
-  form.target = 'gform_iframe';
-  form.style.display = 'none';
+  // ── STEP 1-B 매장 자가진단
+  params.append(GFORM_ENTRIES.blogReviews,    (info.blogReviews    || '0') + '개');
+  params.append(GFORM_ENTRIES.photoCount,     (info.photoCount     || '0') + '장');
+  params.append(GFORM_ENTRIES.visitorReviews, (info.visitorReviews || '0') + '개');
+  params.append(GFORM_ENTRIES.yesCount,       '매장 YES ' + yesCount + '개');
+  params.append(GFORM_ENTRIES.noCount,        '매장 NO '  + noCount  + '개');
+  params.append(GFORM_ENTRIES.score,          score + '점 / 100점');
+  params.append(GFORM_ENTRIES.grade,          grade);
+  params.append(GFORM_ENTRIES.strongAreas,    strong || '없음');
+  params.append(GFORM_ENTRIES.weakAreas,      weak   || '없음');
 
+  // ── 통합 결과
+  const solText = getSolutionText();
+  params.append(GFORM_ENTRIES.finalSolution,  solText);
+  params.append(GFORM_ENTRIES.diagDate,       diagDate);
   params.forEach((val, key) => {
     const input = document.createElement('input');
     input.type = 'hidden';
