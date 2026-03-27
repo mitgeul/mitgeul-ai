@@ -886,9 +886,9 @@
     </div>
 
     <div class="plan-tabs">
-      <button class="plan-tab active" onclick="switchPlan('today')">⚡ 오늘 할 일</button>
-      <button class="plan-tab" onclick="switchPlan('week')">📅 이번 주</button>
-      <button class="plan-tab" onclick="switchPlan('month')">📈 이번 달</button>
+      <button class="plan-tab active" data-tab="today" onclick="switchPlan('today')">⚡ 오늘 할 일</button>
+      <button class="plan-tab" data-tab="week" onclick="switchPlan('week')">📅 이번 주</button>
+      <button class="plan-tab" data-tab="month" onclick="switchPlan('month')">📈 이번 달</button>
     </div>
 
     <div id="planToday" class="plan-content active"></div>
@@ -937,6 +937,7 @@
 </div>
 
 <script>
+
 // ===================== DATA =====================
 const CHECKLIST_DATA = [
   {
@@ -1099,57 +1100,6 @@ const BENCHMARK_DATA = {
   },
 };
 
-
-const ACTION_PLANS = {
-  today: {
-    urgent: [
-      { text: "대표 사진 교체 또는 신규 등록", desc: "밝고 선명한 사진 1장이 CTR을 30% 올립니다" },
-      { text: "답변 없는 리뷰에 답글 달기", desc: "미답 리뷰 전체 확인 후 성의 있게 작성" },
-      { text: "영업시간 최신화 확인 및 수정", desc: "잘못된 영업시간은 즉시 불신으로 이어짐" },
-    ],
-    high: [
-      { text: "메뉴/서비스 가격 정보 업데이트", desc: "인상된 가격 반영, 신메뉴 추가" },
-      { text: "소식(포스트) 1건 작성 업로드", desc: "이번 주 특별 메뉴, 이벤트 안내 등" },
-    ]
-  },
-  week: {
-    high: [
-      { text: "사진 10장 이상으로 채우기", desc: "내부·외부·메뉴·서비스별 다양하게" },
-      { text: "지인 5명에게 방문자 리뷰 요청", desc: "직접 방문한 분들께 솔직한 후기 요청" },
-      { text: "매장 소개글 키워드 최적화 작성", desc: "지역명+업종명+특징 키워드 자연스럽게 포함" },
-    ],
-    normal: [
-      { text: "해시태그 10개 이상 추가·최적화", desc: "경쟁 매장 태그 분석 후 적용" },
-      { text: "편의 정보 (주차·반려동물 등) 완성", desc: "검색 필터 노출 기회 증가" },
-    ]
-  },
-  month: {
-    high: [
-      { text: "블로그 체험단 모집 또는 운영", desc: "월 1~2명 체험단으로 블로그 리뷰 확보" },
-      { text: "월별 이벤트/프로모션 등록", desc: "정기 이벤트로 재방문율 향상" },
-      { text: "경쟁 상위 매장 3곳 정기 분석", desc: "벤치마킹으로 격차 파악 및 개선 방향 수립" },
-    ],
-    normal: [
-      { text: "통계 데이터 월간 리뷰 및 목표 수립", desc: "조회수·클릭률·예약 전환율 모니터링" },
-      { text: "소식 4건 이상 정기 발행 계획 수립", desc: "콘텐츠 달력 작성으로 꾸준한 관리" },
-    ]
-  }
-};
-
-// ===================== STATE =====================
-let state = {
-  info: {},
-  checks: {},
-  bizChecks: {},
-  bizYesCount: 0,
-  bizResult: null,
-  score: 0,
-  catScores: {},
-  stepDone: [false,false,false,false,false,false,false]
-};
-
-// ===================== INIT =====================
-// ===================== STEP 1-A 사업 기준 점검 =====================
 const BIZ_CHECK_DATA = [
   {
     cat: "사업 기준", icon: "🎯",
@@ -1241,733 +1191,42 @@ const BIZ_RESULTS = {
   }
 };
 
-let bizChecks = {};
-
-function renderBizCheck() {
-  const container = document.getElementById('bizCheckContainer');
-  container.innerHTML = '';
-  BIZ_CHECK_DATA.forEach(cat => {
-    const catDiv = document.createElement('div');
-    catDiv.className = 'check-category';
-    catDiv.innerHTML = `<div class="check-cat-title">${cat.icon} ${cat.cat}</div>`;
-    cat.items.forEach(item => {
-      const itemDiv = document.createElement('div');
-      itemDiv.className = 'check-item';
-      itemDiv.id = 'bi_' + item.id;
-      itemDiv.innerHTML = `
-        <div style="flex:1">
-          <div class="check-item-text">${item.text}</div>
-        </div>
-        <div class="yn-btns">
-          <button class="yn-btn yes" onclick="setBizCheck('${item.id}','yes')">YES</button>
-          <button class="yn-btn no"  onclick="setBizCheck('${item.id}','no')">NO</button>
-        </div>`;
-      catDiv.appendChild(itemDiv);
-    });
-    const cardDiv = document.createElement('div');
-    cardDiv.className = 'card';
-    cardDiv.style.padding = '20px';
-    cardDiv.appendChild(catDiv);
-    container.appendChild(cardDiv);
-  });
-}
-
-function setBizCheck(id, val) {
-  bizChecks[id] = val;
-  const el = document.getElementById('bi_' + id);
-  el.className = 'check-item ' + val;
-  el.querySelectorAll('.yn-btn').forEach(b => b.classList.remove('active'));
-  el.querySelector('.yn-btn.' + val).classList.add('active');
-  const done = Object.keys(bizChecks).length;
-  document.getElementById('bizCheckProgress').textContent = `${done} / 20`;
-  document.getElementById('bizCheckProgressBar').style.width = `${(done/20)*100}%`;
-}
-
-function calcBizCheck() {
-  const yesCount = Object.values(bizChecks).filter(v=>v==='yes').length;
-  state.bizYesCount = yesCount;
-  state.bizChecks = bizChecks;
-
-  const result = yesCount >= 16 ? BIZ_RESULTS.high
-               : yesCount >= 10 ? BIZ_RESULTS.mid
-               : BIZ_RESULTS.low;
-  state.bizResult = result;
-  state.bizYesCount = yesCount;
-
-  // ── 결과 오버레이 렌더 ──
-  document.getElementById('bizResultCard').innerHTML = `
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
-      <span style="font-family:'DM Mono',monospace;font-size:11px;letter-spacing:2px;color:var(--accent)">MITGEUL AI · STEP 1-A · 사업 기준 점검 결과</span>
-    </div>
-    <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:14px">
-      <div style="font-family:'DM Mono',monospace;font-size:52px;font-weight:700;color:${result.color};line-height:1">
-        ${yesCount}<span style="font-size:20px;color:var(--text3);font-weight:400">/20</span>
-      </div>
-      <div>
-        <div style="font-size:11px;font-family:'DM Mono',monospace;color:var(--text3);margin-bottom:4px">${result.range}</div>
-        <div style="display:inline-block;padding:5px 14px;border-radius:20px;font-size:12px;font-weight:700;font-family:'DM Mono',monospace;background:rgba(61,255,192,0.08);color:${result.color};border:1px solid ${result.color}">${result.grade}</div>
-      </div>
-    </div>
-    <div style="font-size:17px;font-weight:700;color:#fff;line-height:1.5">${result.title}</div>`;
-
-  document.getElementById('bizResultBody').innerHTML = `
-    <div style="font-size:14px;color:var(--text2);line-height:1.9;white-space:pre-line">${result.desc}</div>
-    <div style="margin-top:18px;padding:16px 18px;background:rgba(61,255,192,0.05);border:1px solid rgba(61,255,192,0.15);border-radius:12px;font-size:13px;color:var(--text2);line-height:1.85">
-      <div style="font-size:11px;font-family:'DM Mono',monospace;color:var(--accent);letter-spacing:1px;margin-bottom:8px">STEP 1-B 연결 안내</div>
-      ${result.summary}
-    </div>`;
-
-  document.getElementById('bizResultQ').innerHTML = `
-    <div style="font-size:11px;font-family:'DM Mono',monospace;color:var(--accent);letter-spacing:1px;margin-bottom:14px">하루에 하나씩 떠올려보세요</div>
-    ${result.questions.map((q,i)=>`
-      <div style="display:flex;gap:12px;margin-bottom:12px;align-items:flex-start">
-        <span style="width:22px;height:22px;border-radius:6px;background:rgba(61,255,192,0.12);color:var(--accent);font-family:'DM Mono',monospace;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">${i+1}</span>
-        <span style="font-size:13px;color:var(--text2);line-height:1.75">${q}</span>
-      </div>`).join('')}`;
-
-  document.getElementById('bizResultOverlay').style.display = 'block';
-  document.body.style.overflow = 'hidden';
-}
-
-
-function getBizBannerSmall() {
-  if (!state.bizResult) return '';
-  const r = state.bizResult;
-  return `<div class="card" style="margin-bottom:16px;border-color:rgba(61,255,192,0.15);background:linear-gradient(135deg,rgba(30,35,112,0.5),rgba(15,20,60,0.5))">
-    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
-      <div style="flex:1;min-width:180px">
-        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--text3);margin-bottom:6px">STEP 1-A · 사업 기준 점검</div>
-        <div style="font-size:14px;font-weight:600;color:#fff;line-height:1.5">${r.title}</div>
-        <div style="font-size:12px;color:var(--text2);margin-top:4px">${r.summary.slice(0,120)}...</div>
-      </div>
-      <div style="text-align:right;flex-shrink:0">
-        <div style="font-family:'DM Mono',monospace;font-size:32px;font-weight:700;color:${r.color};line-height:1">YES ${state.bizYesCount}</div>
-        <div style="font-size:11px;font-family:'DM Mono',monospace;color:var(--text3)">/20 · ${r.grade}</div>
-      </div>
-    </div>
-  </div>`;
-}
-
-function getBizBannerFull() {
-  if (!state.bizResult) return '';
-  const r = state.bizResult;
-  return `<div class="card" style="margin-bottom:16px;background:rgba(30,35,112,0.4);border-color:rgba(61,255,192,0.15)">
-    <div style="font-family:'DM Mono',monospace;font-size:11px;letter-spacing:1px;color:var(--accent);margin-bottom:10px">STEP 1-A · 사업 기준 점검</div>
-    <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
-      <div style="font-family:'DM Mono',monospace;font-size:32px;font-weight:700;color:${r.color}">${state.bizYesCount}<span style="font-size:14px;color:var(--text3);font-weight:400">/20</span></div>
-      <div style="flex:1;min-width:180px">
-        <div style="font-size:14px;font-weight:600;color:#fff;margin-bottom:4px">${r.title}</div>
-        <div style="font-size:12px;color:var(--text2)">${r.range} · <span style="color:${r.color}">${r.grade}</span></div>
-      </div>
-    </div>
-  </div>`;
-}
-
-function closeBizResult() {
-  document.getElementById('bizResultOverlay').style.display = 'none';
-  document.body.style.overflow = '';
-  renderChecklist();
-  goStep(2);
-}
-
-window.onload = function() {
-  renderBizCheck();
-  renderChecklist();
-  loadPlanTabs();
+const ACTION_PLANS = {
+  today: {
+    urgent: [
+      { text: "대표 사진 교체 또는 신규 등록", desc: "밝고 선명한 사진 1장이 CTR을 30% 올립니다" },
+      { text: "답변 없는 리뷰에 답글 달기", desc: "미답 리뷰 전체 확인 후 성의 있게 작성" },
+      { text: "영업시간 최신화 확인 및 수정", desc: "잘못된 영업시간은 즉시 불신으로 이어짐" },
+    ],
+    high: [
+      { text: "메뉴/서비스 가격 정보 업데이트", desc: "인상된 가격 반영, 신메뉴 추가" },
+      { text: "소식(포스트) 1건 작성 업로드", desc: "이번 주 특별 메뉴, 이벤트 안내 등" },
+    ]
+  },
+  week: {
+    high: [
+      { text: "사진 10장 이상으로 채우기", desc: "내부·외부·메뉴·서비스별 다양하게" },
+      { text: "지인 5명에게 방문자 리뷰 요청", desc: "직접 방문한 분들께 솔직한 후기 요청" },
+      { text: "매장 소개글 키워드 최적화 작성", desc: "지역명+업종명+특징 키워드 자연스럽게 포함" },
+    ],
+    normal: [
+      { text: "해시태그 10개 이상 추가·최적화", desc: "경쟁 매장 태그 분석 후 적용" },
+      { text: "편의 정보 (주차·반려동물 등) 완성", desc: "검색 필터 노출 기회 증가" },
+    ]
+  },
+  month: {
+    high: [
+      { text: "블로그 체험단 모집 또는 운영", desc: "월 1~2명 체험단으로 블로그 리뷰 확보" },
+      { text: "월별 이벤트/프로모션 등록", desc: "정기 이벤트로 재방문율 향상" },
+      { text: "경쟁 상위 매장 3곳 정기 분석", desc: "벤치마킹으로 격차 파악 및 개선 방향 수립" },
+    ],
+    normal: [
+      { text: "통계 데이터 월간 리뷰 및 목표 수립", desc: "조회수·클릭률·예약 전환율 모니터링" },
+      { text: "소식 4건 이상 정기 발행 계획 수립", desc: "콘텐츠 달력 작성으로 꾸준한 관리" },
+    ]
+  }
 };
 
-function renderChecklist() {
-  const container = document.getElementById('checklistContainer');
-  container.innerHTML = '';
-  CHECKLIST_DATA.forEach(cat => {
-    const catDiv = document.createElement('div');
-    catDiv.className = 'check-category';
-    catDiv.innerHTML = `<div class="check-cat-title">${cat.icon} ${cat.cat}</div>`;
-    cat.items.forEach(item => {
-      const itemDiv = document.createElement('div');
-      itemDiv.className = 'check-item';
-      itemDiv.id = 'ci_' + item.id;
-
-      // 업종별 동적 문구 처리
-      let itemText = item.text;
-      let itemSub  = item.sub;
-      if (item.dynamic && item.id === 'c8') {
-        const cat = state.info.category;
-        const c8map = {
-          restaurant: { text:"음식·재료·조리 과정 사진이 적절히 포함되어 있다",   sub:"메뉴별 음식 사진이 식욕을 자극하는지 확인" },
-          cafe:       { text:"음료·디저트·인테리어 감성 사진이 포함되어 있다",    sub:"SNS 공유될 만한 감성 사진 여부 확인" },
-          beauty:     { text:"시술 전후·작업 과정·결과물 사진이 포함되어 있다",   sub:"비포&애프터 사진이 신뢰도에 직결됨" },
-          edu:        { text:"수업 현장·강의실·교재·학생 활동 사진이 포함되어 있다", sub:"학습 환경과 분위기 전달이 중요" },
-          fitness:    { text:"운동 공간·기구·수업 진행·강사 사진이 포함되어 있다", sub:"시설 청결도와 공간감 전달이 핵심" },
-        };
-        const mapped = c8map[cat];
-        if (mapped) { itemText = mapped.text; itemSub = mapped.sub; }
-        else { itemText = "매장 분위기와 서비스가 잘 담긴 사진이 포함되어 있다"; itemSub = "업종 특성에 맞는 콘텐츠 사진 여부 확인"; }
-      }
-
-      itemDiv.innerHTML = `
-        <div>
-          <div class="check-item-text">${itemText}</div>
-          <div class="check-item-sub">${itemSub}</div>
-        </div>
-        <div style="display:flex;align-items:center;gap:8px">
-          <span class="check-item-score">+${item.score}점</span>
-          <div class="yn-btns">
-            <button class="yn-btn yes" onclick="setCheck('${item.id}','yes',${item.score},'${cat.cat}')">YES</button>
-            <button class="yn-btn no" onclick="setCheck('${item.id}','no',0,'${cat.cat}')">NO</button>
-          </div>
-        </div>`;
-      catDiv.appendChild(itemDiv);
-    });
-    const cardDiv = document.createElement('div');
-    cardDiv.className = 'card';
-    cardDiv.style.padding = '20px';
-    cardDiv.appendChild(catDiv);
-    container.appendChild(cardDiv);
-  });
-}
-
-function setCheck(id, val, score, cat) {
-  state.checks[id] = { val, score };
-  const el = document.getElementById('ci_' + id);
-  el.className = 'check-item ' + val;
-  el.querySelectorAll('.yn-btn').forEach(b => b.classList.remove('active'));
-  el.querySelector('.yn-btn.' + val).classList.add('active');
-  updateCheckProgress();
-}
-
-function updateCheckProgress() {
-  const total = 35;
-  const done = Object.keys(state.checks).length;
-  document.getElementById('checkProgress').textContent = `${done} / ${total}`;
-  document.getElementById('checkProgressBar').style.width = `${(done/total)*100}%`;
-}
-
-function calcChecklist() {
-  const totalScore = Object.values(state.checks).reduce((s,c) => s + c.score, 0);
-  const maxScore = CHECKLIST_DATA.flatMap(c=>c.items).reduce((s,i)=>s+i.score,0);
-  state.score = Math.round((totalScore / maxScore) * 100);
-  
-  // Category scores
-  CHECKLIST_DATA.forEach(cat => {
-    const catMax = cat.items.reduce((s,i)=>s+i.score,0);
-    const catGot = cat.items.reduce((s,i)=>{
-      const c = state.checks[i.id];
-      return s + (c && c.val==='yes' ? i.score : 0);
-    }, 0);
-    state.catScores[cat.cat] = { got: catGot, max: catMax, pct: Math.round((catGot/catMax)*100) };
-  });
-  
-  renderAIScore();
-  goStep(3);
-}
-
-function renderAIScore() {
-  const score = state.score;
-  let grade, gradeColor;
-  if (score >= 85) { grade = 'S등급'; gradeColor = '#3DFFC0'; }
-  else if (score >= 70) { grade = 'A등급'; gradeColor = '#3DFFC0'; }
-  else if (score >= 55) { grade = 'B등급'; gradeColor = '#f59e0b'; }
-  else if (score >= 40) { grade = 'C등급'; gradeColor = '#fb923c'; }
-  else { grade = 'D등급'; gradeColor = '#f43f5e'; }
-
-  const circle = document.getElementById('mainScoreCircle');
-  circle.style.setProperty('--pct', score + '%');
-  document.getElementById('mainScoreNum').textContent = score;
-  const gradeEl = document.getElementById('mainScoreGrade');
-  gradeEl.textContent = grade;
-  gradeEl.style.color = gradeColor;
-
-  // Score bars
-  const barsEl = document.getElementById('scoreBars');
-  barsEl.innerHTML = '';
-  CHECKLIST_DATA.forEach(cat => {
-    const cs = state.catScores[cat.cat];
-    if (!cs) return;
-    barsEl.innerHTML += `
-      <div class="score-bar-item">
-        <div class="score-bar-label">
-          <span>${cat.icon} ${cat.cat}</span>
-          <span>${cs.pct}%</span>
-        </div>
-        <div class="score-bar-track">
-          <div class="score-bar-fill" style="width:${cs.pct}%"></div>
-        </div>
-      </div>`;
-  });
-
-  // Strengths / Weaknesses
-  const sorted = Object.entries(state.catScores).sort((a,b)=>b[1].pct-a[1].pct);
-  const strengths = sorted.filter(([,v])=>v.pct>=70);
-  const weaknesses = sorted.filter(([,v])=>v.pct<50);
-
-  let html = `
-    <div class="card">
-      <div class="report-section">
-        <div class="report-section-title">💪 강점 영역</div>
-        <div class="strength-list">
-          ${strengths.length ? strengths.map(([k,v])=>`<div class="strength-item">${k} — ${v.pct}% 달성 (${v.got}/${v.max}점)</div>`).join('') : '<div class="strength-item">현재 두드러진 강점 영역이 없습니다. 전반적인 개선이 필요합니다.</div>'}
-        </div>
-      </div>
-      <div class="divider"></div>
-      <div class="report-section">
-        <div class="report-section-title">⚠️ 개선 필요 영역</div>
-        <div class="weakness-list">
-          ${weaknesses.length ? weaknesses.map(([k,v])=>`<div class="weakness-item">${k} — ${v.pct}% 달성, ${v.max-v.got}점 추가 가능</div>`).join('') : '<div class="weakness-item">모든 영역이 양호합니다!</div>'}
-        </div>
-      </div>
-    </div>`;
-  
-  // Grade description
-  const gradeDescs = {
-    'S등급': '최상위 수준입니다! 현 상태를 유지하면서 리뷰 최신성과 콘텐츠 다양성에 집중하세요.',
-    'A등급': '상위권입니다. 몇 가지 약점만 보완하면 최상위 노출이 가능합니다.',
-    'B등급': '평균 이상입니다. 사진·리뷰·소식 관리를 강화하면 큰 도약이 기대됩니다.',
-    'C등급': '개선 여지가 많습니다. 기본 정보 완성과 리뷰 관리부터 시작하세요.',
-    'D등급': '시급한 개선이 필요합니다. 기본 정보부터 차근차근 채워나가세요.'
-  };
-
-  html += `
-    <div class="alert alert-warn" style="margin-top:16px">
-      🎯 <div><strong>${grade} 진단:</strong> ${gradeDescs[grade]}</div>
-    </div>`;
-
-  document.getElementById('aiAnalysisContainer').innerHTML = html;
-
-  // Also render benchmark if category available
-  renderBenchmark();
-  // And action plan
-  renderActionPlan();
-}
-
-function renderBenchmark() {
-  const cat = state.info.category;
-  const container = document.getElementById('benchmarkContainer');
-
-  // 미지원 업종 처리
-  if (!cat || !BENCHMARK_DATA[cat]) {
-    container.innerHTML = `
-      <div class="alert alert-warn" style="margin-top:0">
-        ⚠️ <div>선택하신 업종은 현재 준비 중입니다.<br>
-        <strong>음식점·카페·미용·학원·운동</strong> 업종은 지금 바로 이용 가능해요!<br>
-        다른 업종은 순차적으로 업데이트 예정입니다 😊</div>
-      </div>`;
-    return;
-  }
-  const bdata = BENCHMARK_DATA[cat];
-  
-  const blogReviews = parseInt(state.info.blogReviews) || 0;
-  const visitorReviews = parseInt(state.info.visitorReviews) || 0;
-  const photos = parseInt(state.info.photoCount) || 0;
-
-  const myVals = {
-    "블로그 리뷰 수": blogReviews,
-    "방문자 리뷰 수": visitorReviews,
-    "등록 사진 수": photos,
-  };
-
-  function getGapClass(metric, mine, topStr) {
-    const top = parseInt(topStr);
-    if (!mine || isNaN(mine)) return 'gap-bad';
-    return mine >= top ? 'gap-good' : (mine >= top * 0.5 ? '' : 'gap-bad');
-  }
-
-  let rows = bdata.items.map(item => {
-    const mine = myVals[item.metric];
-    const mineStr = mine !== undefined ? mine + item.unit : '—';
-    const gapClass = mine !== undefined ? getGapClass(item.metric, mine, item.top) : '';
-    const level = mine !== undefined ? 
-      (mine >= parseInt(item.top) ? '<span class="bench-tag high">상위</span>' : 
-       mine >= parseInt(item.avg) ? '<span class="bench-tag mid">평균</span>' : 
-       '<span class="bench-tag low">미달</span>') : '—';
-    return `
-      <tr>
-        <td>${item.metric}</td>
-        <td class="bench-val top">${item.top}</td>
-        <td class="bench-val">${item.avg}</td>
-        <td class="bench-val">${item.min}</td>
-        <td class="bench-val mine ${gapClass}">${mineStr}</td>
-        <td>${level}</td>
-      </tr>`;
-  }).join('');
-
-  container.innerHTML = `
-    <div class="alert alert-info">
-      📊 <div><strong>${bdata.title}</strong> 업종 기준표입니다. 상위 매장의 평균 수치와 내 매장을 비교하세요.</div>
-    </div>
-    <div class="card" style="padding:0;overflow:hidden">
-      <table class="bench-table">
-        <thead>
-          <tr>
-            <th>항목</th>
-            <th>권장 목표치</th>
-            <th>평균 수준</th>
-            <th>최소 기준</th>
-            <th>내 매장</th>
-            <th>수준</th>
-          </tr>
-        </thead>
-        <tbody>${rows}</tbody>
-      </table>
-    </div>`;
-}
-
-function loadPlanTabs() {
-  renderPlanContent('today', ACTION_PLANS.today, 'planToday');
-  renderPlanContent('week', ACTION_PLANS.week, 'planWeek');
-  renderPlanContent('month', ACTION_PLANS.month, 'planMonth');
-}
-
-function renderPlanContent(period, data, containerId) {
-  const container = document.getElementById(containerId);
-  if (!container) return;
-  let html = '';
-  
-  if (data.urgent) {
-    html += `<div style="font-size:12px;color:var(--accent4);font-family:'DM Mono',monospace;letter-spacing:1px;margin-bottom:10px">🚨 즉시 처리</div>`;
-    data.urgent.forEach((t,i) => {
-      const key = `${period}_u_${i}`;
-      html += taskHTML(key, t, 'urgent');
-    });
-  }
-  if (data.high) {
-    html += `<div style="font-size:12px;color:var(--accent3);font-family:'DM Mono',monospace;letter-spacing:1px;margin-bottom:10px;margin-top:16px">⚡ 우선 처리</div>`;
-    data.high.forEach((t,i) => {
-      const key = `${period}_h_${i}`;
-      html += taskHTML(key, t, 'high');
-    });
-  }
-  if (data.normal) {
-    html += `<div style="font-size:12px;color:var(--accent);font-family:'DM Mono',monospace;letter-spacing:1px;margin-bottom:10px;margin-top:16px">📌 일반 처리</div>`;
-    data.normal.forEach((t,i) => {
-      const key = `${period}_n_${i}`;
-      html += taskHTML(key, t, 'normal');
-    });
-  }
-  container.innerHTML = html;
-}
-
-function taskHTML(key, task, priority) {
-  return `
-    <div class="task-item" id="task_${key}" onclick="toggleTask('${key}')">
-      <div class="task-checkbox" id="cb_${key}"></div>
-      <div style="flex:1">
-        <div class="task-text">${task.text}</div>
-        <div class="task-desc">${task.desc}</div>
-      </div>
-      <span class="task-priority ${priority}">${priority === 'urgent' ? '긴급' : priority === 'high' ? '높음' : '보통'}</span>
-    </div>`;
-}
-
-function toggleTask(key) {
-  const el = document.getElementById('task_' + key);
-  el.classList.toggle('done');
-  const cb = document.getElementById('cb_' + key);
-  cb.innerHTML = el.classList.contains('done') ? '✓' : '';
-}
-
-function switchPlan(tab) {
-  document.querySelectorAll('.plan-tab').forEach(b => b.classList.remove('active'));
-  document.querySelectorAll('.plan-content').forEach(c => c.classList.remove('active'));
-  const tabEl = document.querySelector(`.plan-tab[onclick="switchPlan('${tab}')"]`);
-  if (tabEl) tabEl.classList.add('active');
-  const contentId = 'plan' + tab.charAt(0).toUpperCase() + tab.slice(1);
-  const content = document.getElementById(contentId);
-  if (content) content.classList.add('active');
-}
-
-function renderActionPlan() {
-  // Customize plan based on weak areas
-  loadPlanTabs();
-}
-
-async function generateReport() {
-  goStep(6);
-  const container = document.getElementById('reportContainer');
-  const info = state.info;
-  const score = state.score;
-  const catScores = state.catScores;
-  const checks = state.checks;
-  const now = new Date();
-  const dateStr = now.toLocaleDateString('ko-KR', { year:'numeric', month:'2-digit', day:'2-digit' });
-
-  const checkedYes = Object.entries(checks).filter(([,v])=>v.val==='yes').length;
-  const checkedNo  = Object.entries(checks).filter(([,v])=>v.val==='no').length;
-  const weakAreas   = Object.entries(catScores).filter(([,v])=>v.pct<50).map(([k])=>k).join(', ');
-  const strongAreas = Object.entries(catScores).filter(([,v])=>v.pct>=70).map(([k])=>k).join(', ');
-
-  let grade;
-  if      (score>=85) grade='S';
-  else if (score>=70) grade='A';
-  else if (score>=55) grade='B';
-  else if (score>=40) grade='C';
-  else                grade='D';
-
-  // ── 리포트 헤더 + 5개 섹션 카드 즉시 렌더 ──
-  container.innerHTML = `
-    <div class="report-header">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-        <svg width="28" height="28" viewBox="0 0 42 42" fill="none"><rect width="42" height="42" rx="12" fill="#252c8a"/><rect width="42" height="42" rx="12" stroke="#3DFFC0" stroke-width="1.5" stroke-opacity="0.4" fill="none"/><text x="21" y="30" text-anchor="middle" font-family="DM Mono,monospace" font-size="22" font-weight="700" fill="#3DFFC0">M</text><circle cx="34" cy="9" r="3.5" fill="#3DFFC0" opacity="0.9"/></svg>
-        <span style="font-family:'DM Mono',monospace;font-size:13px;letter-spacing:3px;color:var(--accent)">MITGEUL AI REPORT</span>
-      </div>
-      <div class="report-title">AI 통합 진단 리포트</div>
-      <div class="report-meta" style="margin-top:10px;display:flex;flex-wrap:wrap;gap:14px">
-        <span>📌 ${info.storeName || '—'}</span>
-        <span>🏷 ${info.category || '—'}</span>
-        <span>📅 ${dateStr}</span>
-        <span>🔗 ${info.storeUrl ? '<a href="'+info.storeUrl+'" target="_blank" style="color:var(--accent);text-decoration:none">매장 링크 <span style="font-size:10px;opacity:0.7">(플레이스)</span></a>' : '미입력'}</span>
-      </div>
-    </div>
-
-    <!-- STEP 1-A 사업기준 점검 결과 배너 -->
-    ${getBizBannerSmall()}
-
-    <!-- 사업 기준 점검 결과 배너 -->
-    ${getBizBannerFull()}
-
-    <!-- 점수 요약 배너 -->
-    <div class="card" style="display:flex;align-items:center;gap:20px;flex-wrap:wrap;margin-bottom:16px;background:linear-gradient(135deg,rgba(61,255,192,0.08),rgba(30,35,112,0.4))">
-      <div style="text-align:center;min-width:80px">
-        <div style="font-family:'DM Mono',monospace;font-size:48px;font-weight:700;color:var(--accent);line-height:1">${score}</div>
-        <div style="font-size:11px;color:var(--text3);letter-spacing:1px;margin-top:2px">/ 100점</div>
-      </div>
-      <div style="flex:1;min-width:200px">
-        <div style="font-size:18px;font-weight:700;color:#fff;margin-bottom:6px">${grade}등급
-          <span style="font-size:13px;font-weight:400;color:var(--text2);margin-left:8px">YES ${checkedYes}개 · NO ${checkedNo}개</span>
-        </div>
-        <div style="font-size:13px;color:var(--text2)">강점: <span style="color:var(--accent)">${strongAreas||'—'}</span></div>
-        <div style="font-size:13px;color:var(--text2);margin-top:4px">약점: <span style="color:#f43f5e">${weakAreas||'—'}</span></div>
-      </div>
-    </div>
-
-    <!-- 섹션 1 -->
-    <div class="report-card-section" id="rSec1">
-      <div class="report-sec-label">01 · 종합 진단 요약</div>
-      <div class="report-sec-body streaming" id="rBody1"><span class="cursor-blink">▋</span></div>
-    </div>
-    <!-- 섹션 2 -->
-    <div class="report-card-section" id="rSec2">
-      <div class="report-sec-label">02 · 핵심 문제점 TOP 3</div>
-      <div class="report-sec-body" id="rBody2" style="opacity:0.3"><span class="cursor-blink">▋</span></div>
-    </div>
-    <!-- 섹션 3 -->
-    <div class="report-card-section" id="rSec3">
-      <div class="report-sec-label">03 · 업종별 특화 조언</div>
-      <div class="report-sec-body" id="rBody3" style="opacity:0.3"><span class="cursor-blink">▋</span></div>
-    </div>
-    <!-- 섹션 4 -->
-    <div class="report-card-section" id="rSec4">
-      <div class="report-sec-label">04 · 30일 성과 예측</div>
-      <div class="report-sec-body" id="rBody4" style="opacity:0.3"><span class="cursor-blink">▋</span></div>
-    </div>
-    <!-- 섹션 5 -->
-    <div class="report-card-section" id="rSec5">
-      <div class="report-sec-label">05 · 최우선 실행 과제</div>
-      <div class="report-sec-body" id="rBody5" style="opacity:0.3"><span class="cursor-blink">▋</span></div>
-    </div>`;
-
-  // ── 템플릿 기반 자동 리포트 생성 (API 없이 즉시 생성) ──
-  const catNames = Object.keys(catScores);
-  const sortedCats = Object.entries(catScores).sort((a,b)=>a[1].pct-b[1].pct);
-  const worstCats  = sortedCats.slice(0,3).map(([k,v])=>({name:k,pct:v.pct}));
-  const bestCats   = sortedCats.slice(-2).reverse().map(([k,v])=>({name:k,pct:v.pct}));
-
-  const blogR  = parseInt(info.blogReviews)||0;
-  const visitR = parseInt(info.visitorReviews)||0;
-  const photos = parseInt(info.photoCount)||0;
-
-  const catMap = {
-    cafe:'카페·디저트', restaurant:'음식점', beauty:'미용·뷰티',
-    fitness:'운동·헬스', medical:'병원·의원', retail:'소매점',
-    edu:'교육·학원', service:'생활서비스'
-  };
-  const catLabel = catMap[info.category] || info.category || '해당 업종';
-
-  // 블로그/SNS 체크 결과 분석
-  const hasBlog     = checks['c31']?.val === 'yes';
-  const blogPosts   = checks['c32']?.val === 'yes';
-  const blogLinked  = checks['c33']?.val === 'yes';
-  const blogRecent  = checks['c34']?.val === 'yes';
-  const hasSNS      = checks['c35']?.val === 'yes';
-  const blogScore   = [hasBlog, blogPosts, blogLinked, blogRecent, hasSNS].filter(Boolean).length;
-
-  const blogSummary = (() => {
-    if (blogScore >= 4) return `블로그·SNS 채널이 잘 갖춰져 있어 외부 유입 경쟁력이 높습니다.`;
-    if (blogScore >= 2) return `블로그·SNS 채널이 일부 운영 중이나 연동과 꾸준한 포스팅이 더 필요합니다.`;
-    if (hasBlog)        return `블로그는 있으나 매장과의 연동·포스팅 관리가 미흡합니다.`;
-    return `블로그·SNS 채널이 없거나 미운영 상태로, 외부 유입 경로가 부족합니다.`;
-  })();
-
-  const blogAdvice = (() => {
-    if (!hasBlog)     return `네이버 블로그를 개설하고 매장 소개 포스팅 3개 이상을 작성하면 검색 노출이 크게 늘어납니다.`;
-    if (!blogLinked)  return `블로그에 매장 URL을 반드시 연결하세요. 블로그 방문자가 바로 매장으로 유입됩니다.`;
-    if (!blogRecent)  return `블로그 포스팅을 월 1회 이상 꾸준히 올려야 검색 알고리즘에서 활성 매장으로 인식됩니다.`;
-    if (!hasSNS)      return `인스타그램·유튜브 등 SNS 채널을 추가로 운영하면 다양한 연령대 고객 유입이 가능합니다.`;
-    return `현재 블로그·SNS 채널을 잘 운영 중입니다. 체험단·공동구매 등 협업으로 더 확장해보세요.`;
-  })();
-
-  // 등급별 종합 진단 요약 (블로그 상태 포함)
-  const summaryMap = {
-    S: `${info.storeName||'해당 매장'}은 온라인 관리 전반에서 최상위 수준을 유지하고 있습니다. 기본 정보부터 리뷰·콘텐츠·블로그 채널까지 고르게 잘 운영되고 있어 검색 경쟁력이 매우 높습니다. ${blogSummary} 현재 강점을 유지하면서 최신성 관리에 집중하면 1위 노출을 안정적으로 유지할 수 있습니다.`,
-    A: `${info.storeName||'해당 매장'}은 온라인 관리에서 상위권 수준을 보여주고 있습니다. 전반적으로 잘 관리되고 있으나 몇 가지 핵심 항목 보완이 필요합니다. ${blogSummary} 특히 ${worstCats[0]?.name||'약점 영역'} 부분을 집중 개선하면 단기간 내 큰 효과를 볼 수 있습니다.`,
-    B: `${info.storeName||'해당 매장'}은 기본 관리는 되어있으나 경쟁 매장 대비 개선이 필요한 영역이 있습니다. 현재 ${score}점으로 평균 수준이며 ${worstCats[0]?.name||'약점 영역'}과 ${worstCats[1]?.name||'리뷰 관리'} 부분의 집중 개선이 필요합니다. ${blogSummary} 체계적인 관리 루틴을 만들면 한 달 내 눈에 띄는 변화가 가능합니다.`,
-    C: `${info.storeName||'해당 매장'}은 현재 온라인 관리에 개선이 시급한 상태입니다. ${score}점으로 경쟁 매장 대비 노출 경쟁력이 낮으며 ${worstCats[0]?.name||'기본 정보'}와 ${worstCats[1]?.name||'리뷰 관리'} 영역이 취약합니다. ${blogSummary} 기본기부터 차근차근 채워나가면 빠른 개선 효과를 기대할 수 있습니다.`,
-    D: `${info.storeName||'해당 매장'}은 온라인 관리가 전반적으로 미흡한 상태입니다. 현재 ${score}점으로 상위 노출 기본 요건이 충족되지 않고 있습니다. ${blogSummary} 기본 정보 완성·사진 등록·리뷰 관리부터 즉시 시작하면 단기간 내 큰 폭의 점수 향상이 가능합니다.`
-  };
-
-  // 핵심 문제점 TOP3 (블로그 약점 시 자동 포함)
-  const problemTemplates = {
-    '리뷰 관리':              `블로그 리뷰 ${blogR}개·방문자 리뷰 ${visitR}개로 상위 기준에 미달합니다. 리뷰 수와 답글 관리가 검색 알고리즘에 직접 영향을 줍니다.`,
-    '사진 / 미디어':          `등록 사진 ${photos}장으로 경쟁 매장 대비 부족합니다. 대표 사진 품질과 다양한 카테고리 사진이 클릭률을 결정합니다.`,
-    '소식 / 공지':            `소식 업데이트가 부족하여 매장 활성도 점수가 낮습니다. 월 2회 이상 정기 업데이트가 노출 유지에 필수입니다.`,
-    '메뉴 / 서비스 정보':     `메뉴·서비스 정보가 불완전합니다. 상세한 메뉴 정보와 가격은 방문 전환율에 직접 영향을 미칩니다.`,
-    'SEO / 키워드 최적화':    `키워드 최적화가 부족하여 검색 노출 기회를 놓치고 있습니다. 지역명+업종명 키워드를 소개글에 자연스럽게 포함해야 합니다.`,
-    '편의 정보':              `주차·예약 등 편의 정보가 미완성입니다. 검색 필터 노출 기회를 놓치고 있습니다.`,
-    '기본 정보 완성도':       `영업시간·전화번호 등 기본 정보에 오류나 누락이 있습니다. 잘못된 정보는 고객 이탈과 신뢰도 하락으로 직결됩니다.`,
-    '응답 / 활동성':          `매장 관리 활동성이 낮습니다. 정기적인 관리와 빠른 응답이 매장 점수에 반영됩니다.`,
-    '블로그 / 외부 채널 연동':`${blogSummary} ${blogAdvice}`
-  };
-
-  const problems = worstCats.map(c => problemTemplates[c.name] || `${c.name} 영역이 ${c.pct}% 수준으로 개선이 필요합니다.`);
-  if (problems.length < 3) problems.push(`전반적인 콘텐츠 업데이트 주기를 늘려 매장 활성도를 높여야 합니다.`);
-  // 블로그 점수 낮으면 문제점에 추가
-  if (blogScore < 2 && problems.length < 4) {
-    problems.push(problemTemplates['블로그 / 외부 채널 연동']);
-  }
-
-  // 업종별 특화 조언 (블로그 조언 자동 포함)
-  const adviceMap = {
-    cafe:       ['시즌 음료·디저트 출시 때마다 소식 업데이트 → 검색 유입 급증 효과', '인스타그램 감성 사진 5장 이상 등록 → 2030 타겟 클릭률 향상', '주말 웨이팅·포장 가능 여부 명시 → 방문 전환율 향상'],
-    restaurant: ['런치 메뉴·가격 명시 + 주차 정보 → 직장인 점심 수요 확보', '메뉴별 사진 등록 필수 → 음식 사진 없으면 클릭 자체가 안 됨', '예약 기능 연동 → 예약 전환율 상위 노출에 유리'],
-    beauty:     ['시술 전후 사진(동의 받은) 등록 → 신뢰도 및 클릭률 대폭 향상', '가격표 명시 필수 → 가격 미공개 매장은 이탈률이 높음', '예약 기능 필수 연동 → 미용 업종 예약률이 노출 순위에 직결'],
-    edu:        ['강사 소개·커리큘럼 상세 등록 → 비교 검색 고객 유입', '수강생 후기·성과 사진 등록 → 신뢰도 향상', '무료 상담·체험 이벤트 정기 등록 → 신규 수강생 유입'],
-    fitness:    ['무료 체험·PT 이벤트 소식을 월 2회 이상 업데이트 → 신규 회원 유입', '강사 프로필·자격증·수업 사진 등록 → 신뢰도 향상', '예약 연동 필수 → 즉시 예약 가능 매장이 노출 우선순위 높음'],
-  };
-  const baseAdvice = adviceMap[info.category] || ['메뉴·서비스 정보 상세 등록', '정기적인 소식 업데이트', '리뷰 답글 관리 강화'];
-  // 블로그 조언 항상 마지막에 추가
-  const advice = [...baseAdvice, `📝 블로그·SNS 채널 현황: ${blogAdvice}`];
-
-  // 30일 성과 예측 (블로그 상태 반영)
-  const blogBoost = blogScore < 2
-    ? ` 특히 블로그·SNS 채널을 개설·연동하면 외부 유입이 추가로 20~30% 늘어날 수 있습니다.`
-    : ` 블로그·SNS 채널 운영을 더 강화하면 외부 유입이 추가로 증가합니다.`;
-
-  const predictionMap = {
-    S: `현재 최상위 수준을 유지하면서 리뷰 최신성 관리를 강화하면 30일 내 상위 3위 이내 안정적 노출이 가능합니다. 신규 방문자 유입이 월 15~20% 증가할 것으로 예측됩니다.${blogBoost}`,
-    A: `약점 영역을 집중 개선하면 30일 내 노출 순위가 현재보다 3~5단계 상승할 것으로 예측됩니다. 리뷰 수 증가와 소식 업데이트를 병행하면 방문자 수 20~30% 증가 효과를 기대할 수 있습니다.${blogBoost}`,
-    B: `오늘부터 실행 솔루션을 따라 개선하면 2주 내 매장 점수가 10~15점 상승하고 30일 내 노출 빈도가 40~50% 증가할 것으로 예측됩니다.${blogBoost}`,
-    C: `기본 정보 완성과 사진 10장 이상 등록만 해도 2주 내 검색 노출이 시작됩니다. 30일 내 꾸준히 관리하면 방문자 수 2배 증가와 함께 지역 검색 상위 노출이 가능합니다.${blogBoost}`,
-    D: `지금 당장 기본 정보와 사진을 보강하면 1주일 내 매장이 검색에 노출되기 시작합니다. 30일 내 집중 관리 시 방문자 수 3배 이상 증가가 가능합니다.${blogBoost}`
-  };
-
-  // 최우선 실행 과제 (블로그 약점이면 우선 과제로 올림)
-  const actionMap = {
-    '리뷰 관리':              `오늘 당장 미답변 리뷰 전체에 답글을 달고, 최근 방문한 단골 고객 3명에게 솔직한 방문자 리뷰를 부탁하세요.`,
-    '사진 / 미디어':          `오늘 스마트폰으로 매장 내·외부, 대표 메뉴·서비스 사진을 10장 이상 촬영하여 즉시 등록하세요. 밝은 자연광 활용이 핵심입니다.`,
-    '소식 / 공지':            `지금 바로 이번 주 특별 메뉴, 이벤트, 또는 매장 소식 1건을 작성하여 소식에 업로드하세요.`,
-    '메뉴 / 서비스 정보':     `오늘 메뉴·서비스 항목 전체를 점검하고 가격·설명을 최신화하세요. 누락된 항목은 즉시 추가하세요.`,
-    'SEO / 키워드 최적화':    `지금 매장 소개글을 열고 지역명+업종명+특징 키워드를 포함한 100자 이상의 소개글로 수정하세요.`,
-    '기본 정보 완성도':       `지금 매장 관리 앱에서 영업시간·전화번호·주소를 확인하고 오류가 있다면 즉시 수정하세요.`,
-    '편의 정보':              `주차 가능 여부, 예약 기능, 포장·배달 여부를 오늘 바로 설정하세요.`,
-    '응답 / 활동성':          `매장 관리 앱을 설치하고 알림을 켜서 문의·리뷰에 즉시 응답할 수 있는 환경을 만드세요.`,
-    '블로그 / 외부 채널 연동':`${blogAdvice}`
-  };
-  const topWeak = worstCats[0]?.name || '리뷰 관리';
-  const action = actionMap[topWeak] || `오늘 ${topWeak} 영역부터 집중적으로 개선을 시작하세요.`;
-
-  // 섹션별 채우기 (300ms 간격)
-  const sections = [
-    { id:'rBody1', html: summaryMap[grade] || summaryMap['B'] },
-    { id:'rBody2', html: problems.map((p,i)=>`<div class="r-list-item"><span class="r-num">${i+1}</span>${p}</div>`).join('') },
-    { id:'rBody3', html: advice.map((a,i)=>`<div class="r-list-item"><span class="r-num">${i+1}</span>${a}</div>`).join('') },
-    { id:'rBody4', html: predictionMap[grade] || predictionMap['B'] },
-    { id:'rBody5', html: `<div class="r-action-box">🎯 ${action}</div>` }
-  ];
-
-  // 순차적으로 섹션 표시 (300ms 간격)
-  sections.forEach((sec, idx) => {
-    setTimeout(() => {
-      fillSection(sec.id, sec.html);
-    }, idx * 300);
-  });
-
-  setTimeout(() => {
-    const btns = document.getElementById('reportBtns');
-    const banner = document.getElementById('gformBanner');
-    if (btns) { btns.style.display = 'flex'; btns.style.visibility = 'visible'; }
-    if (banner) { banner.style.display = 'block'; banner.style.visibility = 'visible'; }
-  }, sections.length * 300 + 200);
-}
-
-function tryRenderSections(raw) {
-  // 완성된 필드만 미리 표시
-  try {
-    const clean = raw.replace(/```json|```/g,'').trim();
-    const d = JSON.parse(clean);
-    if (d.summary)    fillSection('rBody1', d.summary);
-    if (d.problems)   fillSection('rBody2', d.problems.map((p,i)=>`<div class="r-list-item"><span class="r-num">${i+1}</span>${p}</div>`).join(''));
-    if (d.advice)     fillSection('rBody3', d.advice.map((a,i)=>`<div class="r-list-item"><span class="r-num">${i+1}</span>${a}</div>`).join(''));
-    if (d.prediction) fillSection('rBody4', d.prediction);
-    if (d.action)     fillSection('rBody5', `<div class="r-action-box">🎯 ${d.action}</div>`);
-  } catch {}
-}
-
-function renderAllSections(raw) {
-  tryRenderSections(raw);
-  // Remove any remaining cursors
-  document.querySelectorAll('.cursor-blink').forEach(el => el.remove());
-  document.querySelectorAll('.report-sec-body').forEach(el => { el.style.opacity = '1'; el.classList.remove('streaming'); });
-}
-
-function fillSection(id, html) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  el.innerHTML = html;
-  el.style.opacity = '1';
-  el.classList.remove('streaming');
-}
-
-function saveInfo() {
-  const storeName = document.getElementById('storeName').value.trim();
-  const storeCategory = document.getElementById('storeCategory').value;
-  if (!storeName || !storeCategory) {
-    alert('매장명과 업종은 필수 입력 항목입니다.');
-    return;
-  }
-  state.info = {
-    storeName,
-    category: storeCategory,
-    storeUrl: document.getElementById('storeUrl').value.trim(),
-    storeAge: document.getElementById('storeAge').value,
-    blogReviews: document.getElementById('blogReviews').value,
-    visitorReviews: document.getElementById('visitorReviews').value,
-    photoCount: document.getElementById('photoCount').value,
-    mainConcern: document.getElementById('mainConcern').value,
-  };
-  state.stepDone[0] = true;
-  goStep(1);
-}
-
-function updateCategory() {}
-
-function goStep(n) {
-  // id 기반으로 섹션 전환
-  for (let i = 0; i <= 6; i++) {
-    const sec = document.getElementById('sec' + i);
-    if (sec) sec.classList.toggle('active', i === n);
-  }
-  // 스텝 버튼 상태 업데이트
-  document.querySelectorAll('.step-btn').forEach((b, i) => {
-    b.classList.remove('active', 'done');
-    if (i === n) b.classList.add('active');
-    else if (state.stepDone[i]) b.classList.add('done');
-  });
-  // sec2(자가진단)으로 이동 시 업종별 문구 재적용
-  if (n === 2) renderChecklist();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-// ===================== GOOGLE FORM SUBMIT =====================
 const GFORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSdf_YdllSh4QIxyeoaZ080xBeDTw8aZnG3LxleJbpthGAzf2w/formResponse";
 const GFORM_ENTRIES = {
   name:           "entry.878763656",    // Q1  성함
@@ -1992,83 +1251,566 @@ const GFORM_ENTRIES = {
 };
 
 
-function getSolutionText() {
-  // 실행 솔루션에서 완료된 항목 + 미완료 항목 요약
-  const allTasks = {
-    today: [
-      '오늘 당장 미답변 리뷰 전체에 답글 달기',
-      '대표 사진 교체 또는 신규 등록',
-      '영업시간 최신화 확인 및 수정',
-      '메뉴·서비스 가격 정보 업데이트',
-      '소식(포스트) 1건 작성 업로드'
-    ],
-    week: [
-      '사진 10장 이상으로 채우기',
-      '지인 5명에게 방문자 리뷰 요청',
-      '매장 소개글 키워드 최적화',
-      '해시태그 10개 이상 추가',
-      '편의 정보 완성'
-    ],
-    month: [
-      '블로그 체험단 모집 또는 운영',
-      '월별 이벤트/프로모션 등록',
-      '경쟁 상위 매장 3곳 정기 분석',
-      '통계 데이터 월간 리뷰',
-      '소식 4건 이상 정기 발행'
-    ]
+
+// ===================== STATE =====================
+var state = {
+  info: {},
+  checks: {},
+  bizChecks: {},
+  bizYesCount: 0,
+  bizResult: null,
+  score: 0,
+  catScores: {},
+  stepDone: [false,false,false,false,false,false,false]
+};
+
+// ===================== NAVIGATION =====================
+function goStep(n) {
+  for (var i = 0; i <= 6; i++) {
+    var sec = document.getElementById('sec' + i);
+    if (sec) {
+      if (i === n) {
+        sec.classList.add('active');
+      } else {
+        sec.classList.remove('active');
+      }
+    }
+  }
+  var btns = document.querySelectorAll('.step-btn');
+  btns.forEach(function(b, i) {
+    b.classList.remove('active', 'done');
+    if (i === n) b.classList.add('active');
+    else if (state.stepDone[i]) b.classList.add('done');
+  });
+  if (n === 2) renderChecklist();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ===================== STEP 0: 기본 정보 =====================
+function saveInfo() {
+  var storeName = document.getElementById('storeName').value.trim();
+  var storeCategory = document.getElementById('storeCategory').value;
+  if (!storeName || !storeCategory) {
+    alert('매장명과 업종은 필수 입력 항목입니다.');
+    return;
+  }
+  state.info = {
+    storeName: storeName,
+    category: storeCategory,
+    storeUrl: document.getElementById('storeUrl').value.trim(),
+    storeAge: document.getElementById('storeAge').value,
+    blogReviews: document.getElementById('blogReviews').value,
+    visitorReviews: document.getElementById('visitorReviews').value,
+    photoCount: document.getElementById('photoCount').value,
+    mainConcern: document.getElementById('mainConcern').value
+  };
+  state.stepDone[0] = true;
+  goStep(1);
+}
+
+function updateCategory() {}
+
+// ===================== STEP 1: 사업 기준 점검 =====================
+var bizChecksLocal = {};
+
+function renderBizCheck() {
+  var container = document.getElementById('bizCheckContainer');
+  if (!container) return;
+  container.innerHTML = '';
+  BIZ_CHECK_DATA.forEach(function(cat) {
+    var catDiv = document.createElement('div');
+    catDiv.className = 'check-category';
+    catDiv.innerHTML = '<div class="check-cat-title">' + cat.icon + ' ' + cat.cat + '</div>';
+    cat.items.forEach(function(item) {
+      var itemDiv = document.createElement('div');
+      itemDiv.className = 'check-item';
+      itemDiv.id = 'bi_' + item.id;
+      var bid = item.id;
+      itemDiv.setAttribute('data-bid', bid);
+      itemDiv.innerHTML =
+        '<div style="flex:1"><div class="check-item-text">' + item.text + '</div></div>' +
+        '<div class="yn-btns">' +
+        '<button class="yn-btn yes" onclick="setBizCheck(this.closest(\'.check-item\').dataset.bid,\'yes\')">YES</button>' +
+        '<button class="yn-btn no" onclick="setBizCheck(this.closest(\'.check-item\').dataset.bid,\'no\')">NO</button>' +
+        '</div>';
+      catDiv.appendChild(itemDiv);
+    });
+    var cardDiv = document.createElement('div');
+    cardDiv.className = 'card';
+    cardDiv.style.padding = '20px';
+    cardDiv.appendChild(catDiv);
+    container.appendChild(cardDiv);
+  });
+}
+
+function setBizCheck(id, val) {
+  state.bizChecks[id] = val;
+  var el = document.getElementById('bi_' + id);
+  el.className = 'check-item ' + val;
+  el.querySelectorAll('.yn-btn').forEach(function(b) { b.classList.remove('active'); });
+  el.querySelector('.yn-btn.' + val).classList.add('active');
+  var done = Object.keys(state.bizChecks).length;
+  document.getElementById('bizCheckProgress').textContent = done + ' / 20';
+  document.getElementById('bizCheckProgressBar').style.width = (done/20*100) + '%';
+}
+
+function calcBizCheck() {
+  var yesCount = Object.values(state.bizChecks).filter(function(v){ return v==='yes'; }).length;
+  state.bizYesCount = yesCount;
+  var result = yesCount >= 16 ? BIZ_RESULTS.high : yesCount >= 10 ? BIZ_RESULTS.mid : BIZ_RESULTS.low;
+  state.bizResult = result;
+
+  document.getElementById('bizResultCard').innerHTML =
+    '<div style="font-family:DM Mono,monospace;font-size:11px;letter-spacing:2px;color:var(--accent);margin-bottom:12px">MITGEUL AI · STEP 1-A · 사업 기준 점검 결과</div>' +
+    '<div style="font-family:DM Mono,monospace;font-size:48px;font-weight:700;color:' + result.color + ';line-height:1;margin-bottom:8px">' + yesCount + '<span style="font-size:16px;color:var(--text3)">/20</span></div>' +
+    '<div style="display:inline-block;padding:5px 14px;border-radius:20px;font-size:12px;font-weight:700;background:rgba(61,255,192,0.08);color:' + result.color + ';border:1px solid ' + result.color + ';margin-bottom:12px">' + result.grade + '</div>' +
+    '<div style="font-size:16px;font-weight:700;color:#fff;line-height:1.5">' + result.title + '</div>';
+
+  document.getElementById('bizResultBody').innerHTML =
+    '<div style="font-size:14px;color:var(--text2);line-height:1.9;white-space:pre-line">' + result.desc + '</div>' +
+    '<div style="margin-top:16px;padding:14px 16px;background:rgba(61,255,192,0.05);border:1px solid rgba(61,255,192,0.15);border-radius:10px;font-size:13px;color:var(--text2);line-height:1.8">' +
+    '<div style="font-size:10px;font-family:DM Mono,monospace;color:var(--accent);letter-spacing:1px;margin-bottom:6px">STEP 1-B 연결 안내</div>' + result.summary + '</div>';
+
+  document.getElementById('bizResultQ').innerHTML =
+    '<div style="font-size:10px;font-family:DM Mono,monospace;color:var(--accent);letter-spacing:1px;margin-bottom:12px">하루에 하나씩 떠올려보세요</div>' +
+    result.questions.map(function(q, i) {
+      return '<div style="display:flex;gap:10px;margin-bottom:10px;align-items:flex-start">' +
+        '<span style="width:20px;height:20px;border-radius:5px;background:rgba(61,255,192,0.12);color:var(--accent);font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0">' + (i+1) + '</span>' +
+        '<span style="font-size:13px;color:var(--text2);line-height:1.7">' + q + '</span></div>';
+    }).join('');
+
+  document.getElementById('bizResultOverlay').style.display = 'block';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeBizResult() {
+  document.getElementById('bizResultOverlay').style.display = 'none';
+  document.body.style.overflow = '';
+  renderChecklist();
+  state.stepDone[1] = true;
+  goStep(2);
+}
+
+// ===================== STEP 2: 자가진단 체크리스트 =====================
+function renderChecklist() {
+  var container = document.getElementById('checklistContainer');
+  if (!container) return;
+  container.innerHTML = '';
+  CHECKLIST_DATA.forEach(function(cat) {
+    var catDiv = document.createElement('div');
+    catDiv.className = 'check-category';
+    catDiv.innerHTML = '<div class="check-cat-title">' + cat.icon + ' ' + cat.cat + '</div>';
+    cat.items.forEach(function(item) {
+      var itemDiv = document.createElement('div');
+      itemDiv.className = 'check-item';
+      itemDiv.id = 'ci_' + item.id;
+
+      var itemText = item.text;
+      var itemSub = item.sub;
+      if (item.dynamic && item.id === 'c8') {
+        var catKey = state.info.category;
+        var c8map = {
+          restaurant: { text:'음식·재료·조리 과정 사진이 적절히 포함되어 있다', sub:'메뉴별 음식 사진이 식욕을 자극하는지 확인' },
+          cafe: { text:'음료·디저트·인테리어 감성 사진이 포함되어 있다', sub:'SNS 공유될 만한 감성 사진 여부 확인' },
+          beauty: { text:'시술 전후·작업 과정·결과물 사진이 포함되어 있다', sub:'비포&애프터 사진이 신뢰도에 직결됨' },
+          edu: { text:'수업 현장·강의실·교재·학생 활동 사진이 포함되어 있다', sub:'학습 환경과 분위기 전달이 중요' },
+          fitness: { text:'운동 공간·기구·수업 진행·강사 사진이 포함되어 있다', sub:'시설 청결도와 공간감 전달이 핵심' }
+        };
+        if (c8map[catKey]) { itemText = c8map[catKey].text; itemSub = c8map[catKey].sub; }
+      }
+
+      itemDiv.setAttribute('data-id', item.id);
+      itemDiv.setAttribute('data-score', item.score);
+      itemDiv.setAttribute('data-cat', cat.cat);
+      itemDiv.innerHTML =
+        '<div>' +
+        '<div class="check-item-text">' + itemText + '</div>' +
+        '<div class="check-item-sub">' + itemSub + '</div>' +
+        '</div>' +
+        '<div style="display:flex;align-items:center;gap:8px">' +
+        '<span class="check-item-score">+' + item.score + '\uC810</span>' +
+        '<div class="yn-btns">' +
+        '<button class="yn-btn yes" onclick="setCheckFromBtn(this,\'yes\')">YES</button>' +
+        '<button class="yn-btn no" onclick="setCheckFromBtn(this,\'no\')">NO</button>' +
+        '</div></div>';
+      catDiv.appendChild(itemDiv);
+    });
+    var cardDiv = document.createElement('div');
+    cardDiv.className = 'card';
+    cardDiv.style.padding = '20px';
+    cardDiv.appendChild(catDiv);
+    container.appendChild(cardDiv);
+  });
+}
+
+
+function setCheckFromBtn(btn, val) {
+  var el = btn.closest('.check-item');
+  var id = el.getAttribute('data-id');
+  var score = parseInt(el.getAttribute('data-score'));
+  var cat = el.getAttribute('data-cat');
+  setCheck(id, val, val==='yes'?score:0, cat);
+}
+
+function setCheck(id, val, score, cat) {
+  state.checks[id] = { val: val, score: score };
+  var el = document.getElementById('ci_' + id);
+  el.className = 'check-item ' + val;
+  el.querySelectorAll('.yn-btn').forEach(function(b) { b.classList.remove('active'); });
+  el.querySelector('.yn-btn.' + val).classList.add('active');
+  updateCheckProgress();
+}
+
+function updateCheckProgress() {
+  var total = 35;
+  var done = Object.keys(state.checks).length;
+  document.getElementById('checkProgress').textContent = done + ' / ' + total;
+  document.getElementById('checkProgressBar').style.width = (done/total*100) + '%';
+}
+
+function calcChecklist() {
+  var maxScore = CHECKLIST_DATA.flatMap(function(c){ return c.items; }).reduce(function(s,i){ return s+i.score; }, 0);
+  var totalScore = Object.values(state.checks).reduce(function(s,c){ return s+c.score; }, 0);
+  state.score = Math.round(totalScore / maxScore * 100);
+
+  CHECKLIST_DATA.forEach(function(cat) {
+    var catMax = cat.items.reduce(function(s,i){ return s+i.score; }, 0);
+    var catGot = cat.items.reduce(function(s,i) {
+      var c = state.checks[i.id];
+      return s + (c && c.val==='yes' ? i.score : 0);
+    }, 0);
+    state.catScores[cat.cat] = { got:catGot, max:catMax, pct:Math.round(catGot/catMax*100) };
+  });
+
+  renderAIScore();
+  state.stepDone[2] = true;
+  goStep(3);
+}
+
+// ===================== STEP 3: AI 진단 =====================
+function renderAIScore() {
+  var score = state.score;
+  var grade, gradeColor;
+  if (score >= 85) { grade='S등급'; gradeColor='#4ade80'; }
+  else if (score >= 70) { grade='A등급'; gradeColor='#00d4ff'; }
+  else if (score >= 55) { grade='B등급'; gradeColor='#f59e0b'; }
+  else if (score >= 40) { grade='C등급'; gradeColor='#fb923c'; }
+  else { grade='D등급'; gradeColor='#f43f5e'; }
+
+  var circle = document.getElementById('mainScoreCircle');
+  if (circle) circle.style.setProperty('--pct', score + '%');
+  var numEl = document.getElementById('mainScoreNum');
+  if (numEl) numEl.textContent = score;
+  var gradeEl = document.getElementById('mainScoreGrade');
+  if (gradeEl) { gradeEl.textContent = grade; gradeEl.style.color = gradeColor; }
+
+  var barsEl = document.getElementById('scoreBars');
+  if (barsEl) {
+    barsEl.innerHTML = '';
+    CHECKLIST_DATA.forEach(function(cat) {
+      var cs = state.catScores[cat.cat];
+      if (!cs) return;
+      barsEl.innerHTML +=
+        '<div class="score-bar-item">' +
+        '<div class="score-bar-label"><span>' + cat.icon + ' ' + cat.cat + '</span><span>' + cs.pct + '%</span></div>' +
+        '<div class="score-bar-track"><div class="score-bar-fill" style="width:' + cs.pct + '%"></div></div>' +
+        '</div>';
+    });
+  }
+
+  var sorted = Object.entries(state.catScores).sort(function(a,b){ return b[1].pct - a[1].pct; });
+  var strengths = sorted.filter(function(e){ return e[1].pct >= 70; });
+  var weaknesses = sorted.filter(function(e){ return e[1].pct < 50; });
+
+  var html =
+    '<div class="card">' +
+    '<div class="report-section">' +
+    '<div class="report-section-title">💪 강점 영역</div>' +
+    '<div class="strength-list">' +
+    (strengths.length ? strengths.map(function(e){ return '<div class="strength-item">' + e[0] + ' — ' + e[1].pct + '% 달성</div>'; }).join('') : '<div class="strength-item">전반적 개선이 필요합니다.</div>') +
+    '</div></div><div class="divider"></div>' +
+    '<div class="report-section">' +
+    '<div class="report-section-title">⚠️ 개선 필요 영역</div>' +
+    '<div class="weakness-list">' +
+    (weaknesses.length ? weaknesses.map(function(e){ return '<div class="weakness-item">' + e[0] + ' — ' + e[1].pct + '% 달성</div>'; }).join('') : '<div class="weakness-item">모든 영역이 양호합니다!</div>') +
+    '</div></div></div>';
+
+  var aiCont = document.getElementById('aiAnalysisContainer');
+  if (aiCont) aiCont.innerHTML = html;
+
+  renderBenchmark();
+  renderActionPlan();
+}
+
+// ===================== STEP 4: 벤치마크 =====================
+function renderBenchmark() {
+  var cat = state.info.category;
+  var container = document.getElementById('benchmarkContainer');
+  if (!container) return;
+
+  if (!cat || !BENCHMARK_DATA[cat]) {
+    container.innerHTML = '<div class="alert alert-warn">⚠️ <div>선택하신 업종은 현재 준비 중입니다.<br><strong>음식점·카페·미용·학원·운동</strong> 업종은 지금 바로 이용 가능해요!</div></div>';
+    return;
+  }
+
+  var bdata = BENCHMARK_DATA[cat];
+  var blogReviews = parseInt(state.info.blogReviews)||0;
+  var visitorReviews = parseInt(state.info.visitorReviews)||0;
+  var photos = parseInt(state.info.photoCount)||0;
+  var myVals = { '블로그 리뷰 수': blogReviews, '방문자 리뷰 수': visitorReviews, '등록 사진 수': photos };
+
+  var rows = bdata.items.map(function(item) {
+    var mine = myVals[item.metric];
+    var mineStr = mine !== undefined ? mine + item.unit : '—';
+    var topNum = parseInt(item.top);
+    var avgNum = parseInt(item.avg);
+    var level = mine === undefined ? '—' :
+      mine >= topNum ? '<span class="bench-tag high">상위</span>' :
+      mine >= avgNum ? '<span class="bench-tag mid">평균</span>' :
+      '<span class="bench-tag low">미달</span>';
+    return '<tr><td>' + item.metric + '</td><td class="bench-val top">' + item.top + '</td><td class="bench-val">' + item.avg + '</td><td class="bench-val">' + item.min + '</td><td class="bench-val mine">' + mineStr + '</td><td>' + level + '</td></tr>';
+  }).join('');
+
+  container.innerHTML =
+    '<div class="alert alert-info">📊 <div><strong>' + bdata.title + '</strong> ' + (bdata.desc||'') + '<br><span style="font-size:12px">현재 수치는 MITGEUL AI 권장 목표치입니다. 실제 데이터가 쌓이면 업데이트됩니다.</span></div></div>' +
+    '<div class="card" style="padding:0;overflow:hidden"><table class="bench-table"><thead><tr>' +
+    '<th>항목</th><th>권장 목표치<span style="font-size:10px;font-weight:400;color:var(--text3)"> (참고)</span></th><th>평균 수준</th><th>최소 기준</th><th>내 매장</th><th>수준</th>' +
+    '</tr></thead><tbody>' + rows + '</tbody></table></div>';
+}
+
+// ===================== STEP 5: 실행 솔루션 =====================
+function renderActionPlan() {
+  loadPlanTabs();
+}
+
+function loadPlanTabs() {
+  renderPlanContent('today', ACTION_PLANS.today, 'planToday');
+  renderPlanContent('week', ACTION_PLANS.week, 'planWeek');
+  renderPlanContent('month', ACTION_PLANS.month, 'planMonth');
+}
+
+function renderPlanContent(period, data, containerId) {
+  var container = document.getElementById(containerId);
+  if (!container) return;
+  var html = '';
+  if (data.urgent) {
+    html += '<div style="font-size:12px;color:var(--accent4);font-family:DM Mono,monospace;letter-spacing:1px;margin-bottom:10px">🚨 즉시 처리</div>';
+    data.urgent.forEach(function(t, i) { html += taskHTML(period+'_u_'+i, t, 'urgent'); });
+  }
+  if (data.high) {
+    html += '<div style="font-size:12px;color:var(--accent3);font-family:DM Mono,monospace;letter-spacing:1px;margin-bottom:10px;margin-top:16px">⚡ 우선 처리</div>';
+    data.high.forEach(function(t, i) { html += taskHTML(period+'_h_'+i, t, 'high'); });
+  }
+  if (data.normal) {
+    html += '<div style="font-size:12px;color:var(--accent);font-family:DM Mono,monospace;letter-spacing:1px;margin-bottom:10px;margin-top:16px">📌 일반 처리</div>';
+    data.normal.forEach(function(t, i) { html += taskHTML(period+'_n_'+i, t, 'normal'); });
+  }
+  container.innerHTML = html;
+}
+
+function taskHTML(key, task, priority) {
+  var label = priority==='urgent'?'긴급':priority==='high'?'높음':'보통';
+  return '<div class="task-item" id="task_'+key+'" onclick="toggleTask(this.dataset.key)">'+
+    '<div class="task-checkbox" id="cb_'+key+'"></div>'+
+    '<div style="flex:1"><div class="task-text">'+task.text+'</div><div class="task-desc">'+task.desc+'</div></div>'+
+    '<span class="task-priority '+priority+'">'+label+'</span></div>';
+}
+
+function toggleTask(key) {
+  var el = document.getElementById('task_'+key);
+  el.classList.toggle('done');
+  var cb = document.getElementById('cb_'+key);
+  cb.innerHTML = el.classList.contains('done') ? '✓' : '';
+}
+
+function switchPlan(tab) {
+  document.querySelectorAll('.plan-tab').forEach(function(b){ b.classList.remove('active'); });
+  document.querySelectorAll('.plan-content').forEach(function(c){ c.classList.remove('active'); });
+  var tabEl = document.querySelector('.plan-tab[data-tab="'+tab+'"]');
+  if (tabEl) tabEl.classList.add('active');
+  var id = 'plan' + tab.charAt(0).toUpperCase() + tab.slice(1);
+  var content = document.getElementById(id);
+  if (content) content.classList.add('active');
+}
+
+// ===================== STEP 6: 통합 리포트 =====================
+function generateReport() {
+  state.stepDone[5] = true;
+  goStep(6);
+  var container = document.getElementById('reportContainer');
+  var info = state.info;
+  var score = state.score;
+  var catScores = state.catScores;
+  var checks = state.checks;
+  var now = new Date();
+  var dateStr = now.toLocaleDateString('ko-KR', {year:'numeric',month:'2-digit',day:'2-digit'});
+
+  var yesCount = Object.values(checks).filter(function(c){ return c.val==='yes'; }).length;
+  var noCount  = Object.values(checks).filter(function(c){ return c.val==='no'; }).length;
+  var strong = Object.entries(catScores).filter(function(e){ return e[1].pct>=70; }).map(function(e){ return e[0]; }).join(', ');
+  var weak   = Object.entries(catScores).filter(function(e){ return e[1].pct<50; }).map(function(e){ return e[0]; }).join(', ');
+
+  var grade;
+  if (score>=85) grade='S';
+  else if (score>=70) grade='A';
+  else if (score>=55) grade='B';
+  else if (score>=40) grade='C';
+  else grade='D';
+
+  // 사업기준 배너
+  var bizBanner = '';
+  if (state.bizResult) {
+    bizBanner = '<div class="card" style="margin-bottom:16px;border-color:rgba(61,255,192,0.15);background:rgba(30,35,112,0.4)">' +
+      '<div style="font-family:DM Mono,monospace;font-size:10px;letter-spacing:2px;color:var(--accent);margin-bottom:8px">STEP 1-A · 사업 기준 점검</div>' +
+      '<div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">' +
+      '<div style="font-family:DM Mono,monospace;font-size:32px;font-weight:700;color:' + state.bizResult.color + '">' + state.bizYesCount + '<span style="font-size:14px;color:var(--text3)">/20</span></div>' +
+      '<div><div style="font-size:14px;font-weight:600;color:#fff;margin-bottom:4px">' + state.bizResult.title + '</div>' +
+      '<div style="font-size:12px;color:var(--text2)">' + state.bizResult.range + ' · <span style="color:' + state.bizResult.color + '">' + state.bizResult.grade + '</span></div></div>' +
+      '</div></div>';
+  }
+
+  container.innerHTML =
+    '<div class="report-header">' +
+    '<div style="font-family:DM Mono,monospace;font-size:11px;letter-spacing:3px;color:var(--accent);margin-bottom:8px">MITGEUL AI REPORT</div>' +
+    '<div class="report-title">AI 통합 진단 리포트</div>' +
+    '<div class="report-meta" style="margin-top:8px;display:flex;flex-wrap:wrap;gap:12px">' +
+    '<span>📌 ' + (info.storeName||'—') + '</span>' +
+    '<span>🏷 ' + (info.category||'—') + '</span>' +
+    '<span>📅 ' + dateStr + '</span>' +
+    '</div></div>' +
+    bizBanner +
+    '<div class="card" style="display:flex;align-items:center;gap:20px;flex-wrap:wrap;margin-bottom:16px;background:linear-gradient(135deg,rgba(61,255,192,0.08),rgba(30,35,112,0.4))">' +
+    '<div style="text-align:center;min-width:80px"><div style="font-family:DM Mono,monospace;font-size:48px;font-weight:700;color:var(--accent);line-height:1">' + score + '</div>' +
+    '<div style="font-size:11px;color:var(--text3);margin-top:2px">/ 100점</div></div>' +
+    '<div style="flex:1;min-width:160px"><div style="font-size:18px;font-weight:700;color:#fff;margin-bottom:6px">' + grade + '등급</div>' +
+    '<div style="font-size:13px;color:var(--text2)">강점: <span style="color:var(--accent)">' + (strong||'—') + '</span></div>' +
+    '<div style="font-size:13px;color:var(--text2);margin-top:4px">약점: <span style="color:#f43f5e">' + (weak||'—') + '</span></div></div></div>' +
+    getReportSections(grade, score, strong, weak, info, yesCount, noCount);
+
+  document.getElementById('reportBtns').style.display = 'flex';
+  document.getElementById('gformBanner').style.display = 'block';
+}
+
+function getReportSections(grade, score, strong, weak, info, yesCount, noCount) {
+  var catLabel = {cafe:'카페·디저트',restaurant:'음식점',beauty:'미용·뷰티',fitness:'운동·헬스',edu:'교육·학원'}[info.category] || '해당 업종';
+  var blogR = parseInt(info.blogReviews)||0;
+  var visitR = parseInt(info.visitorReviews)||0;
+  var photos = parseInt(info.photoCount)||0;
+
+  var hasBlog = state.checks['c31']&&state.checks['c31'].val==='yes';
+  var blogLinked = state.checks['c33']&&state.checks['c33'].val==='yes';
+  var blogRecent = state.checks['c34']&&state.checks['c34'].val==='yes';
+  var hasSNS = state.checks['c35']&&state.checks['c35'].val==='yes';
+  var blogScore = [hasBlog,blogLinked,blogRecent,hasSNS].filter(Boolean).length;
+
+  var blogSummary = blogScore>=3 ? '블로그·SNS 채널이 잘 갖춰져 있어 외부 유입 경쟁력이 높습니다.' :
+    hasBlog ? '블로그는 있으나 연동·포스팅 관리가 더 필요합니다.' :
+    '블로그·SNS 채널이 없거나 미운영 상태로 외부 유입 경로가 부족합니다.';
+
+  var summaryMap = {
+    S: info.storeName+'은 온라인 관리 전반에서 최상위 수준을 유지하고 있습니다. '+blogSummary+' 현재 강점을 유지하면서 최신성 관리에 집중하면 1위 노출을 안정적으로 유지할 수 있습니다.',
+    A: info.storeName+'은 상위권 수준을 보여주고 있습니다. '+blogSummary+' 약점 영역을 집중 개선하면 단기간 내 큰 효과를 볼 수 있습니다.',
+    B: info.storeName+'은 기본 관리는 되어있으나 개선이 필요한 영역이 있습니다. '+blogSummary+' 체계적인 관리 루틴을 만들면 한 달 내 변화가 가능합니다.',
+    C: info.storeName+'은 현재 개선이 시급한 상태입니다. '+blogSummary+' 기본기부터 차근차근 채워나가면 빠른 개선 효과를 기대할 수 있습니다.',
+    D: info.storeName+'은 온라인 관리가 전반적으로 미흡한 상태입니다. '+blogSummary+' 기본 정보 완성, 사진 등록, 리뷰 관리부터 즉시 시작하세요.'
   };
 
-  const catScores = state.catScores;
-  const weakAreas = Object.entries(catScores)
-    .filter(([,v]) => v.pct < 50)
-    .map(([k]) => k)
-    .join(', ');
-  const strongAreas = Object.entries(catScores)
-    .filter(([,v]) => v.pct >= 70)
-    .map(([k]) => k)
-    .join(', ');
+  var adviceMap = {
+    cafe: ['시즌 메뉴 출시 때마다 소식 업데이트 → 검색 유입 급증 효과','인스타그램 감성 사진 5장 이상 등록 → 클릭률 향상','포장·웨이팅 정보 명시 → 방문 전환율 향상'],
+    restaurant: ['런치 메뉴·가격 명시 + 주차 정보 → 직장인 점심 수요 확보','메뉴별 사진 등록 필수 → 음식 사진 없으면 클릭이 안 됨','예약 기능 연동 → 상위 노출에 유리'],
+    beauty: ['시술 전후 사진 등록 → 신뢰도 및 클릭률 향상','가격표 명시 필수 → 가격 미공개 매장은 이탈률이 높음','예약 기능 필수 연동 → 노출 순위에 직결'],
+    edu: ['강사 소개·커리큘럼 상세 등록','수강생 후기·성과 사진 등록','무료 상담·체험 이벤트 정기 등록'],
+    fitness: ['무료 체험·PT 이벤트 소식 월 2회 이상 업데이트','강사 프로필·자격증·수업 사진 등록','예약 연동 필수 → 즉시 예약 가능 매장이 노출 우선']
+  };
+  var advice = adviceMap[info.category] || ['메뉴·서비스 정보 상세 등록','정기적인 소식 업데이트','리뷰 답글 관리 강화'];
+  advice.push('📝 블로그 채널: ' + (hasBlog ? (blogRecent?'최근 업데이트 중. 매장 URL 연동을 확인하세요.':'블로그가 있으나 최근 포스팅이 없습니다. 월 1회 이상 업데이트하세요.') : '네이버 블로그를 개설하고 매장 소개 포스팅 3개 이상을 작성하세요.'));
 
-  return [
-    '[매장 자가진단 요약]',
-    '강점: ' + (strongAreas || '없음'),
-    '약점: ' + (weakAreas  || '없음'),
-    '',
-    '[핵심 실행 과제]',
-    '오늘: 미답변 리뷰 답글, 대표사진 점검, 영업시간 확인',
-    '이번주: 사진 보강, 리뷰 요청, 소개글 키워드 최적화',
-    '이번달: 블로그 체험단, 이벤트 등록, 경쟁매장 분석'
-  ].join('\n');
+  var predMap = {
+    S: '현재 수준을 유지하면서 리뷰 최신성을 강화하면 30일 내 상위 3위 이내 안정적 노출이 가능합니다. 신규 방문자 유입이 월 15~20% 증가할 것으로 예측됩니다.',
+    A: '약점 영역을 집중 개선하면 30일 내 노출 순위가 3~5단계 상승할 것으로 예측됩니다. 방문자 수 20~30% 증가 효과를 기대할 수 있습니다.',
+    B: '오늘부터 개선하면 2주 내 점수가 10~15점 상승하고 30일 내 노출 빈도가 40~50% 증가할 것으로 예측됩니다.',
+    C: '기본 정보 완성과 사진 10장 이상 등록만 해도 2주 내 검색 노출이 시작됩니다. 30일 내 방문자 수 2배 증가가 가능합니다.',
+    D: '지금 당장 기본 정보와 사진을 보강하면 1주일 내 검색에 노출되기 시작합니다. 30일 내 방문자 수 3배 이상 증가가 가능합니다.'
+  };
+
+  var catScores = state.catScores;
+  var worstCat = Object.entries(catScores).sort(function(a,b){ return a[1].pct-b[1].pct; })[0];
+  var actionMap = {
+    '리뷰 관리': '오늘 당장 미답변 리뷰 전체에 답글을 달고, 단골 고객 3명에게 방문자 리뷰를 부탁하세요.',
+    '사진 / 미디어': '오늘 스마트폰으로 매장 사진 10장 이상 촬영하여 즉시 등록하세요.',
+    '소식 / 공지': '지금 바로 이번 주 특별 소식 1건을 작성하여 업로드하세요.',
+    '메뉴 / 서비스 정보': '오늘 메뉴·서비스 항목 전체를 점검하고 가격·설명을 최신화하세요.',
+    'SEO / 키워드 최적화': '지금 소개글을 열고 지역명+업종명+특징 키워드를 포함한 100자 이상으로 수정하세요.',
+    '기본 정보 완성도': '지금 매장 관리 앱에서 영업시간·전화번호·주소를 확인하고 오류를 즉시 수정하세요.',
+    '블로그 / 외부 채널 연동': hasBlog ? '블로그에 매장 URL을 연결하고 이번 주 포스팅 1건을 작성하세요.' : '지금 바로 네이버 블로그를 개설하고 매장 소개 포스팅을 작성하세요.'
+  };
+  var topWeak = worstCat ? worstCat[0] : '리뷰 관리';
+  var action = actionMap[topWeak] || '오늘 ' + topWeak + ' 영역부터 집중적으로 개선을 시작하세요.';
+
+  return (
+    '<div class="report-card-section"><div class="report-sec-label">01 · 종합 진단 요약</div>' +
+    '<div class="report-sec-body">' + (summaryMap[grade]||summaryMap['B']) + '</div></div>' +
+
+    '<div class="report-card-section"><div class="report-sec-label">02 · 업종별 특화 조언</div>' +
+    '<div class="report-sec-body">' + advice.map(function(a,i){ return '<div class="r-list-item"><span class="r-num">'+(i+1)+'</span>'+a+'</div>'; }).join('') + '</div></div>' +
+
+    '<div class="report-card-section"><div class="report-sec-label">03 · 30일 성과 예측</div>' +
+    '<div class="report-sec-body">' + (predMap[grade]||predMap['B']) + '</div></div>' +
+
+    '<div class="report-card-section"><div class="report-sec-label">04 · 최우선 실행 과제</div>' +
+    '<div class="report-sec-body"><div class="r-action-box">🎯 ' + action + '</div></div></div>'
+  );
+}
+
+// ===================== GOOGLE FORM =====================
+function getSolutionText() {
+  var catScores = state.catScores;
+  var strong = Object.entries(catScores).filter(function(e){ return e[1].pct>=70; }).map(function(e){ return e[0]; }).join(', ');
+  var weak   = Object.entries(catScores).filter(function(e){ return e[1].pct<50; }).map(function(e){ return e[0]; }).join(', ');
+  return '[매장 자가진단 요약]\n강점: '+(strong||'없음')+'\n약점: '+(weak||'없음')+'\n\n[핵심 실행 과제]\n오늘: 미답변 리뷰 답글, 대표사진 점검, 영업시간 확인\n이번주: 사진 보강, 리뷰 요청, 소개글 키워드 최적화\n이번달: 블로그 체험단, 이벤트 등록, 경쟁매장 분석';
+}
+
+function getBizBannerSmall() {
+  if (!state.bizResult) return '';
+  var r = state.bizResult;
+  return '<div class="card" style="margin-bottom:16px;border-color:rgba(61,255,192,0.15)">' +
+    '<div style="font-family:DM Mono,monospace;font-size:10px;color:var(--text3);margin-bottom:6px">STEP 1-A · 사업 기준 점검</div>' +
+    '<div style="font-size:14px;font-weight:600;color:#fff">' + r.title + '</div>' +
+    '<div style="font-family:DM Mono,monospace;font-size:24px;font-weight:700;color:' + r.color + ';margin-top:4px">YES ' + state.bizYesCount + '/20 · ' + r.grade + '</div>' +
+    '</div>';
+}
+
+function getBizBannerFull() {
+  return getBizBannerSmall();
 }
 
 function submitToGoogleForm() {
-  const btn = document.getElementById('gformBtn');
-  const statusEl = document.getElementById('gformStatus');
-
-  const userName = prompt("성함을 입력해주세요 (필수)");
+  var btn = document.getElementById('gformBtn');
+  var statusEl = document.getElementById('gformStatus');
+  var userName = prompt("성함을 입력해주세요 (필수)");
   if (!userName || !userName.trim()) { alert("성함을 입력해야 저장할 수 있습니다."); return; }
-  const userPhone = prompt("연락처를 입력해주세요 (필수)\n예: 010-1234-5678");
+  var userPhone = prompt("연락처를 입력해주세요 (필수)\n예: 010-1234-5678");
   if (!userPhone || !userPhone.trim()) { alert("연락처를 입력해야 저장할 수 있습니다."); return; }
 
-  const info     = state.info;
-  const checks   = state.checks;
-  const catScores = state.catScores;
-  const score    = state.score;
-  const now      = new Date();
-  const diagDate = now.toLocaleDateString('ko-KR', {year:'numeric',month:'2-digit',day:'2-digit'});
+  var info = state.info;
+  var checks = state.checks;
+  var catScores = state.catScores;
+  var score = state.score;
+  var now = new Date();
+  var diagDate = now.toLocaleDateString('ko-KR', {year:'numeric',month:'2-digit',day:'2-digit'});
+  var yesCount = Object.values(checks).filter(function(c){ return c.val==='yes'; }).length;
+  var noCount  = Object.values(checks).filter(function(c){ return c.val==='no'; }).length;
+  var strong = Object.entries(catScores).filter(function(e){ return e[1].pct>=70; }).map(function(e){ return e[0]; }).join(', ');
+  var weak   = Object.entries(catScores).filter(function(e){ return e[1].pct<50; }).map(function(e){ return e[0]; }).join(', ');
+  var scoreNum = score;
+  var gradeStr;
+  if (scoreNum>=85) gradeStr='S등급';
+  else if (scoreNum>=70) gradeStr='A등급';
+  else if (scoreNum>=55) gradeStr='B등급';
+  else if (scoreNum>=40) gradeStr='C등급';
+  else gradeStr='D등급';
 
-  const yesCount = Object.values(checks).filter(c=>c.val==='yes').length;
-  const noCount  = Object.values(checks).filter(c=>c.val==='no').length;
-  const strong   = Object.entries(catScores).filter(([,v])=>v.pct>=70).map(([k])=>k).join(', ');
-  const weak     = Object.entries(catScores).filter(([,v])=>v.pct<50).map(([k])=>k).join(', ');
-
-  let grade;
-  if      (score>=85) grade='S등급';
-  else if (score>=70) grade='A등급';
-  else if (score>=55) grade='B등급';
-  else if (score>=40) grade='C등급';
-  else                grade='D등급';
-
-  const params = new URLSearchParams();
+  var params = new URLSearchParams();
   params.append(GFORM_ENTRIES.name,           userName.trim());
   params.append(GFORM_ENTRIES.phone,          userPhone.trim());
   params.append(GFORM_ENTRIES.storeName,      info.storeName    || '미입력');
@@ -2077,13 +1819,13 @@ function submitToGoogleForm() {
   params.append(GFORM_ENTRIES.mainConcern,    info.mainConcern  || '미입력');
   params.append(GFORM_ENTRIES.bizYesCount,    '사업기준 YES ' + state.bizYesCount + '개 / 20개');
   params.append(GFORM_ENTRIES.bizGrade,       state.bizResult ? state.bizResult.grade : '미완료');
-  params.append(GFORM_ENTRIES.blogReviews,    (info.blogReviews    || '0') + '개');
-  params.append(GFORM_ENTRIES.photoCount,     (info.photoCount     || '0') + '장');
-  params.append(GFORM_ENTRIES.visitorReviews, (info.visitorReviews || '0') + '개');
+  params.append(GFORM_ENTRIES.blogReviews,    (info.blogReviews||'0') + '개');
+  params.append(GFORM_ENTRIES.photoCount,     (info.photoCount||'0') + '장');
+  params.append(GFORM_ENTRIES.visitorReviews, (info.visitorReviews||'0') + '개');
   params.append(GFORM_ENTRIES.yesCount,       '매장 YES ' + yesCount + '개');
   params.append(GFORM_ENTRIES.noCount,        '매장 NO '  + noCount  + '개');
   params.append(GFORM_ENTRIES.score,          score + '점 / 100점');
-  params.append(GFORM_ENTRIES.grade,          grade);
+  params.append(GFORM_ENTRIES.grade,          gradeStr);
   params.append(GFORM_ENTRIES.strongAreas,    strong || '없음');
   params.append(GFORM_ENTRIES.weakAreas,      weak   || '없음');
   params.append(GFORM_ENTRIES.finalSolution,  getSolutionText());
@@ -2092,39 +1834,30 @@ function submitToGoogleForm() {
   btn.disabled = true;
   btn.textContent = '⏳ 저장 중...';
   btn.style.opacity = '0.7';
-  statusEl.style.display = 'block';
-  statusEl.style.color = 'var(--text3)';
-  statusEl.textContent = '구글 스프레드시트에 저장하고 있습니다...';
+  if (statusEl) { statusEl.style.display = 'block'; statusEl.textContent = '구글 스프레드시트에 저장 중...'; }
 
-  const iframe = document.createElement('iframe');
+  var iframe = document.createElement('iframe');
   iframe.name = 'gform_iframe';
   iframe.style.display = 'none';
   document.body.appendChild(iframe);
-
-  const form = document.createElement('form');
+  var form = document.createElement('form');
   form.method = 'POST';
   form.action = GFORM_URL;
   form.target = 'gform_iframe';
   form.style.display = 'none';
-
-  params.forEach((val, key) => {
-    const input = document.createElement('input');
-    input.type = 'hidden';
-    input.name = key;
-    input.value = val;
+  params.forEach(function(val, key) {
+    var input = document.createElement('input');
+    input.type = 'hidden'; input.name = key; input.value = val;
     form.appendChild(input);
   });
-
   document.body.appendChild(form);
   form.submit();
-
-  setTimeout(() => {
+  setTimeout(function() {
     btn.textContent = '✅ 저장 완료!';
     btn.style.background = 'var(--accent2)';
     btn.style.opacity = '1';
-    statusEl.style.color = 'var(--accent2)';
-    statusEl.textContent = userName + '님의 진단 결과가 저장되었습니다. MITGEUL AI가 분석에 활용합니다 😊';
-    setTimeout(() => {
+    if (statusEl) { statusEl.style.color = 'var(--accent2)'; statusEl.textContent = userName + '님의 진단 결과가 저장되었습니다. MITGEUL AI가 분석에 활용합니다 😊'; }
+    setTimeout(function() {
       document.body.removeChild(iframe);
       document.body.removeChild(form);
     }, 3000);
@@ -2132,14 +1865,17 @@ function submitToGoogleForm() {
 }
 
 function copyReport() {
-  const container = document.getElementById('reportContainer');
-  const text = container.innerText;
-  navigator.clipboard.writeText(text).then(() => {
-    alert('리포트가 클립보드에 복사되었습니다!');
-  }).catch(() => {
-    alert('복사에 실패했습니다. 직접 선택해서 복사해주세요.');
-  });
+  var container = document.getElementById('reportContainer');
+  navigator.clipboard.writeText(container.innerText).then(function(){ alert('리포트가 복사되었습니다!'); });
 }
+
+// ===================== INIT =====================
+window.onload = function() {
+  renderBizCheck();
+  renderChecklist();
+  loadPlanTabs();
+};
+
 </script>
 
   <!-- 사업 기준 결과 오버레이 (전역) -->
