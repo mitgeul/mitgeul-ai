@@ -2044,31 +2044,20 @@ function submitToGoogleForm() {
   const btn = document.getElementById('gformBtn');
   const statusEl = document.getElementById('gformStatus');
 
-  // 성함·연락처 입력 모달
   const userName = prompt("성함을 입력해주세요 (필수)");
-  if (!userName || !userName.trim()) {
-    alert("성함을 입력해야 저장할 수 있습니다.");
-    return;
-  }
+  if (!userName || !userName.trim()) { alert("성함을 입력해야 저장할 수 있습니다."); return; }
   const userPhone = prompt("연락처를 입력해주세요 (필수)\n예: 010-1234-5678");
-  if (!userPhone || !userPhone.trim()) {
-    alert("연락처를 입력해야 저장할 수 있습니다.");
-    return;
-  }
+  if (!userPhone || !userPhone.trim()) { alert("연락처를 입력해야 저장할 수 있습니다."); return; }
 
-  const info = state.info;
-  const checks = state.checks;
+  const info     = state.info;
+  const checks   = state.checks;
   const catScores = state.catScores;
-  const score = state.score;
+  const score    = state.score;
+  const now      = new Date();
+  const diagDate = now.toLocaleDateString('ko-KR', {year:'numeric',month:'2-digit',day:'2-digit'});
+
   const yesCount = Object.values(checks).filter(c=>c.val==='yes').length;
   const noCount  = Object.values(checks).filter(c=>c.val==='no').length;
-  let grade;
-  if      (score>=85) grade='S등급';
-  else if (score>=70) grade='A등급';
-  else if (score>=55) grade='B등급';
-  else if (score>=40) grade='C등급';
-  else                grade='D등급';
-
   const strong   = Object.entries(catScores).filter(([,v])=>v.pct>=70).map(([k])=>k).join(', ');
   const weak     = Object.entries(catScores).filter(([,v])=>v.pct<50).map(([k])=>k).join(', ');
 
@@ -2079,30 +2068,15 @@ function submitToGoogleForm() {
   else if (score>=40) grade='C등급';
   else                grade='D등급';
 
-  const yesCount  = Object.values(checks).filter(c=>c.val==='yes').length;
-  const noCount   = Object.values(checks).filter(c=>c.val==='no').length;
-  const strong    = Object.entries(catScores).filter(([,v])=>v.pct>=70).map(([k])=>k).join(', ') || '없음';
-  const weak      = Object.entries(catScores).filter(([,v])=>v.pct<50).map(([k])=>k).join(', ')  || '없음';
-  const now       = new Date();
-  const diagDate  = now.toLocaleDateString('ko-KR', {year:'numeric',month:'2-digit',day:'2-digit'});
-
-  // Build form data
   const params = new URLSearchParams();
-  // ── 신청자 정보
   params.append(GFORM_ENTRIES.name,           userName.trim());
   params.append(GFORM_ENTRIES.phone,          userPhone.trim());
-
-  // ── 매장 기본 정보
   params.append(GFORM_ENTRIES.storeName,      info.storeName    || '미입력');
   params.append(GFORM_ENTRIES.category,       info.category     || '미입력');
   params.append(GFORM_ENTRIES.storeUrl,       info.storeUrl     || '미입력');
   params.append(GFORM_ENTRIES.mainConcern,    info.mainConcern  || '미입력');
-
-  // ── STEP 1-A 사업기준 점검
   params.append(GFORM_ENTRIES.bizYesCount,    '사업기준 YES ' + state.bizYesCount + '개 / 20개');
   params.append(GFORM_ENTRIES.bizGrade,       state.bizResult ? state.bizResult.grade : '미완료');
-
-  // ── STEP 1-B 매장 자가진단
   params.append(GFORM_ENTRIES.blogReviews,    (info.blogReviews    || '0') + '개');
   params.append(GFORM_ENTRIES.photoCount,     (info.photoCount     || '0') + '장');
   params.append(GFORM_ENTRIES.visitorReviews, (info.visitorReviews || '0') + '개');
@@ -2112,11 +2086,27 @@ function submitToGoogleForm() {
   params.append(GFORM_ENTRIES.grade,          grade);
   params.append(GFORM_ENTRIES.strongAreas,    strong || '없음');
   params.append(GFORM_ENTRIES.weakAreas,      weak   || '없음');
-
-  // ── 통합 결과
-  const solText = getSolutionText();
-  params.append(GFORM_ENTRIES.finalSolution,  solText);
+  params.append(GFORM_ENTRIES.finalSolution,  getSolutionText());
   params.append(GFORM_ENTRIES.diagDate,       diagDate);
+
+  btn.disabled = true;
+  btn.textContent = '⏳ 저장 중...';
+  btn.style.opacity = '0.7';
+  statusEl.style.display = 'block';
+  statusEl.style.color = 'var(--text3)';
+  statusEl.textContent = '구글 스프레드시트에 저장하고 있습니다...';
+
+  const iframe = document.createElement('iframe');
+  iframe.name = 'gform_iframe';
+  iframe.style.display = 'none';
+  document.body.appendChild(iframe);
+
+  const form = document.createElement('form');
+  form.method = 'POST';
+  form.action = GFORM_URL;
+  form.target = 'gform_iframe';
+  form.style.display = 'none';
+
   params.forEach((val, key) => {
     const input = document.createElement('input');
     input.type = 'hidden';
@@ -2128,15 +2118,12 @@ function submitToGoogleForm() {
   document.body.appendChild(form);
   form.submit();
 
-  // Success feedback after 2s
   setTimeout(() => {
     btn.textContent = '✅ 저장 완료!';
     btn.style.background = 'var(--accent2)';
     btn.style.opacity = '1';
     statusEl.style.color = 'var(--accent2)';
-    statusEl.textContent = `✓ ${userName}님의 진단 결과가 저장되었습니다. MITGEUL AI가 분석에 활용합니다 😊`;
-
-    // Cleanup
+    statusEl.textContent = userName + '님의 진단 결과가 저장되었습니다. MITGEUL AI가 분석에 활용합니다 😊';
     setTimeout(() => {
       document.body.removeChild(iframe);
       document.body.removeChild(form);
