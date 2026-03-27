@@ -62,10 +62,11 @@
     font-size: 18px;
     font-weight: 500;
     letter-spacing: 4px;
-    color: #fff;
+    color: #ffffff !important;
     line-height: 1;
+    visibility: visible !important;
   }
-  .mitgeul-wordmark span { color: var(--accent); margin-left: 2px; }
+  .mitgeul-wordmark span { color: #3DFFC0 !important; margin-left: 2px; }
 
   /* HEADER */
   .header {
@@ -128,7 +129,11 @@
     color: var(--accent);
     box-shadow: 0 0 20px rgba(61,255,192,0.15);
   }
-  .step-btn.done { border-color: var(--accent2); color: var(--accent2); background: rgba(61,255,192,0.05); }
+  .step-btn.done {
+    border-color: rgba(61,255,192,0.4);
+    color: rgba(61,255,192,0.6);
+    background: rgba(61,255,192,0.04);
+  }
   .step-num {
     width: 22px; height: 22px;
     border-radius: 50%;
@@ -138,7 +143,7 @@
     font-size: 11px;
   }
   .step-btn.active .step-num { background: var(--accent); color: #111850; }
-  .step-btn.done .step-num { background: var(--accent2); color: #111850; }
+  .step-btn.done .step-num { background: rgba(61,255,192,0.2); color: rgba(61,255,192,0.7); }
 
   /* SECTION */
   .section { display: none; animation: fadeIn 0.4s ease; }
@@ -749,7 +754,7 @@
       <span class="mitgeul-wordmark">MITGEUL<span>AI</span></span>
     </div>
     <div class="header-badge">AI DIAGNOSIS SYSTEM · v2.0</div>
-    <h1>사업 기준 · 자가진단<br><span>AI 통합 시스템</span></h1>
+    <h1>사업 기준 · 자가진단 <span>AI 통합 시스템</span></h1>
     <p>MITGEUL AI가 분석하는 사업 기준 진단<br>매장 자가진단 · AI점수 · 벤치마크 · 실행 솔루션 · 리포트</p>
   </div>
 
@@ -1050,6 +1055,7 @@
 </div>
 
 <script>
+
 
 
 
@@ -1694,11 +1700,6 @@ function renderBenchmark() {
     '<th>항목</th><th>권장 목표치<span style="font-size:10px;font-weight:400;color:var(--text3)"> (참고)</span></th><th>평균 수준</th><th>최소 기준</th><th>내 매장</th><th>수준</th>' +
     '</tr></thead><tbody>' + rows + '</tbody></table></div>';
   state.stepDone[4] = true;
-  document.querySelectorAll('.step-btn').forEach(function(b,i){
-    b.classList.remove('active','done');
-    if(i===3) b.classList.add('active');
-    else if(state.stepDone[i]) b.classList.add('done');
-  });
 }
 
 // ===================== STEP 5: 실행 솔루션 =====================
@@ -1710,7 +1711,6 @@ function loadPlanTabs() {
   renderPlanContent('today', ACTION_PLANS.today, 'planToday');
   renderPlanContent('week', ACTION_PLANS.week, 'planWeek');
   renderPlanContent('month', ACTION_PLANS.month, 'planMonth');
-  state.stepDone[5] = true;
 }
 
 function renderPlanContent(period, data, containerId) {
@@ -1759,7 +1759,7 @@ function switchPlan(tab) {
 
 // ===================== STEP 6: 통합 리포트 =====================
 function generateReport() {
-  state.stepDone[5] = true;
+  state.stepDone[6] = true;
   goStep(6);
   var container = document.getElementById('reportContainer');
   var info = state.info;
@@ -2178,6 +2178,7 @@ window.onload = function() {
   renderChecklist();
   loadPlanTabs();
 };
+
 
 
 
