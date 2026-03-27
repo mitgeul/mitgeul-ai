@@ -1964,11 +1964,13 @@ function saveInfo() {
 function updateCategory() {}
 
 function goStep(n) {
-  document.querySelectorAll('.section').forEach((s,i) => {
-    s.classList.toggle('active', i === n);
-  });
-  document.querySelectorAll('.step-btn').forEach((b,i) => {
-    b.classList.remove('active','done');
+  // id 기반으로 정확히 섹션 전환 (클래스명 충돌 방지)
+  for (let i = 0; i <= 6; i++) {
+    const sec = document.getElementById('sec' + i);
+    if (sec) sec.classList.toggle('active', i === n);
+  }
+  document.querySelectorAll('.step-btn').forEach((b, i) => {
+    b.classList.remove('active', 'done');
     if (i === n) b.classList.add('active');
     else if (state.stepDone[i]) b.classList.add('done');
   });
