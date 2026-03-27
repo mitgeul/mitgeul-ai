@@ -1371,7 +1371,6 @@ function closeBizResult() {
 }
 
 window.onload = function() {
-  renderBizCheck();
   renderChecklist();
   loadPlanTabs();
 };
@@ -1945,14 +1944,13 @@ function saveInfo() {
     mainConcern: document.getElementById('mainConcern').value,
   };
   state.stepDone[0] = true;
-  renderBizCheck();
   goStep(1);
 }
 
 function updateCategory() {}
 
 function goStep(n) {
-  // id 기반으로 정확히 섹션 전환 (클래스명 충돌 방지)
+  // id 기반으로 정확히 섹션 전환
   for (let i = 0; i <= 6; i++) {
     const sec = document.getElementById('sec' + i);
     if (sec) sec.classList.toggle('active', i === n);
@@ -1962,6 +1960,14 @@ function goStep(n) {
     if (i === n) b.classList.add('active');
     else if (state.stepDone[i]) b.classList.add('done');
   });
+  // sec1(사업기준)으로 이동 시 체크리스트 렌더
+  if (n === 1) {
+    setTimeout(() => renderBizCheck(), 50);
+  }
+  // sec2(자가진단)으로 이동 시 체크리스트 업종별 재렌더
+  if (n === 2) {
+    setTimeout(() => renderChecklist(), 50);
+  }
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
