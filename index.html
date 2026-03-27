@@ -112,7 +112,7 @@
   .step-btn {
     flex: 0 0 auto;
     display: flex; align-items: center; gap: 6px;
-    padding: 8px 12px;
+    padding: 8px 14px;
     border-radius: 10px;
     border: 1px solid var(--border);
     background: var(--card);
@@ -120,6 +120,7 @@
     font-size: 12px;
     font-weight: 500;
     cursor: pointer;
+    white-space: nowrap;
     transition: all 0.25s;
     white-space: nowrap;
   }
@@ -130,9 +131,9 @@
     box-shadow: 0 0 20px rgba(61,255,192,0.15);
   }
   .step-btn.done {
-    border-color: rgba(61,255,192,0.4);
-    color: rgba(61,255,192,0.6);
-    background: rgba(61,255,192,0.04);
+    border-color: var(--border);
+    color: var(--text2);
+    background: var(--card);
   }
   .step-num {
     width: 22px; height: 22px;
@@ -143,7 +144,7 @@
     font-size: 11px;
   }
   .step-btn.active .step-num { background: var(--accent); color: #111850; }
-  .step-btn.done .step-num { background: rgba(61,255,192,0.2); color: rgba(61,255,192,0.7); }
+  .step-btn.done .step-num { background: var(--accent); color: #111850; font-weight:700; }
 
   /* SECTION */
   .section { display: none; animation: fadeIn 0.4s ease; }
@@ -1054,12 +1055,14 @@
 
 </div>
 
+<s
+
+
+
+
+
+
 <script>
-
-
-
-
-
 // ===================== DATA =====================
 const CHECKLIST_DATA = [
   {
@@ -1759,6 +1762,7 @@ function switchPlan(tab) {
 
 // ===================== STEP 6: 통합 리포트 =====================
 function generateReport() {
+  state.stepDone[5] = true;
   state.stepDone[6] = true;
   goStep(6);
   var container = document.getElementById('reportContainer');
@@ -2137,15 +2141,31 @@ function submitToGoogleForm() {
   if (statusEl) { statusEl.style.display = 'block'; statusEl.textContent = '구글 스프레드시트에 저장 중...'; }
 
   // fetch no-cors 방식으로 구글폼 제출 (CORS 우회)
-  console.log('폼 제출 시도:', GFORM_URL);
-  console.log('params:', params.toString().substring(0, 200));
-  fetch(GFORM_URL, {
-    method: 'POST',
-    mode: 'no-cors',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: params.toString()
-  }).then(function() {
-    console.log('폼 제출 완료 (no-cors - opaque response)');
+  // iframe + form 방식으로 구글폼 제출 (가장 안정적)
+  var iframeName = 'gform_target_' + Date.now();
+  var iframe = document.createElement('iframe');
+  iframe.setAttribute('name', iframeName);
+  iframe.setAttribute('id', iframeName);
+  iframe.style.cssText = 'display:none;width:0;height:0;border:0;';
+  document.body.appendChild(iframe);
+
+  var form = document.createElement('form');
+  form.setAttribute('method', 'POST');
+  form.setAttribute('action', GFORM_URL);
+  form.setAttribute('target', iframeName);
+  form.style.display = 'none';
+
+  params.forEach(function(val, key) {
+    var input = document.createElement('input');
+    input.setAttribute('type', 'hidden');
+    input.setAttribute('name', key);
+    input.setAttribute('value', val);
+    form.appendChild(input);
+  });
+
+  document.body.appendChild(form);
+
+  iframe.onload = function() {
     btn.textContent = '✅ 저장 완료!';
     btn.style.background = 'var(--accent2)';
     btn.style.opacity = '1';
@@ -2154,17 +2174,27 @@ function submitToGoogleForm() {
       statusEl.style.color = 'var(--accent2)';
       statusEl.textContent = userName + '님의 진단 결과가 저장되었습니다. MITGEUL AI가 분석에 활용합니다 😊';
     }
-  }).catch(function(err) {
-    // no-cors는 항상 opaque response → catch 거의 안 됨
-    btn.textContent = '✅ 저장 완료!';
-    btn.style.background = 'var(--accent2)';
-    btn.style.opacity = '1';
-    btn.disabled = false;
-    if (statusEl) {
-      statusEl.style.color = 'var(--accent2)';
-      statusEl.textContent = userName + '님의 진단 결과가 저장되었습니다.';
+    setTimeout(function() {
+      if (iframe.parentNode) document.body.removeChild(iframe);
+      if (form.parentNode) document.body.removeChild(form);
+    }, 3000);
+  };
+
+  form.submit();
+
+  // iframe.onload가 안 될 경우 대비 타임아웃
+  setTimeout(function() {
+    if (btn.textContent === '⏳ 저장 중...') {
+      btn.textContent = '✅ 저장 완료!';
+      btn.style.background = 'var(--accent2)';
+      btn.style.opacity = '1';
+      btn.disabled = false;
+      if (statusEl) {
+        statusEl.style.color = 'var(--accent2)';
+        statusEl.textContent = userName + '님의 진단 결과가 저장되었습니다. MITGEUL AI가 분석에 활용합니다 😊';
+      }
     }
-  });
+  }, 3000);
 }
 
 function copyReport() {
@@ -2178,6 +2208,13 @@ window.onload = function() {
   renderChecklist();
   loadPlanTabs();
 };
+
+
+
+
+
+
+
 
 
 
