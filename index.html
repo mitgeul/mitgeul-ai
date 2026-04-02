@@ -1465,6 +1465,89 @@ window.onload = function() {
   renderActionPlan();
 };
 
+// ===================== 비밀번호 게이트 =====================
+(function() {
+  var PASS = 'mitgeul2026';
+  var SESSION_KEY = 'mg_auth';
+
+  function showGate() {
+    var overlay = document.createElement('div');
+    overlay.id = 'pwGate';
+    overlay.style.cssText = [
+      'position:fixed','inset:0','z-index:99999',
+      'background:#1E2370',
+      'display:flex','align-items:center','justify-content:center',
+      'font-family:Pretendard,sans-serif'
+    ].join(';');
+
+    overlay.innerHTML = [
+      '<div style="width:100%;max-width:400px;padding:0 24px;text-align:center">',
+
+        // 로고
+        '<svg width="48" height="48" viewBox="0 0 42 42" fill="none" style="margin-bottom:20px">',
+          '<rect width="42" height="42" rx="12" fill="#252c8a"/>',
+          '<rect width="42" height="42" rx="12" stroke="#3DFFC0" stroke-width="1.5" stroke-opacity="0.4" fill="none"/>',
+          '<text x="21" y="30" text-anchor="middle" font-family="DM Mono,monospace" font-size="22" font-weight="700" fill="#3DFFC0">M</text>',
+          '<circle cx="34" cy="9" r="3.5" fill="#3DFFC0" opacity="0.9"/>',
+        '</svg>',
+
+        '<div style="font-family:DM Mono,monospace;font-size:11px;letter-spacing:3px;color:#3DFFC0;margin-bottom:10px">MITGEUL AI</div>',
+        '<div style="font-size:18px;font-weight:700;color:#fff;margin-bottom:6px">사업 기준 · 자가진단 시스템</div>',
+        '<div style="font-size:13px;color:#64748b;margin-bottom:32px">접근 코드를 입력해주세요</div>',
+
+        '<input id="pwInput" type="password" placeholder="접근 코드" autocomplete="off"',
+          'style="width:100%;background:#171d5e;border:1px solid #2d3580;border-radius:10px;',
+          'color:#e2e8f0;font-family:Pretendard,sans-serif;font-size:15px;',
+          'padding:13px 16px;outline:none;text-align:center;letter-spacing:4px;',
+          'margin-bottom:12px;box-sizing:border-box" />',
+
+        '<button id="pwBtn"',
+          'style="width:100%;background:#3DFFC0;color:#111850;border:none;border-radius:10px;',
+          'font-size:14px;font-weight:700;padding:13px;cursor:pointer;',
+          'font-family:Pretendard,sans-serif;margin-bottom:16px">',
+          '입력 확인',
+        '</button>',
+
+        '<div id="pwErr" style="font-size:12px;color:#f43f5e;min-height:18px"></div>',
+
+      '</div>'
+    ].join('');
+
+    document.body.appendChild(overlay);
+
+    var input = document.getElementById('pwInput');
+    var btn   = document.getElementById('pwBtn');
+    var err   = document.getElementById('pwErr');
+
+    function attempt() {
+      if (input.value === PASS) {
+        sessionStorage.setItem(SESSION_KEY, '1');
+        overlay.style.opacity = '0';
+        overlay.style.transition = 'opacity 0.3s';
+        setTimeout(function(){ overlay.parentNode && overlay.parentNode.removeChild(overlay); }, 320);
+      } else {
+        err.textContent = '접근 코드가 올바르지 않습니다.';
+        input.value = '';
+        input.style.borderColor = '#f43f5e';
+        setTimeout(function(){ input.style.borderColor = '#2d3580'; err.textContent = ''; }, 1800);
+      }
+    }
+
+    btn.addEventListener('click', attempt);
+    input.addEventListener('keydown', function(e){ if (e.key === 'Enter') attempt(); });
+    setTimeout(function(){ input.focus(); }, 100);
+  }
+
+  if (sessionStorage.getItem(SESSION_KEY) !== '1') {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', showGate);
+    } else {
+      showGate();
+    }
+  }
+})();
+
+
 
 </script>
 </body>
