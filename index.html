@@ -331,11 +331,14 @@
   .divider { height: 1px; background: var(--border); margin: 24px 0; }
 
   /* ── 인쇄/PDF ── */
-  @media print {
-    @page { size: A4; margin: 15mm 15mm 18mm 15mm; }
-    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-    body { background: #fff !important; color: #1a1a2e !important; }
-    .header, .step-nav, .btn-row, #reportBtns, .gform-banner { display: none !important; }
+@media print {
+  @page { size: A4; margin: 15mm 15mm 18mm 15mm; }
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  body { background: #fff !important; color: #1a1a2e !important; }
+  .header, .step-nav, .btn-row, #reportBtns, .gform-banner { display: none !important; }
+  .report-sec-body { color: #1a1a2e !important; }
+  [style*="color:#fff"] { color: #1a1a2e !important; }
+  [style*="background:rgba(61,255,192"] { background: #f0fff8 !important; }
     #sec0,#sec1,#sec2,#sec3,#sec4,#sec5 { display: none !important; }
     #sec6 { display: block !important; margin: 0; padding: 0; }
     .card { background: #fff !important; border: 1px solid #c8cce8 !important; border-radius: 6px !important; page-break-inside: avoid; break-inside: avoid; margin-bottom: 10px; }
