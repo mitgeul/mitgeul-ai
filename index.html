@@ -1403,59 +1403,51 @@ function submitToGoogleForm() {
   var weak   = Object.entries(catScores).filter(function(e){return e[1].pct<50;}).map(function(e){return e[0];}).join(', ');
   var scoreNum = score;
   var gradeStr = scoreNum>=85?'S등급':scoreNum>=70?'A등급':scoreNum>=55?'B등급':scoreNum>=40?'C등급':'D등급';
-  var solText = '[매장 자가진단]\n강점: '+(strong||'없음')+'\n약점: '+(weak||'없음')+'\n\n[핵심 실행]\n오늘: 미답변 리뷰 답글, 대표사진 점검\n이번주: 사진 보강, 리뷰 요청\n이번달: 블로그 체험단, 이벤트 등록';
+  var solText = '[매장 자가진단]\n강점: '+(strong||'없음')+'\n약점: '+(weak||'없음');
 
-  var params = new URLSearchParams();
-  params.append(GFORM_ENTRIES.name,           userName.trim());
-  params.append(GFORM_ENTRIES.phone,          userPhone.trim());
-  params.append(GFORM_ENTRIES.storeName,      info.storeName    || '미입력');
-  params.append(GFORM_ENTRIES.category,       info.category     || '미입력');
-  params.append(GFORM_ENTRIES.storeUrl,       info.storeUrl     || '미입력');
-  params.append(GFORM_ENTRIES.mainConcern,    info.mainConcern  || '미입력');
-  params.append(GFORM_ENTRIES.bizYesCount,    '사업기준 YES ' + state.bizYesCount + '개 / 15개');
-  params.append(GFORM_ENTRIES.bizGrade,       state.bizResult ? state.bizResult.grade : '미완료');
-  params.append(GFORM_ENTRIES.blogReviews,    (info.blogReviews    || '0') + '개');
-  params.append(GFORM_ENTRIES.photoCount,     (info.photoCount     || '0') + '장');
-  params.append(GFORM_ENTRIES.visitorReviews, (info.visitorReviews || '0') + '개');
-  params.append(GFORM_ENTRIES.yesCount,       '매장 YES ' + yesCount + '개');
-  params.append(GFORM_ENTRIES.noCount,        '매장 NO '  + noCount  + '개');
-  params.append(GFORM_ENTRIES.score,          score + '점 / 100점');
-  params.append(GFORM_ENTRIES.grade,          gradeStr);
-  params.append(GFORM_ENTRIES.strongAreas,    strong || '없음');
-  params.append(GFORM_ENTRIES.weakAreas,      weak   || '없음');
-  params.append(GFORM_ENTRIES.finalSolution,  solText);
-  params.append(GFORM_ENTRIES.diagDate,       diagDate);
+  var formData = new FormData();
+  formData.append(GFORM_ENTRIES.name,          userName.trim());
+  formData.append(GFORM_ENTRIES.phone,         userPhone.trim());
+  formData.append(GFORM_ENTRIES.storeName,     info.storeName    || '미입력');
+  formData.append(GFORM_ENTRIES.category,      info.category     || '미입력');
+  formData.append(GFORM_ENTRIES.storeUrl,      info.storeUrl     || '미입력');
+  formData.append(GFORM_ENTRIES.mainConcern,   info.mainConcern  || '미입력');
+  formData.append(GFORM_ENTRIES.bizYesCount,   '사업기준 YES ' + state.bizYesCount + '개 / 15개');
+  formData.append(GFORM_ENTRIES.bizGrade,      state.bizResult ? state.bizResult.grade : '미완료');
+  formData.append(GFORM_ENTRIES.blogReviews,   (info.blogReviews    || '0') + '개');
+  formData.append(GFORM_ENTRIES.photoCount,    (info.photoCount     || '0') + '장');
+  formData.append(GFORM_ENTRIES.visitorReviews,(info.visitorReviews || '0') + '개');
+  formData.append(GFORM_ENTRIES.yesCount,      '매장 YES ' + yesCount + '개');
+  formData.append(GFORM_ENTRIES.noCount,       '매장 NO '  + noCount  + '개');
+  formData.append(GFORM_ENTRIES.score,         score + '점 / 100점');
+  formData.append(GFORM_ENTRIES.grade,         gradeStr);
+  formData.append(GFORM_ENTRIES.strongAreas,   strong || '없음');
+  formData.append(GFORM_ENTRIES.weakAreas,     weak   || '없음');
+  formData.append(GFORM_ENTRIES.finalSolution, solText);
+  formData.append(GFORM_ENTRIES.diagDate,      diagDate);
 
-  btn.disabled = true; btn.textContent = '⏳ 저장 중...'; btn.style.opacity = '0.7';
-  if (statusEl) { statusEl.style.display = 'block'; statusEl.textContent = '구글 스프레드시트에 저장 중...'; }
+  btn.disabled = true;
+  btn.textContent = '⏳ 저장 중...';
+  if (statusEl) { statusEl.style.display = 'block'; statusEl.textContent = '저장 중...'; }
 
-  var iframeName = 'gf_' + Date.now();
-  var iframe = document.createElement('iframe');
-  iframe.setAttribute('name', iframeName);
-  iframe.style.cssText = 'display:none;width:0;height:0;border:0';
-  document.body.appendChild(iframe);
-
-  var form = document.createElement('form');
-  form.setAttribute('method', 'POST');
-  form.setAttribute('action', GFORM_URL);
-  form.setAttribute('target', iframeName);
-  form.style.display = 'none';
-  params.forEach(function(val, key) {
-    var inp = document.createElement('input');
-    inp.setAttribute('type','hidden');
-    inp.setAttribute('name',key);
-    inp.setAttribute('value',val);
-    form.appendChild(inp);
-  });
-  document.body.appendChild(form);
-  form.submit();
-
-  setTimeout(function() {
-    btn.textContent = '✅ 저장 완료!';
-    btn.style.background = 'var(--accent)'; btn.style.opacity = '1'; btn.disabled = false;
-    if (statusEl) { statusEl.style.color = 'var(--accent)'; statusEl.textContent = userName + '님의 진단 결과가 저장되었습니다. MITGEUL AI가 분석에 활용합니다 😊'; }
-    setTimeout(function(){ if(iframe.parentNode) document.body.removeChild(iframe); if(form.parentNode) document.body.removeChild(form); }, 3000);
-  }, 2500);
+  fetch(GFORM_URL, { method: 'POST', mode: 'no-cors', body: formData })
+    .then(function() {
+      btn.textContent = '✅ 저장 완료!';
+      btn.style.background = 'var(--accent)';
+      btn.disabled = false;
+      if (statusEl) {
+        statusEl.style.color = 'var(--accent)';
+        statusEl.textContent = userName + '님의 진단 결과가 저장되었습니다 😊';
+      }
+    })
+    .catch(function() {
+      btn.textContent = '❌ 저장 실패';
+      btn.disabled = false;
+      if (statusEl) {
+        statusEl.style.color = '#f43f5e';
+        statusEl.textContent = '저장 실패. 다시 시도해주세요.';
+      }
+    });
 }
 
 // ===================== 초기화 =====================
