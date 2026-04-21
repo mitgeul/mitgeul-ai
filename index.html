@@ -77,7 +77,7 @@
     font-weight: 700; line-height: 1.2; color: #fff; margin-bottom: 12px;
   }
   .header h1 span { color: var(--accent); }
-  .header p { font-size: 18px; color: var(--text2); max-width: 500px; margin: 0 auto; line-height: 1.7; }
+  .header p { font-size: 15px; color: var(--text2); max-width: 500px; margin: 0 auto; line-height: 1.7; }
 
   /* ── 스텝 네비 ── */
   .step-nav {
@@ -92,7 +92,7 @@
     flex: 0 0 auto; display: flex; align-items: center; gap: 6px;
     padding: 9px 14px; border-radius: 10px;
     border: 1px solid var(--border); background: var(--card);
-    color: var(--text3); font-size: 15px; font-weight: 500;
+    color: var(--text3); font-size: 12px; font-weight: 500;
     cursor: pointer; transition: all 0.25s; white-space: nowrap;
   }
   .step-btn.active {
@@ -122,8 +122,8 @@
     background: rgba(61,255,192,0.1); border: 1px solid rgba(61,255,192,0.2);
     display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;
   }
-  .section-title { font-family: 'Noto Serif KR', serif; font-size: 25px; font-weight: 700; color: #fff; }
-  .section-sub { font-size: 16px; color: var(--text2); margin-top: 2px; }
+  .section-title { font-family: 'Noto Serif KR', serif; font-size: 22px; font-weight: 700; color: #fff; }
+  .section-sub { font-size: 13px; color: var(--text2); margin-top: 2px; }
 
   /* ── 카드 ── */
   .card {
@@ -137,11 +137,11 @@
   .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
   @media(max-width:600px) { .info-grid { grid-template-columns: 1fr; } }
   .form-group { display: flex; flex-direction: column; gap: 8px; }
-  label { font-size: 16px; color: var(--text2); font-weight: 500; }
+  label { font-size: 13px; color: var(--text2); font-weight: 500; }
   input, select, textarea {
     background: var(--bg2); border: 1px solid var(--border);
     border-radius: 10px; color: var(--text);
-    font-family: 'Pretendard', sans-serif; font-size: 17px;
+    font-family: 'Pretendard', sans-serif; font-size: 14px;
     padding: 11px 14px; outline: none; transition: border-color 0.2s;
   }
   input:focus, select:focus, textarea:focus {
@@ -169,8 +169,8 @@
   .check-item:hover { border-color: rgba(61,255,192,0.2); }
   .check-item.yes { border-color: rgba(61,255,192,0.3); background: rgba(61,255,192,0.04); }
   .check-item.no  { border-color: rgba(244,63,94,0.3); background: rgba(244,63,94,0.04); }
-  .check-item-text { font-size: 17px; color: var(--text); flex:1; }
-  .check-item-sub  { font-size: 15px; color: var(--text3); margin-top: 2px; }
+  .check-item-text { font-size: 14px; color: var(--text); flex:1; }
+  .check-item-sub  { font-size: 12px; color: var(--text3); margin-top: 2px; }
   .check-item-score { font-size: 11px; color: var(--text3); font-family:'DM Mono',monospace; margin-right:16px; }
   .yn-btns { display: flex; gap: 6px; }
   .yn-btn {
@@ -184,8 +184,8 @@
 
   /* ── 진행률 ── */
   .progress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-  .progress-label { font-size: 16px; color: var(--text2); }
-  .progress-val   { font-family: 'DM Mono', monospace; font-size: 16px; color: var(--accent); }
+  .progress-label { font-size: 13px; color: var(--text2); }
+  .progress-val   { font-family: 'DM Mono', monospace; font-size: 13px; color: var(--accent); }
   .progress-track { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
   .progress-fill  { height: 100%; border-radius: 2px; background: linear-gradient(90deg, #3DFFC0, #00e8a8); transition: width 0.5s; }
 
@@ -205,17 +205,17 @@
   }
   .score-num   { font-family: 'DM Mono', monospace; font-size: 42px; font-weight: 500; color: #fff; line-height: 1; }
   .score-label { font-size: 11px; color: var(--text3); margin-top: 4px; letter-spacing: 1px; }
-  .score-grade { font-size: 18px; font-weight: 700; margin-top: 6px; }
+  .score-grade { font-size: 15px; font-weight: 700; margin-top: 6px; }
 
   .score-bar-item   { margin-bottom: 14px; }
-  .score-bar-label  { display: flex; justify-content: space-between; font-size: 16px; color: var(--text2); margin-bottom: 6px; }
+  .score-bar-label  { display: flex; justify-content: space-between; font-size: 13px; color: var(--text2); margin-bottom: 6px; }
   .score-bar-track  { height: 6px; border-radius: 3px; background: var(--bg3); overflow: hidden; }
   .score-bar-fill   { height: 100%; border-radius: 3px; background: linear-gradient(90deg, #3DFFC0, #00e8a8); transition: width 0.8s cubic-bezier(0.34,1.56,0.64,1); }
 
   /* ── 강점/약점 ── */
   .strength-item, .weakness-item {
     display: flex; align-items: flex-start; gap: 10px;
-    font-size: 16px; color: var(--text2); line-height: 1.5;
+    font-size: 13px; color: var(--text2); line-height: 1.5;
     padding: 10px 14px; border-radius: 8px; margin-bottom: 8px;
   }
   .strength-item { background: rgba(61,255,192,0.05); border: 1px solid rgba(61,255,192,0.1); }
@@ -231,11 +231,11 @@
     letter-spacing: 0.5px; border-bottom: 1px solid var(--border);
   }
   .bench-table td {
-    padding: 12px 14px; font-size: 16px;
+    padding: 12px 14px; font-size: 13px;
     border-bottom: 1px solid rgba(255,255,255,0.03); color: var(--text2);
   }
   .bench-table tr:hover td { background: rgba(61,255,192,0.02); }
-  .bench-val      { font-family: 'DM Mono', monospace; font-size: 16px; }
+  .bench-val      { font-family: 'DM Mono', monospace; font-size: 13px; }
   .bench-val.top  { color: var(--accent); }
   .bench-val.mine { color: #fff; font-weight: 600; }
   .bench-tag { display: inline-block; padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; font-family: 'DM Mono', monospace; }
@@ -248,7 +248,7 @@
   .plan-tab {
     padding: 8px 20px; border-radius: 8px; border: 1px solid var(--border);
     background: transparent; color: var(--text3);
-    font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.2s;
+    font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s;
   }
   .plan-tab.active { background: var(--accent); border-color: var(--accent); color: #111850; font-weight: 700; }
   .plan-content { display: none; }
@@ -268,8 +268,8 @@
   .task-priority.urgent { background: rgba(244,63,94,0.2); color: var(--accent4); }
   .task-priority.high   { background: rgba(245,158,11,0.2); color: var(--accent3); }
   .task-priority.normal { background: rgba(61,255,192,0.1); color: var(--accent); }
-  .task-text { font-size: 17px; color: var(--text); flex:1; line-height: 1.5; }
-  .task-desc { font-size: 15px; color: var(--text3); margin-top: 4px; }
+  .task-text { font-size: 14px; color: var(--text); flex:1; line-height: 1.5; }
+  .task-desc { font-size: 12px; color: var(--text3); margin-top: 4px; }
 
   /* ── 리포트 ── */
   .report-header {
@@ -277,7 +277,7 @@
     border: 1px solid rgba(61,255,192,0.2); border-radius: 16px;
     padding: 28px; margin-bottom: 16px;
   }
-  .report-title { font-family: 'Noto Serif KR', serif; font-size: 23px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+  .report-title { font-family: 'Noto Serif KR', serif; font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 8px; }
   .report-meta  { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text3); }
   .report-meta a { color: var(--accent); text-decoration: none; }
 
@@ -288,20 +288,20 @@
     padding: 18px 20px 18px 18px; margin-bottom: 14px;
   }
   .report-sec-label {
-    font-size: 14px; font-weight: 700; color: var(--accent);
+    font-size: 11px; font-weight: 700; color: var(--accent);
     font-family: 'DM Mono', monospace; letter-spacing: 1px;
     text-transform: uppercase; margin-bottom: 10px;
   }
-  .report-sec-body { font-size: 16px; color: var(--text2); line-height: 1.85; }
+  .report-sec-body { font-size: 13px; color: var(--text2); line-height: 1.85; }
 
-  .r-list-item { display: flex; gap: 10px; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 16px; color: var(--text2); line-height: 1.6; }
+  .r-list-item { display: flex; gap: 10px; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 13px; color: var(--text2); line-height: 1.6; }
   .r-num { width: 20px; height: 20px; border-radius: 5px; background: rgba(61,255,192,0.12); color: var(--accent); font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .r-action-box { padding: 14px 16px; background: rgba(61,255,192,0.06); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; font-size: 16px; color: var(--text2); line-height: 1.7; margin-bottom: 10px; }
+  .r-action-box { padding: 14px 16px; background: rgba(61,255,192,0.06); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; font-size: 13px; color: var(--text2); line-height: 1.7; margin-bottom: 10px; }
 
   /* ── 버튼 ── */
   .btn {
     display: inline-flex; align-items: center; gap: 8px;
-    padding: 12px 24px; border-radius: 10px; font-size: 17px;
+    padding: 12px 24px; border-radius: 10px; font-size: 14px;
     font-weight: 600; cursor: pointer; border: none; transition: all 0.25s;
     font-family: 'Pretendard', sans-serif;
   }
@@ -312,7 +312,7 @@
   .btn-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 24px; }
 
   /* ── 알림 ── */
-  .alert { padding: 14px 18px; border-radius: 10px; font-size: 16px; line-height: 1.6; margin-bottom: 16px; display: flex; align-items: flex-start; gap: 10px; }
+  .alert { padding: 14px 18px; border-radius: 10px; font-size: 13px; line-height: 1.6; margin-bottom: 16px; display: flex; align-items: flex-start; gap: 10px; }
   .alert-info { background: rgba(61,255,192,0.06); border: 1px solid rgba(61,255,192,0.2); color: var(--text2); }
   .alert-warn { background: rgba(245,158,11,0.06); border: 1px solid rgba(245,158,11,0.2); color: #fcd34d; }
 
@@ -324,18 +324,18 @@
     display: flex; align-items: center; justify-content: space-between;
     gap: 16px; flex-wrap: wrap;
   }
-  .gform-banner-text { font-size: 16px; color: var(--text2); line-height: 1.6; }
+  .gform-banner-text { font-size: 13px; color: var(--text2); line-height: 1.6; }
   .gform-banner-text strong { color: #fff; display: block; margin-bottom: 4px; }
   #gformStatus { font-size: 12px; color: var(--accent); margin-top: 6px; display: none; }
 
   .divider { height: 1px; background: var(--border); margin: 24px 0; }
 
   /* ── 인쇄/PDF ── */
-@media print {
-  @page { size: A4; margin: 15mm 15mm 18mm 15mm; }
-  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-  body { background: #fff !important; color: #1a1a2e !important; }
-  .header, .step-nav, .btn-row, #reportBtns, .gform-banner { display: none !important; }
+  @media print {
+    @page { size: A4; margin: 15mm 15mm 18mm 15mm; }
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    body { background: #fff !important; color: #1a1a2e !important; }
+    .header, .step-nav, .btn-row, #reportBtns, .gform-banner { display: none !important; }
   .report-sec-body { color: #1a1a2e !important; }
   [style*="color:#fff"] { color: #1a1a2e !important; }
   [style*="background:rgba(61,255,192"] { background: #f0fff8 !important; }
@@ -429,7 +429,8 @@
         <div class="form-group">
           <label>운영 기간</label>
           <select id="storeAge">
-            <option value="new">6개월 미만</option>
+            <option value="new3">3개월 미만</option>
+            <option value="new6">3개월 ~ 6개월</option>
             <option value="1yr">6개월 ~ 1년</option>
             <option value="2yr">1년 ~ 2년</option>
             <option value="old">2년 이상</option>
@@ -456,7 +457,7 @@
             <option value="📍 온라인엔 보이는데 실제 방문이 없어요">📍 온라인엔 보이는데 실제 방문이 없어요</option>
             <option value="⭐ 리뷰가 적거나 나쁜 리뷰가 많아요">⭐ 리뷰가 적거나 나쁜 리뷰가 많아요</option>
             <option value="📸 사진이 없거나 매장이 잘 안 보여요">📸 사진이 없거나 매장이 잘 안 보여요</option>
-            <option value="📝 SNS·체험단 콘텐츠를 어떻게 해야 할지 몰라요">📝 SNS·체험단 콘텐츠를 어떻게 해야 할지 몰라요</option>
+            <option value="📝 블로그·체험단 운영을 어떻게 해야 할지 몰라요">📝 블로그·체험단 운영을 어떻게 해야 할지 몰라요</option>
             <option value="🏆 경쟁 매장보다 항상 밀려요">🏆 경쟁 매장보다 항상 밀려요</option>
             <option value="⚙️ 매장 정보 관리·업데이트가 어려워요">⚙️ 매장 정보 관리·업데이트가 어려워요</option>
           </select>
@@ -484,7 +485,7 @@
         <div style="display:flex;gap:12px"><span style="color:var(--accent);font-family:'DM Mono',monospace;font-size:11px;flex-shrink:0;padding-top:2px">Q 02</span><span style="font-size:14px;color:var(--text2)">고객은 왜 대표님을 선택해야 합니까?</span></div>
         <div style="display:flex;gap:12px"><span style="color:var(--accent);font-family:'DM Mono',monospace;font-size:11px;flex-shrink:0;padding-top:2px">Q 03</span><span style="font-size:14px;color:var(--text2)">지금 하고 있는 마케팅은 사업 방향과 맞습니까?</span></div>
       </div>
-      <div style="margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.06);font-size:12px;color:var(--text3)">답을 적지 않아도 됩니다. 대표님의 현재 상황을 점검합니다.</div>
+      <div style="margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.06);font-size:12px;color:var(--text3)">답을 적지 않아도 됩니다. 질문 앞에서 잠깐 멈추는 것만으로 충분합니다.</div>
     </div>
     <div class="alert alert-info">💡 <div>이 점검은 실행력 테스트가 아닙니다. <strong style="color:var(--accent)">답이 바로 떠오르지 않거나 멈칫하는 문항</strong>이 있다면, 그 지점이 지금 상태입니다. 지금 상황에 더 가까운 쪽을 직관적으로 체크해주세요.</div></div>
     <div id="bizCheckContainer"></div>
@@ -670,7 +671,7 @@ const CHECKLIST_DATA = [
     cat: "리뷰 구조 영역 (07–11)", icon: "⭐",
     items: [
       { id:"c7",  text:"리뷰가 최근 3개월 이내에도 꾸준히 올라오고 있다", sub:"최신성 지수 — 검색 노출에 직접 영향", score:3 },
-      { id:"c8",  text:"리뷰 내용이 단순 별점이 아니라 방문 경험을 구체적으로 설명하고 있다", sub:"리뷰 품질이 신뢰도에 직결됨", score:3 },
+      { id:"c8",  text:"리뷰 내용이 단순 별점이 아니라 방문 경험을 구체적으로 설명하고 있다", sub:"리뷰 품질이 신뢰도에 직결됨", score:3, dynamic:true },
       { id:"c9",  text:"리뷰를 읽으면 고객이 왜 이 매장을 선택했는지 알 수 있다", sub:"선택 이유가 담긴 리뷰는 다음 고객의 판단 근거가 됨", score:3 },
       { id:"c10", text:"부정적인 리뷰에 대표님 답글이 달려 있다", sub:"미답변 부정 리뷰는 신뢰도에 큰 감점 요인", score:3 },
       { id:"c11", text:"전체 리뷰 수가 30개 이상이다", sub:"리뷰 수는 선택 신뢰도의 핵심 기준", score:3 },
@@ -1419,7 +1420,7 @@ function submitToGoogleForm() {
   var weak   = Object.entries(catScores).filter(function(e){return e[1].pct<50;}).map(function(e){return e[0];}).join(', ');
   var scoreNum = score;
   var gradeStr = scoreNum>=85?'S등급':scoreNum>=70?'A등급':scoreNum>=55?'B등급':scoreNum>=40?'C등급':'D등급';
-  var solText = '[매장 자가진단]\n강점: '+(strong||'없음')+'\n약점: '+(weak||'없음');
+  var solText = '[매장 자가진단]\n강점: '+(strong||'없음')+'\n약점: '+(weak||'없음')+'\n\n[핵심 실행]\n오늘: 미답변 리뷰 답글, 대표사진 점검\n이번주: 사진 보강, 리뷰 요청\n이번달: 블로그 체험단, 이벤트 등록';
 
   var formData = new FormData();
   formData.append(GFORM_ENTRIES.name,          userName.trim());
@@ -1500,24 +1501,24 @@ window.onload = function() {
           '<circle cx="34" cy="9" r="3.5" fill="#3DFFC0" opacity="0.9"/>',
         '</svg>',
 
-        '<div style="font-family:DM Mono,monospace;font-size:16px;letter-spacing:3px;color:#3DFFC0;margin-bottom:10px">MITGEUL AI</div>',
-        '<div style="font-size:23px;font-weight:700;color:#fff;margin-bottom:6px">사업 기준 · 자가진단 시스템</div>',
-        '<div style="font-size:18px;color:#64748b;margin-bottom:32px">접근 코드를 입력해주세요</div>',
+        '<div style="font-family:DM Mono,monospace;font-size:11px;letter-spacing:3px;color:#3DFFC0;margin-bottom:10px">MITGEUL AI</div>',
+        '<div style="font-size:18px;font-weight:700;color:#fff;margin-bottom:6px">사업 기준 · 자가진단 시스템</div>',
+        '<div style="font-size:13px;color:#64748b;margin-bottom:32px">접근 코드를 입력해주세요</div>',
 
         '<input id="pwInput" type="password" placeholder="접근 코드" autocomplete="off"',
           'style="width:100%;background:#171d5e;border:1px solid #2d3580;border-radius:10px;',
-          'color:#e2e8f0;font-family:Pretendard,sans-serif;font-size:20px;',
+          'color:#e2e8f0;font-family:Pretendard,sans-serif;font-size:15px;',
           'padding:13px 16px;outline:none;text-align:center;letter-spacing:4px;',
           'margin-bottom:12px;box-sizing:border-box" />',
 
         '<button id="pwBtn"',
           'style="width:100%;background:#3DFFC0;color:#111850;border:none;border-radius:10px;',
-          'font-size:19px;font-weight:700;padding:13px;cursor:pointer;',
+          'font-size:14px;font-weight:700;padding:13px;cursor:pointer;',
           'font-family:Pretendard,sans-serif;margin-bottom:16px">',
           '입력 확인',
         '</button>',
 
-        '<div id="pwErr" style="font-size:17px;color:#f43f5e;min-height:18px"></div>',
+        '<div id="pwErr" style="font-size:12px;color:#f43f5e;min-height:18px"></div>',
 
       '</div>'
     ].join('');
