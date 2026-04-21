@@ -915,6 +915,7 @@ const ACTION_PLANS = {
 
 const GFORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSdf_YdllSh4QIxyeoaZ080xBeDTw8aZnG3LxleJbpthGAzf2w/formResponse";
 const GFORM_ENTRIES = {
+  agree:          "entry.1096758769",   // Q0  개인정보 동의
   name:           "entry.878763656",    // Q1  성함
   phone:          "entry.113765409",    // Q2  연락처
   storeName:      "entry.1420994413",   // Q3  매장명
@@ -1436,6 +1437,7 @@ function submitToGoogleForm() {
   var solText = '[매장 자가진단]\n강점: '+(strong||'없음')+'\n약점: '+(weak||'없음')+'\n\n[핵심 실행]\n오늘: 미답변 리뷰 답글, 대표사진 점검\n이번주: 사진 보강, 리뷰 요청\n이번달: 블로그 체험단, 이벤트 등록';
 
   var formData = new FormData();
+  formData.append(GFORM_ENTRIES.agree,         '동의합니다');
   formData.append(GFORM_ENTRIES.name,          userName.trim());
   formData.append(GFORM_ENTRIES.phone,         userPhone.trim());
   formData.append(GFORM_ENTRIES.storeName,     info.storeName    || '미입력');
