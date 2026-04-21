@@ -1486,6 +1486,7 @@ window.onload = function() {
       'background:#1E2370',
       'display:flex','align-items:center','justify-content:center',
       'font-family:Pretendard,sans-serif'
+      'overflow:hidden'
     ].join(';');
 
     overlay.innerHTML = [
@@ -1522,6 +1523,7 @@ window.onload = function() {
     ].join('');
 
     document.body.appendChild(overlay);
+    document.body.style.overflow = 'hidden';
 
     var input = document.getElementById('pwInput');
     var btn   = document.getElementById('pwBtn');
