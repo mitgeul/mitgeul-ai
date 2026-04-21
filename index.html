@@ -1534,6 +1534,7 @@ window.onload = function() {
         sessionStorage.setItem(SESSION_KEY, '1');
         overlay.style.opacity = '0';
         overlay.style.transition = 'opacity 0.3s';
+        document.body.style.overflow = '';
         setTimeout(function(){ overlay.parentNode && overlay.parentNode.removeChild(overlay); }, 320);
       } else {
         err.textContent = '접근 코드가 올바르지 않습니다.';
