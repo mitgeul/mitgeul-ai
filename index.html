@@ -379,7 +379,7 @@
     </div>
     <div class="header-badge"> DIAGNOSIS SYSTEM · v1.0</div>
     <h1>사업 기준 · 자가진단<br><span> 통합 시스템</span></h1>
-    <p>MITGEUL SYSTEM v1.0이 분석하는 사업 기준 진단<br>매장 자가진단 · 점수 · 벤치마크 · 실행 솔루션 · 리포트</p>
+    <p>MITGEUL v1.0 SYSTEM이 분석하는 사업 기준 진단<br>매장 자가진단 · 점수 · 벤치마크 · 실행 솔루션 · 리포트</p>
   </div>
 
   <!-- 스텝 네비 -->
@@ -524,16 +524,16 @@
       </div>
     </div>
     <div class="btn-row">
-      <button class="btn btn-primary" onclick="calcChecklist()">매장 자가진단 완료 → MITGEUL 진단으로 →</button>
+      <button class="btn btn-primary" onclick="calcChecklist()">매장 자가진단 완료 → MITGEUL v1.0 SYSTEM 진단으로 →</button>
     </div>
   </div>
 
-  <!-- SEC 3: MITGEUL 기준 진단 -->
+  <!-- SEC 3: MITGEUL v1.0 기준 진단 -->
   <div class="section" id="sec3">
     <div class="section-header">
       <div class="section-icon">🤖</div>
       <div>
-        <div class="section-title">MITGEUL 기준 진단</div>
+        <div class="section-title">MITGEUL v1.0 기준 진단</div>
         <div class="section-sub">업종별 5단계 점수 + 강점/약점 분석</div>
       </div>
     </div>
@@ -550,7 +550,7 @@
       </div>
     </div>
     <div id="aiAnalysisContainer">
-      <div class="alert alert-info">💡 체크리스트를 완료하면 MITGEUL 분석 결과가 표시됩니다.</div>
+      <div class="alert alert-info">💡 체크리스트를 완료하면 MITGEUL v1.0  분석 결과가 표시됩니다.</div>
     </div>
     <div class="btn-row">
       <button class="btn btn-primary" onclick="goStep(4)">업종별 기준표 보기 →</button>
@@ -563,7 +563,7 @@
       <div class="section-icon">📊</div>
       <div>
         <div class="section-title">업종별 기준표 대조</div>
-        <div class="section-sub">MITGEUL 권장 목표치와 내 매장 비교</div>
+        <div class="section-sub">MITGEUL v1.0 권장 목표치와 내 매장 비교</div>
       </div>
     </div>
 
@@ -603,7 +603,7 @@
       <div class="section-icon">📄</div>
       <div>
         <div class="section-title">통합 진단 리포트</div>
-        <div class="section-sub">MITGEUL이 생성하는 맞춤 분석 리포트</div>
+        <div class="section-sub">MITGEUL v1.0이 생성하는 맞춤 분석 리포트</div>
       </div>
     </div>
     <div id="reportContainer">
@@ -1029,7 +1029,7 @@ function calcBizCheck() {
   state.bizResult = r;
 
   document.getElementById('bizResultCard').innerHTML =
-    '<div style="font-family:DM Mono,monospace;font-size:11px;letter-spacing:2px;color:var(--accent);margin-bottom:14px">MITGEUL 1.0 · STEP 1-A · 사업 기준 점검 결과</div>' +
+    '<div style="font-family:DM Mono,monospace;font-size:11px;letter-spacing:2px;color:var(--accent);margin-bottom:14px">MITGEUL v1.0 · STEP 1-A · 사업 기준 점검 결과</div>' +
     '<div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:12px">' +
     '<div style="font-family:DM Mono,monospace;font-size:48px;font-weight:700;color:'+r.color+';line-height:1">' + yes + '<span style="font-size:16px;color:var(--text3)">/15</span></div>' +
     '<div><div style="display:inline-block;padding:4px 12px;border-radius:16px;font-size:11px;font-weight:700;font-family:DM Mono,monospace;background:rgba(61,255,192,0.08);color:'+r.color+';border:1px solid '+r.color+';margin-bottom:6px">'+r.grade+'</div>' +
@@ -1139,8 +1139,8 @@ function calcChecklist() {
   goStep(3);
 }
 
-// ===================== STEP 3: MITGEUL 진단 =====================
-function render MITGEUL Score() {
+// ===================== STEP 3: MITGEUL v1.0 진단 =====================
+function render MITGEUL v1.0 Score() {
   var score = state.score;
   var grade, gc;
   if (score>=85){grade='S등급';gc='#3DFFC0';}
@@ -1287,8 +1287,8 @@ function generateReport() {
   var html = '<div class="report-header">' +
     '<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">' +
     '<svg width="28" height="28" viewBox="0 0 42 42" fill="none"><rect width="42" height="42" rx="12" fill="#252c8a"/><rect width="42" height="42" rx="12" stroke="#3DFFC0" stroke-width="1.5" stroke-opacity="0.4" fill="none"/><text x="21" y="30" text-anchor="middle" font-family="DM Mono,monospace" font-size="22" font-weight="700" fill="#3DFFC0">M</text><circle cx="34" cy="9" r="3.5" fill="#3DFFC0" opacity="0.9"/></svg>' +
-    '<span style="font-family:DM Mono,monospace;font-size:12px;letter-spacing:3px;color:var(--accent)">MITGEUL REPORT</span></div>' +
-    '<div class="report-title">MITGEUL 통합 진단 리포트</div>' +
+    '<span style="font-family:DM Mono,monospace;font-size:12px;letter-spacing:3px;color:var(--accent)">MITGEUL v1.0 REPORT</span></div>' +
+    '<div class="report-title">MITGEUL v1.0 통합 진단 리포트</div>' +
     '<div class="report-meta" style="margin-top:8px;display:flex;flex-wrap:wrap;gap:14px">' +
     '<span>📌 '+storeName+'</span><span>🏷 '+(info.category||'—')+'</span><span>📅 '+dateStr+'</span>' +
     (info.storeUrl?'<span>🔗 <a href="'+info.storeUrl+'" target="_blank">매장 링크</a></span>':'') +
@@ -1524,12 +1524,12 @@ window.onload = function() {
           '<circle cx="34" cy="9" r="3.5" fill="#3DFFC0" opacity="0.9"/>',
         '</svg>',
 
-        '<div style="font-family:DM Mono,monospace;font-size:11px;letter-spacing:3px;color:#3DFFC0;margin-bottom:10px">MITGEUL 1.0</div>',
+        '<div style="font-family:DM Mono,monospace;font-size:11px;letter-spacing:3px;color:#3DFFC0;margin-bottom:10px">MITGEUL v1.0</div>',
         '<div style="font-size:18px;font-weight:700;color:#fff;margin-bottom:6px">사업 기준 · 자가진단 시스템</div>',
         '<div style="font-size:13px;color:#64748b;margin-bottom:24px">접근 코드를 입력해주세요</div>',
 
 '<div style="background:rgba(61,255,192,0.06);border:1px solid rgba(61,255,192,0.2);border-radius:12px;padding:18px 20px;margin-bottom:24px;text-align:center">',
-  '<div style="font-size:10px;font-family:DM Mono,monospace;letter-spacing:2px;color:#3DFFC0;margin-bottom:10px">MITGEUL 1.0 · 파일럿 특가</div>',
+  '<div style="font-size:10px;font-family:DM Mono,monospace;letter-spacing:2px;color:#3DFFC0;margin-bottom:10px">MITGEUL v1.0 · 파일럿 특가</div>',
   '<div style="display:flex;align-items:baseline;gap:10px;margin-bottom:8px">',
     '<span style="font-size:13px;color:#f43f5e;text-decoration:line-through">100,000원</span>',
     '<span style="font-family:DM Mono,monospace;font-size:28px;font-weight:700;color:#3DFFC0">30,000원</span>',
