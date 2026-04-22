@@ -616,9 +616,10 @@
     <!-- 구글폼 저장 배너 -->
     <div class="gform-banner" id="gformBanner" style="display:none">
       <div class="gform-banner-text">
-        <strong>📊 진단 결과를 데이터로 저장하세요</strong>
-      결과 저장 시 성함·연락처가 수집되며 서비스 개선 및 맞춤 코칭 안내에 활용됩니다.<br>
-        수집된 정보는 제3자에게 제공되지 않으며 동의 철회 시 즉시 삭제됩니다.
+        <strong>📊 진단 결과 저장 시 혜택 제공</strong>
+      결과를 저장하시면 <strong style="color:#3DFFC0;">블로그마케팅 대행 첫 편 3만원 할인 쿠폰</strong>을 카카오톡으로 보내드립니다.<br>
+쿠폰은 진단 결과 저장 확인 후 1~2 영업일 내 발송됩니다.<br><br>
+수집된 정보는 서비스 개선 및 쿠폰 발송 목적으로만 사용되며 제3자에게 제공되지 않습니다.
         <div style="margin-top:12px;display:flex;align-items:flex-start;gap:8px;">
           <input type="checkbox" id="privacyAgree" style="margin-top:4px;accent-color:var(--accent);width:16px;height:16px;flex-shrink:0;">
           <label for="privacyAgree" style="font-size:13px;color:var(--text2);line-height:1.6;cursor:pointer;">
@@ -1469,7 +1470,7 @@ function submitToGoogleForm() {
       btn.disabled = false;
       if (statusEl) {
         statusEl.style.color = 'var(--accent)';
-        statusEl.textContent = userName + '님의 진단 결과가 저장되었습니다 😊';
+        statusEl.textContent = userName + '님의 결과가 저장되었습니다. 3만원 할인 쿠폰을 1~2 영업일 내 카카오톡으로 보내드립니다 😊';
       }
     })
     .catch(function() {
@@ -1518,7 +1519,24 @@ window.onload = function() {
 
         '<div style="font-family:DM Mono,monospace;font-size:11px;letter-spacing:3px;color:#3DFFC0;margin-bottom:10px">MITGEUL AI</div>',
         '<div style="font-size:18px;font-weight:700;color:#fff;margin-bottom:6px">사업 기준 · 자가진단 시스템</div>',
-        '<div style="font-size:13px;color:#64748b;margin-bottom:32px">접근 코드를 입력해주세요</div>',
+        '<div style="font-size:13px;color:#64748b;margin-bottom:24px">접근 코드를 입력해주세요</div>',
+
+'<div style="background:rgba(61,255,192,0.06);border:1px solid rgba(61,255,192,0.2);border-radius:12px;padding:18px 20px;margin-bottom:24px;text-align:left">',
+  '<div style="font-size:10px;font-family:DM Mono,monospace;letter-spacing:2px;color:#3DFFC0;margin-bottom:10px">MITGEUL AI 1.0 · 파일럿 특가</div>',
+  '<div style="display:flex;align-items:baseline;gap:10px;margin-bottom:8px">',
+    '<span style="font-size:13px;color:#64748b;text-decoration:line-through">100,000원</span>',
+    '<span style="font-family:DM Mono,monospace;font-size:28px;font-weight:700;color:#3DFFC0">30,000원</span>',
+  '</div>',
+  '<div style="font-size:12px;color:#94a3b8;line-height:1.7">사업 기준 자가진단 + 결과 리포트 제공<br>접근 코드는 결제 후 카카오톡으로 전달됩니다.</div>',
+'</div>',
+
+'<a href="http://pf.kakao.com/_ftVan" target="_blank"',
+  'style="display:block;width:100%;background:transparent;border:1px solid #3DFFC0;border-radius:10px;',
+  'color:#3DFFC0;font-size:13px;font-weight:600;padding:11px;text-align:center;',
+  'text-decoration:none;margin-bottom:16px;box-sizing:border-box;',
+  'font-family:Pretendard,sans-serif;">',
+  '카카오톡으로 결제 문의하기 →',
+'</a>',
 
         '<input id="pwInput" type="password" placeholder="접근 코드" autocomplete="off"',
           'style="width:100%;background:#171d5e;border:1px solid #2d3580;border-radius:10px;',
