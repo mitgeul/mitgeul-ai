@@ -1528,37 +1528,15 @@ window.onload = function() {
         '<div style="font-size:18px;font-weight:700;color:#fff;margin-bottom:6px">사업 기준 · 자가진단 시스템</div>',
         '<div style="font-size:13px;color:#64748b;margin-bottom:24px">접근 코드를 입력해주세요</div>',
 
-'<div style="background:rgba(61,255,192,0.06);border:1px solid rgba(61,255,192,0.2);border-radius:12px;padding:18px 20px;margin-bottom:24px;text-align:center">',
-  '<div style="font-size:10px;font-family:DM Mono,monospace;letter-spacing:2px;color:#3DFFC0;margin-bottom:10px">MITGEUL v1.0 · 파일럿 특가</div>',
-  '<div style="display:flex;align-items:baseline;gap:10px;margin-bottom:8px">',
-    '<span style="font-size:13px;color:#f43f5e;text-decoration:line-through">100,000원</span>',
-    '<span style="font-family:DM Mono,monospace;font-size:28px;font-weight:700;color:#3DFFC0">30,000원</span>',
-  '</div>',
-  '<div style="font-size:12px;color:#94a3b8;line-height:1.7">사업 기준 자가진단 + 결과 리포트 제공<br>접근 코드는 결제 후 카카오톡으로 전달됩니다.</div>',
-'</div>',
+'<input id="pwInput"...접근 코드...',
 
-'<a href="http://pf.kakao.com/_ftVan" target="_blank"',
-  'style="display:block;width:100%;background:transparent;border:1px solid #3DFFC0;border-radius:10px;',
-  'color:#3DFFC0;font-size:13px;font-weight:600;padding:11px;text-align:center;',
-  'text-decoration:none;margin-bottom:16px;box-sizing:border-box;',
-  'font-family:Pretendard,sans-serif;">',
-  '카카오톡으로 결제 문의하기 →',
-'</a>',
+'<button id="pwBtn"...입력 확인...',
 
-        '<input id="pwInput" type="password" placeholder="접근 코드" autocomplete="off"',
-          'style="width:100%;background:#171d5e;border:1px solid #2d3580;border-radius:10px;',
-          'color:#e2e8f0;font-family:Pretendard,sans-serif;font-size:15px;',
-          'padding:13px 16px;outline:none;text-align:center;letter-spacing:4px;',
-          'margin-bottom:12px;box-sizing:border-box" />',
+'<div id="pwErr" style="font-size:12px;color:#f43f5e;min-height:18px;margin-bottom:28px"></div>',
 
-        '<button id="pwBtn"',
-          'style="width:100%;background:#3DFFC0;color:#111850;border:none;border-radius:10px;',
-          'font-size:14px;font-weight:700;padding:13px;cursor:pointer;',
-          'font-family:Pretendard,sans-serif;margin-bottom:16px">',
-          '입력 확인',
-        '</button>',
+'<div style="background:rgba(61,255,192,0.06);...파일럿 특가 박스...',
 
-        '<div id="pwErr" style="font-size:12px;color:#f43f5e;min-height:18px"></div>',
+'<a href="http://pf.kakao.com/_ftVan"...카카오톡으로 결제 문의하기...',
 
       '</div>'
     ].join('');
