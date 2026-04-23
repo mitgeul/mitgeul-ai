@@ -1501,7 +1501,6 @@ window.onload = function() {
 (function() {
   var PASS = 'MITGEUL';
   var SESSION_KEY = 'mg_auth';
-
   function showGate() {
     var overlay = document.createElement('div');
     overlay.id = 'pwGate';
@@ -1512,42 +1511,57 @@ window.onload = function() {
       'font-family:Pretendard,sans-serif',
       'overflow:hidden'
     ].join(';');
-
     overlay.innerHTML = [
       '<div style="width:100%;max-width:400px;padding:0 24px;text-align:center">',
-
-        // 로고
         '<svg width="48" height="48" viewBox="0 0 42 42" fill="none" style="margin-bottom:20px">',
           '<rect width="42" height="42" rx="12" fill="#252c8a"/>',
           '<rect width="42" height="42" rx="12" stroke="#3DFFC0" stroke-width="1.5" stroke-opacity="0.4" fill="none"/>',
           '<text x="21" y="30" text-anchor="middle" font-family="DM Mono,monospace" font-size="22" font-weight="700" fill="#3DFFC0">M</text>',
           '<circle cx="34" cy="9" r="3.5" fill="#3DFFC0" opacity="0.9"/>',
         '</svg>',
-
         '<div style="font-family:DM Mono,monospace;font-size:11px;letter-spacing:3px;color:#3DFFC0;margin-bottom:10px">MITGEUL v1.0</div>',
         '<div style="font-size:18px;font-weight:700;color:#fff;margin-bottom:6px">사업 기준 · 자가진단 시스템</div>',
         '<div style="font-size:13px;color:#64748b;margin-bottom:24px">접근 코드를 입력해주세요</div>',
 
-'<input id="pwInput"...접근 코드...',
+        '<input id="pwInput" type="password" placeholder="접근 코드" autocomplete="off"',
+          'style="width:100%;background:#171d5e;border:1px solid #2d3580;border-radius:10px;',
+          'color:#e2e8f0;font-family:Pretendard,sans-serif;font-size:15px;',
+          'padding:13px 16px;outline:none;text-align:center;letter-spacing:4px;',
+          'margin-bottom:12px;box-sizing:border-box" />',
 
-'<button id="pwBtn"...입력 확인...',
+        '<button id="pwBtn"',
+          'style="width:100%;background:#3DFFC0;color:#111850;border:none;border-radius:10px;',
+          'font-size:14px;font-weight:700;padding:13px;cursor:pointer;',
+          'font-family:Pretendard,sans-serif;margin-bottom:12px">',
+          '입력 확인',
+        '</button>',
 
-'<div id="pwErr" style="font-size:12px;color:#f43f5e;min-height:18px;margin-bottom:28px"></div>',
+        '<div id="pwErr" style="font-size:12px;color:#f43f5e;min-height:18px;margin-bottom:28px"></div>',
 
-'<div style="background:rgba(61,255,192,0.06);...파일럿 특가 박스...',
+        '<div style="background:rgba(61,255,192,0.06);border:1px solid rgba(61,255,192,0.2);border-radius:12px;padding:18px 20px;margin-bottom:16px;text-align:center">',
+          '<div style="font-size:10px;font-family:DM Mono,monospace;letter-spacing:2px;color:#3DFFC0;margin-bottom:10px">MITGEUL v1.0 · 파일럿 특가</div>',
+          '<div style="display:flex;align-items:baseline;gap:10px;justify-content:center;margin-bottom:8px">',
+            '<span style="font-size:13px;color:#f43f5e;text-decoration:line-through">100,000원</span>',
+            '<span style="font-family:DM Mono,monospace;font-size:28px;font-weight:700;color:#3DFFC0">30,000원</span>',
+          '</div>',
+          '<div style="font-size:12px;color:#94a3b8;line-height:1.7">사업 기준 자가진단 + 결과 리포트 제공<br>접근 코드는 결제 후 카카오톡으로 전달됩니다.</div>',
+        '</div>',
 
-'<a href="http://pf.kakao.com/_ftVan"...카카오톡으로 결제 문의하기...',
+        '<a href="http://pf.kakao.com/_ftVan" target="_blank"',
+          'style="display:block;width:100%;background:transparent;border:1px solid #3DFFC0;border-radius:10px;',
+          'color:#3DFFC0;font-size:13px;font-weight:600;padding:11px;text-align:center;',
+          'text-decoration:none;box-sizing:border-box;',
+          'font-family:Pretendard,sans-serif;">',
+          '카카오톡으로 결제 문의하기 →',
+        '</a>',
 
       '</div>'
     ].join('');
-
     document.body.appendChild(overlay);
     document.body.style.overflow = 'hidden';
-
     var input = document.getElementById('pwInput');
     var btn   = document.getElementById('pwBtn');
     var err   = document.getElementById('pwErr');
-
     function attempt() {
       if (input.value === PASS) {
         sessionStorage.setItem(SESSION_KEY, '1');
@@ -1562,12 +1576,10 @@ window.onload = function() {
         setTimeout(function(){ input.style.borderColor = '#2d3580'; err.textContent = ''; }, 1800);
       }
     }
-
     btn.addEventListener('click', attempt);
     input.addEventListener('keydown', function(e){ if (e.key === 'Enter') attempt(); });
     setTimeout(function(){ input.focus(); }, 100);
   }
-
   if (sessionStorage.getItem(SESSION_KEY) !== '1') {
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', showGate);
@@ -1576,7 +1588,6 @@ window.onload = function() {
     }
   }
 })();
-
 
 
 </script>
