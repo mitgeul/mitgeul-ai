@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MITGEUL v2.0 — 사업 기준 · 매장 자가진단 · 상권분석 통합 시스템</title>
+<title>MITGEUL v2.0 — 사업 기준 · 매장 자가진단 + 상권분석 통합 시스템</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=DM+Mono:wght@400;500&family=Pretendard:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -172,6 +172,15 @@
     .strength-item{background:#f0fff8!important;border:1px solid #3DFFC0!important;color:#0a4030!important;}
     .weakness-item{background:#fff0f0!important;border:1px solid #f43f5e!important;color:#8b1a2a!important;}
     :root{--accent:#1E2370;--text:#1a1a2e;--text2:#444;--text3:#777;}
+  }
+
+  @keyframes mgPulse {
+    0%,100% { opacity:0.3; transform:scale(0.8); }
+    50%      { opacity:1;   transform:scale(1.2); }
+  }
+  @keyframes mgSweep {
+    0%   { transform:translateX(-100%); }
+    100% { transform:translateX(200%); }
   }
 </style>
 </head>
@@ -3446,7 +3455,7 @@ function getSangkwonReportSection(region, category, gu) {
   var gbd = r.grade==='과열'?'rgba(244,63,94,0.25)':r.grade==='보통'?'rgba(245,158,11,0.25)':'rgba(61,255,192,0.25)';
   var rankPct = Math.round((r.rank/r.gu_count)*100);
   var posLabel = rankPct<=20?'상위 20% — 매우 높은 경쟁':rankPct<=50?'상위 50% — 평균 경쟁':'하위 50% — 낮은 경쟁';
-  var stratHTML = r.strategyPoints.map(function(p,i){return '<div class="r-list-item"><span class="r-num">'+(i+1)+'</span><span>'+p+'</span></div>';}).join('');
+  var stratHTML = makeLoadingHTML(); // AI 로딩 상태로 초기 렌더
   var catData = SANGKWON_DATA[region]&&SANGKWON_DATA[region][category];
   var top3 = catData?catData.by_gu.slice(0,3).map(function(g){return '<strong style="color:#94a3b8">'+g.구+' '+g.점포수.toLocaleString()+'개</strong>';}).join(' · '):'';
   return '<div class="report-card-section"><div class="report-sec-label">06 · 상권 분석 — 소진공 실측 데이터 기반 ('+r.dataSource+')</div><div class="report-sec-body">'+
@@ -3484,7 +3493,7 @@ function renderSangkwonSection() {
   var gbd = r.grade==='과열'?'rgba(244,63,94,0.25)':r.grade==='보통'?'rgba(245,158,11,0.25)':'rgba(61,255,192,0.25)';
   var rankPct = Math.round((r.rank/r.gu_count)*100);
   var posLabel = rankPct<=20?'상위 20% — 매우 높은 경쟁':rankPct<=50?'상위 50% — 평균 경쟁':'하위 50% — 낮은 경쟁';
-  var stratHTML = r.strategyPoints.map(function(p,i){return '<div class="r-list-item"><span class="r-num">'+(i+1)+'</span><span>'+p+'</span></div>';}).join('');
+  var stratHTML = makeLoadingHTML().replace('id="mitgeulAILoading"', 'id="mitgeulAILoadingReport"'); // 리포트용 AI 로딩
   var catData = SANGKWON_DATA[region]&&SANGKWON_DATA[region][category];
   var top3 = catData?catData.by_gu.slice(0,3).map(function(g){return '<strong style="color:#94a3b8">'+g.구+' '+g.점포수.toLocaleString()+'개</strong>';}).join(' · '):'';
   con.innerHTML = '<div class="card">'+
@@ -3501,6 +3510,19 @@ function renderSangkwonSection() {
     stratHTML+
     (top3?'<div style="margin-top:16px;padding:12px 14px;background:rgba(255,255,255,0.02);border-radius:8px;font-size:12px;color:#64748b">'+r.regionLabel+' 최다 경쟁 지역: '+top3+'</div>':'')
     +'</div>';
+  // ── AI 비동기 호출: 프리미엄 블로그 마케팅 차별화 포인트 교체
+  (async function() {
+    var promptData = buildPromptData(r);
+    var aiPoints = await callMitgeulAI(promptData);
+    var loadingEl = document.getElementById('mitgeulAILoading');
+    if (loadingEl) {
+      var points = aiPoints && aiPoints.length
+        ? aiPoints
+        : r.strategyPoints; // API 실패 시 하드코딩 fallback
+      loadingEl.outerHTML = makeStratHTML(points);
+    }
+  })();
+
   // 동 단위 분석 섹션 추가
   var dong = state.info.storeDong||'';
   var dongHTML = getDongSectionHTML(dong, gu, region, category, state.info.storeName||'매장');
@@ -3571,30 +3593,144 @@ function analyzeDong(region, category, gu, dong) {
 }
 
 function getDongKeywords(category, dong, gu, grade, region) {
-  var catLabel = getCategoryLabel(category);
   var dongClean = dong.replace(/[0-9]/g,'').replace(/동$/,'');
-  // 기본 키워드 조합
-  var base = [
-    dong + ' ' + catLabel,
-    dongClean + ' ' + catLabel,
-    gu + ' ' + dong + ' ' + catLabel,
-  ];
-  // 업종별 세부 키워드
-  var subMap = {
-    cafe: [dong+'카페추천', dong+'카페', dongClean+'브런치', dong+'디저트', gu+dong+'카페'],
-    restaurant: [dong+'맛집', dong+'점심맛집', dong+'저녁맛집', dongClean+'맛집추천', gu+dong+'식당'],
-    beauty: [dong+'헤어샵', dong+'네일', dong+'피부관리', dongClean+'뷰티', gu+dong+'미용실'],
-    edu: [dong+'학원', dong+'영어학원', dongClean+'과외', gu+dong+'학원추천', dong+'교육'],
-    fitness: [dong+'헬스장', dong+'필라테스', dong+'PT', dongClean+'요가', gu+dong+'운동']
+
+  // ── 1. 장소 기반 키워드 (지역+업종 직접 검색)
+  var placeMap = {
+    cafe:       [dong+' 카페', dong+' 브런치', dong+' 디저트 카페', gu+' '+dong+' 카페', dongClean+' 카페 추천'],
+    restaurant: [dong+' 맛집', dong+' 식당', gu+' '+dong+' 맛집', dong+' 점심 맛집', dong+' 저녁 맛집'],
+    beauty:     [dong+' 미용실', dong+' 헤어샵', dong+' 네일샵', gu+' '+dong+' 미용실', dong+' 피부관리'],
+    edu:        [dong+' 학원', dong+' 영어학원', gu+' '+dong+' 학원', dong+' 과외', dong+' 학원 추천'],
+    fitness:    [dong+' 헬스장', dong+' 필라테스', dong+' PT', gu+' '+dong+' 헬스', dong+' 요가'],
+    medical:    [dong+' 병원', dong+' 내과', gu+' '+dong+' 병원', dong+' 한의원', dong+' 피부과'],
+    retail:     [dong+' 쇼핑', dong+' 옷가게', gu+' '+dong+' 쇼핑', dong+' 편집샵', dong+' 브랜드'],
+    service:    [dong+' 서비스', dong+' 업체', gu+' '+dong+' 추천', dongClean+' 업체 추천', dong+' 가게']
   };
-  var subs = subMap[category] || [dong+catLabel+'추천', dongClean+catLabel, gu+catLabel];
+
+  // ── 2. 상황 기반 키워드 (고객의 문제·상황으로 검색)
+  var situationMap = {
+    cafe: [
+      dong+' 노트북 카페',
+      dong+' 혼자 가기 좋은 카페',
+      dong+' 오래 앉아도 되는 카페',
+      dong+' 조용한 카페',
+      dong+' 데이트 카페',
+      dong+' 아이랑 가기 좋은 카페',
+      dong+' 넓은 카페',
+      dong+' 사진 잘 나오는 카페'
+    ],
+    restaurant: [
+      dong+' 회식 장소',
+      dong+' 혼밥 가능한 식당',
+      dong+' 아이랑 가기 좋은 식당',
+      dong+' 주차 되는 식당',
+      dong+' 조용한 식당',
+      dong+' 소개팅 식당',
+      dong+' 웨이팅 없는 맛집',
+      dong+' 기념일 식당'
+    ],
+    beauty: [
+      dong+' 예약 잘 되는 미용실',
+      dong+' 말 안 걸어도 되는 미용실',
+      dong+' 처음 가기 좋은 헤어샵',
+      dong+' 시간 잘 지키는 미용실',
+      dong+' 과한 권유 없는 피부샵',
+      dong+' 민감성 피부 네일샵',
+      dong+' 혼자 가도 편한 샵',
+      dong+' 부담 없는 가격 미용실'
+    ],
+    edu: [
+      dong+' 성인 영어 학원',
+      dong+' 직장인 학원',
+      dong+' 소수 정예 학원',
+      dong+' 단기 속성 학원',
+      dong+' 내신 관리 학원',
+      dong+' 재수생 학원',
+      dong+' 자격증 학원',
+      dong+' 주말 수업 학원'
+    ],
+    fitness: [
+      dong+' 직장인 PT',
+      dong+' 초보자 필라테스',
+      dong+' 소그룹 운동',
+      dong+' 다이어트 PT',
+      dong+' 체형 교정 필라테스',
+      dong+' 주말 헬스장',
+      dong+' 아침 운동 가능한 헬스',
+      dong+' 여성 전용 피트니스'
+    ],
+    medical: [
+      dong+' 대기 짧은 병원',
+      dong+' 점심시간 병원',
+      dong+' 친절한 병원',
+      dong+' 설명 잘 해주는 병원',
+      dong+' 예약 없이 가는 병원',
+      dong+' 과잉진료 없는 병원',
+      dong+' 어린이 병원',
+      dong+' 주말 진료 병원'
+    ],
+    retail:  [dong+' 구경하기 좋은 곳', dong+' 선물 사기 좋은 곳', dong+' 혼자 쇼핑', dong+' 가성비 쇼핑'],
+    service: [dong+' 믿을 수 있는 업체', dong+' 빠른 처리 가능', dong+' 가격 합리적인 곳', dong+' 단골 되기 좋은 곳']
+  };
+
+  // ── 3. 랜드마크/역 기반 키워드 (주변 장소로 검색)
+  var landmarkMap = {
+    cafe:       [gu+' 역 근처 카페', gu+' 공원 근처 카페', gu+' 산책하며 들르기 좋은 카페'],
+    restaurant: [gu+' 역 근처 맛집', gu+' 공원 근처 식당', gu+' 주차 편한 맛집'],
+    beauty:     [gu+' 역 근처 미용실', gu+' 번화가 헤어샵', gu+' 쇼핑하다 들를 수 있는 샵'],
+    edu:        [gu+' 역세권 학원', gu+' 학원가 추천', gu+' 직장 근처 학원'],
+    fitness:    [gu+' 역 근처 헬스장', gu+' 출퇴근길 필라테스', gu+' 직장 근처 PT'],
+    medical:    [gu+' 역 근처 병원', gu+' 번화가 병원', gu+' 회사 근처 병원'],
+    retail:     [gu+' 역 근처 쇼핑', gu+' 번화가 쇼핑'],
+    service:    [gu+' 역 근처 업체', gu+' 접근 편한 곳']
+  };
+
+  var place     = placeMap[category]     || [dong+' '+getCategoryLabel(category)];
+  var situation = situationMap[category] || [];
+  var landmark  = landmarkMap[category]  || [];
+
   // grade별 전략 메시지
   var stratMsg = grade==='핫플'
-    ? '🔴 핫플 동 — 키워드 경쟁이 치열합니다. 동+상세키워드(메뉴명·특징) 조합으로 롱테일 공략이 필수입니다.'
+    ? '🔴 핫플 동 — "'+dong+' 카페" 같은 단순 키워드는 이미 경쟁이 치열합니다. 상황 키워드("'+dong+' 노트북 카페", "'+dong+' 혼자 카페")로 롱테일 공략이 필수입니다.'
     : grade==='활성'
-    ? '🟡 활성 동 — 키워드 경쟁이 보통 수준입니다. 월 2건 블로그 포스팅으로 상위 선점이 가능합니다.'
-    : '🟢 저경쟁 동 — 동+업종 키워드가 아직 비어 있을 가능성이 높습니다. 지금이 선점 골든타임입니다.';
-  return { base: base, subs: subs, stratMsg: stratMsg };
+    ? '🟡 활성 동 — 장소 키워드와 상황 키워드를 번갈아 포스팅하면 월 2건으로도 상위 선점이 가능합니다.'
+    : '🟢 저경쟁 동 — 장소·상황·랜드마크 키워드 모두 비어 있을 가능성이 높습니다. 지금이 선점 골든타임입니다.';
+  stratMsg = stratMsg.replace('카페', getCategoryLabel(category));
+
+  return { place: place, situation: situation, landmark: landmark, stratMsg: stratMsg };
+}
+
+function getSituTitleExamples(category, dong, gu) {
+  var ex = {
+    cafe: [
+      '· <strong style="color:#e2e8f0">'+dong+' 노트북 카페</strong> — 오래 앉아도 눈치 없는 곳 찾았어요',
+      '· <strong style="color:#e2e8f0">'+dong+' 혼자 가기 좋은 카페</strong> 조용하고 넓어서 단골 됐어요'
+    ],
+    restaurant: [
+      '· <strong style="color:#e2e8f0">'+dong+' 회식 장소</strong> — 주차 되고 조용한 곳 찾다가 발견',
+      '· <strong style="color:#e2e8f0">'+dong+' 혼밥 가능한 식당</strong> — 눈치 안 보여서 자주 가요'
+    ],
+    beauty: [
+      '· <strong style="color:#e2e8f0">'+dong+' 말 안 걸어도 되는 미용실</strong> — 내향인 추천',
+      '· <strong style="color:#e2e8f0">'+dong+' 예약 시간 잘 지키는 헤어샵</strong> 점심시간에 다녀왔어요'
+    ],
+    edu: [
+      '· <strong style="color:#e2e8f0">'+dong+' 직장인 영어학원</strong> — 퇴근 후 다닐 수 있는 곳',
+      '· <strong style="color:#e2e8f0">'+dong+' 소수 정예 학원</strong> 3개월 다니고 달라진 점'
+    ],
+    fitness: [
+      '· <strong style="color:#e2e8f0">'+dong+' 초보자 필라테스</strong> — 아무것도 몰라도 된다고 해서 갔어요',
+      '· <strong style="color:#e2e8f0">'+dong+' 다이어트 PT</strong> — 직장인이 주 2회 3개월 한 결과'
+    ],
+    medical: [
+      '· <strong style="color:#e2e8f0">'+dong+' 대기 짧은 내과</strong> — 점심시간에 다녀왔어요',
+      '· <strong style="color:#e2e8f0">'+dong+' 설명 잘 해주는 병원</strong> — 과잉진료 없어서 단골 됐어요'
+    ]
+  };
+  var lines = ex[category] || [
+    '· <strong style="color:#e2e8f0">'+dong+' '+getCategoryLabel(category)+'</strong> — 상황별 솔직 후기'
+  ];
+  return lines.join('<br>');
 }
 
 function getDongSectionHTML(dong, gu, region, category, storeName) {
@@ -3618,12 +3754,17 @@ function getDongSectionHTML(dong, gu, region, category, storeName) {
 
   var kw = getDongKeywords(category, dongDisplay, gu, grade, region);
 
-  var baseKwHTML = kw.base.map(function(k){
-    return '<span style="display:inline-block;padding:5px 12px;border-radius:20px;border:1px solid rgba(61,255,192,0.3);background:rgba(61,255,192,0.07);font-size:12px;font-family:DM Mono,monospace;color:#3DFFC0;margin:4px 4px 4px 0">'+k+'</span>';
+  function makeKwTag(k, color, bg, border, size) {
+    return '<span style="display:inline-block;padding:4px 11px;border-radius:20px;border:1px solid '+border+';background:'+bg+';font-size:'+size+'px;font-family:DM Mono,monospace;color:'+color+';margin:3px 3px 3px 0">'+k+'</span>';
+  }
+  var placeKwHTML = kw.place.slice(0,5).map(function(k){
+    return makeKwTag(k,'#3DFFC0','rgba(61,255,192,0.07)','rgba(61,255,192,0.3)','12');
   }).join('');
-
-  var subKwHTML = kw.subs.map(function(k){
-    return '<span style="display:inline-block;padding:4px 10px;border-radius:20px;border:1px solid rgba(148,163,184,0.2);background:rgba(148,163,184,0.05);font-size:11px;font-family:DM Mono,monospace;color:#94a3b8;margin:3px 3px 3px 0">'+k+'</span>';
+  var situKwHTML = kw.situation.slice(0,6).map(function(k){
+    return makeKwTag(k,'#f59e0b','rgba(245,158,11,0.06)','rgba(245,158,11,0.25)','11');
+  }).join('');
+  var landKwHTML = kw.landmark.slice(0,3).map(function(k){
+    return makeKwTag(k,'#94a3b8','rgba(148,163,184,0.05)','rgba(148,163,184,0.2)','11');
   }).join('');
 
   var countStr = dongResult.found ? count.toLocaleString()+'개' : '집계 외 (낮은 경쟁)';
@@ -3649,17 +3790,27 @@ function getDongSectionHTML(dong, gu, region, category, storeName) {
 
     '<div style="padding:12px 14px;border-radius:8px;background:rgba(255,255,255,0.02);font-size:12px;color:#94a3b8;line-height:1.8;margin-bottom:18px">'+kw.stratMsg+'</div>'+
 
-    '<div style="font-size:11px;font-family:DM Mono,monospace;color:#3DFFC0;letter-spacing:1px;margin-bottom:10px">🔑 핵심 공략 키워드 (블로그 제목·본문에 사용)</div>'+
-    '<div style="margin-bottom:14px">'+baseKwHTML+'</div>'+
+    '<div style="font-size:11px;font-family:DM Mono,monospace;color:#3DFFC0;letter-spacing:1px;margin-bottom:8px">📍 장소 기반 키워드 — 지역+업종 직접 검색</div>'+
+    '<div style="font-size:11px;color:#64748b;margin-bottom:8px">업종을 알고 지역에서 찾는 고객</div>'+
+    '<div style="margin-bottom:16px">'+placeKwHTML+'</div>'+
 
-    '<div style="font-size:11px;font-family:DM Mono,monospace;color:#94a3b8;letter-spacing:1px;margin-bottom:8px">📌 세부 롱테일 키워드</div>'+
-    '<div style="margin-bottom:14px">'+subKwHTML+'</div>'+
+    '<div style="font-size:11px;font-family:DM Mono,monospace;color:#f59e0b;letter-spacing:1px;margin-bottom:8px">💬 상황 기반 키워드 — 고객의 문제·상황으로 검색</div>'+
+    '<div style="font-size:11px;color:#64748b;margin-bottom:8px">업종을 모르고 자신의 상황을 검색하는 고객</div>'+
+    '<div style="margin-bottom:16px">'+situKwHTML+'</div>'+
+
+    '<div style="font-size:11px;font-family:DM Mono,monospace;color:#94a3b8;letter-spacing:1px;margin-bottom:8px">🗺️ 랜드마크 기반 키워드 — 역·공원·번화가 연계</div>'+
+    '<div style="font-size:11px;color:#64748b;margin-bottom:8px">주변 장소에서 이동하며 찾는 고객</div>'+
+    '<div style="margin-bottom:16px">'+landKwHTML+'</div>'+
 
     '<div style="padding:12px 14px;border-radius:8px;background:rgba(61,255,192,0.05);border-left:3px solid var(--accent);font-size:12px;color:#94a3b8;line-height:1.9">'+
     '<div style="font-size:10px;font-family:DM Mono,monospace;color:var(--accent);letter-spacing:1px;margin-bottom:6px">💡 블로그 포스팅 제목 예시</div>'+
-    '· <strong style="color:#e2e8f0">'+dongDisplay+' '+getCategoryLabel(category)+'</strong> 솔직 후기 | '+storeName+'<br>'+
-    '· 현지인이 추천하는 <strong style="color:#e2e8f0">'+dongDisplay+' 숨은 '+getCategoryLabel(category)+'</strong> — '+storeName+'<br>'+
-    '· <strong style="color:#e2e8f0">'+gu+' '+dongDisplay+' '+getCategoryLabel(category)+'</strong> 중에서 제가 선택한 이유'+
+    '<div style="font-size:10px;color:#3DFFC0;font-family:DM Mono,monospace;margin-bottom:4px">📍 장소 기반</div>'+
+    '· <strong style="color:#e2e8f0">'+dongDisplay+' '+getCategoryLabel(category)+'</strong> 직접 가봤습니다 — 솔직 후기<br>'+
+    '· <strong style="color:#e2e8f0">'+gu+' '+dongDisplay+'</strong> 숨은 '+getCategoryLabel(category)+' 찾았어요<br>'+
+    '<div style="font-size:10px;color:#f59e0b;font-family:DM Mono,monospace;margin-top:8px;margin-bottom:4px">💬 상황 기반</div>'+
+    getSituTitleExamples(category, dongDisplay, gu)+'<br>'+
+    '<div style="font-size:10px;color:#94a3b8;font-family:DM Mono,monospace;margin-top:8px;margin-bottom:4px">🗺️ 랜드마크 기반</div>'+
+    '· <strong style="color:#e2e8f0">'+gu+' 역 근처 '+getCategoryLabel(category)+'</strong> 걸어서 5분 — '+dongDisplay+' 추천'+
     '</div>';
   // 동 단위 키워드 섹션
   var dongSec = '';
@@ -3669,14 +3820,123 @@ function getDongSectionHTML(dong, gu, region, category, storeName) {
     var dgrade = dres.found?dres.dongGrade:'저경쟁';
     var kw = getDongKeywords(category, dres.found?dres.dong:rd, gu, dgrade, region);
     var gc2=dgrade==='핫플'?'#f43f5e':dgrade==='활성'?'#f59e0b':'#3DFFC0';
-    var kwTags = kw.base.concat(kw.subs).map(function(k){return '<span style="display:inline-block;padding:3px 9px;border-radius:12px;border:1px solid rgba(61,255,192,0.25);background:rgba(61,255,192,0.06);font-size:11px;font-family:DM Mono,monospace;color:#3DFFC0;margin:3px 2px">'+k+'</span>';}).join('');
+    var allKws = (kw.place||[]).slice(0,3).concat((kw.situation||[]).slice(0,3)).concat((kw.landmark||[]).slice(0,2));
+    var kwTags = allKws.map(function(k,i){
+      var c = i<3?'#3DFFC0':i<6?'#f59e0b':'#94a3b8';
+      var bg = i<3?'rgba(61,255,192,0.06)':i<6?'rgba(245,158,11,0.06)':'rgba(148,163,184,0.04)';
+      var bd = i<3?'rgba(61,255,192,0.25)':i<6?'rgba(245,158,11,0.2)':'rgba(148,163,184,0.15)';
+      return '<span style="display:inline-block;padding:3px 9px;border-radius:12px;border:1px solid '+bd+';background:'+bg+';font-size:11px;font-family:DM Mono,monospace;color:'+c+';margin:3px 2px">'+k+'</span>';
+    }).join('');
     dongSec = '<div style="margin-top:12px;padding:14px 16px;border-radius:10px;background:rgba(15,20,60,0.4);border:1px solid rgba(61,255,192,0.15)">'+
-      '<div style="font-size:10px;font-family:DM Mono,monospace;color:var(--accent);letter-spacing:1px;margin-bottom:8px">📍 동 단위 키워드 전략 — '+(dres.found?dres.dong:rd)+'</div>'+
+      '<div style="font-size:10px;font-family:DM Mono,monospace;color:var(--accent);letter-spacing:1px;margin-bottom:8px">📍 동 단위 키워드 전략 (🟢장소 🟡상황 ⬜랜드마크) — '+(dres.found?dres.dong:rd)+'</div>'+
       '<div style="display:inline-block;padding:3px 10px;border-radius:12px;background:rgba(61,255,192,0.08);font-size:12px;font-weight:700;color:'+gc2+';margin-bottom:10px">'+dgrade+'</div>'+
       '<div style="font-size:12px;color:#94a3b8;margin-bottom:10px">'+kw.stratMsg+'</div>'+
       kwTags+'</div>';
   }
   return html + dongSec + '</div></div>';
+}
+
+
+// ══════════════════════════════════════
+// MITGEUL v2.0 · Claude API 연동
+// ══════════════════════════════════════
+
+async function callMitgeulAI(promptData) {
+  try {
+    var systemPrompt = `당신은 MITGEUL v2.0 시스템의 블로그 마케팅 전략 전문가입니다.
+소상공인 매장의 상권 데이터와 진단 결과를 바탕으로
+실행 가능한 블로그 마케팅 차별화 포인트를 제공합니다.
+
+규칙:
+- 반드시 JSON 형식으로만 응답 (마크다운 없이)
+- points 배열: 정확히 4개의 전략 포인트
+- 각 포인트는 40자 이내의 실행 가능한 한국어 문장
+- 매장명, 지역, 업종, 경쟁 상황을 반드시 반영
+- 구체적 숫자나 행동 동사 포함
+- 응답 형식: {"points": ["포인트1", "포인트2", "포인트3", "포인트4"]}`;
+
+    var userPrompt = `매장 정보:
+- 업종: ${promptData.categoryLabel}
+- 위치: ${promptData.region} ${promptData.gu}${promptData.dong ? ' ' + promptData.dong : ''}
+- 구 단위 경쟁 등급: ${promptData.guGrade} (${promptData.guRank}위 / ${promptData.guCount}개 구 중)
+- 구 내 동종 업소 수: ${promptData.myCount.toLocaleString()}개
+${promptData.dong ? `- 동 단위 경쟁 등급: ${promptData.dongGrade}` : ''}
+- 블로그 리뷰 수: ${promptData.blogReviews || 0}개
+- 방문자 리뷰 수: ${promptData.visitorReviews || 0}개
+- 사진 등록 수: ${promptData.photoCount || 0}장
+- 주요 고민: ${promptData.mainConcern || '없음'}
+- 매장 진단 점수: ${promptData.score || '—'}점
+
+위 정보를 바탕으로 이 매장에 딱 맞는 블로그 마케팅 차별화 포인트 4개를 JSON으로 제공하세요.`;
+
+    var response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: userPrompt }]
+      })
+    });
+
+    var data = await response.json();
+    var text = data.content && data.content[0] && data.content[0].text;
+    if (!text) throw new Error('no content');
+
+    // JSON 파싱 (마크다운 펜스 제거)
+    var clean = text.replace(/```json|```/g, '').trim();
+    var parsed = JSON.parse(clean);
+    return parsed.points || [];
+
+  } catch(e) {
+    console.warn('MITGEUL AI API 오류:', e);
+    return null; // null이면 기존 하드코딩 fallback
+  }
+}
+
+function buildPromptData(r) {
+  var info = state.info;
+  var dongResult = info.storeDong ? analyzeDong(info.storeRegion, info.category, info.storeGu, info.storeDong) : { found: false };
+  return {
+    storeName:     '', // 개인정보 보호: 매장명 미전송
+    categoryLabel: getCategoryLabel(info.category),
+    region:        info.storeRegion || '',
+    gu:            info.storeGu || '',
+    dong:          info.storeDong || '',
+    guGrade:       r.grade,
+    guRank:        r.rank,
+    guCount:       r.gu_count,
+    myCount:       r.myCount,
+    dongGrade:     dongResult.found ? dongResult.dongGrade : (info.storeDong ? '저경쟁' : ''),
+    blogReviews:   info.blogReviews,
+    visitorReviews:info.visitorReviews,
+    photoCount:    info.photoCount,
+    mainConcern:   info.mainConcern,
+    score:         state.score
+  };
+}
+
+function makeStratHTML(points) {
+  return points.map(function(p, i) {
+    return '<div class="r-list-item"><span class="r-num">'+(i+1)+'</span><span>'+p+'</span></div>';
+  }).join('');
+}
+
+function makeLoadingHTML() {
+  return '<div id="mitgeulAILoading" style="padding:16px 0">'+
+    '<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">'+
+    '<div style="width:8px;height:8px;border-radius:50%;background:#3DFFC0;animation:mgPulse 1s infinite"></div>'+
+    '<div style="width:8px;height:8px;border-radius:50%;background:#3DFFC0;animation:mgPulse 1s .2s infinite"></div>'+
+    '<div style="width:8px;height:8px;border-radius:50%;background:#3DFFC0;animation:mgPulse 1s .4s infinite"></div>'+
+    '<span style="font-size:12px;color:#64748b;margin-left:4px">MITGEUL AI 분석 중...</span></div>'+
+    '<div style="height:10px;background:rgba(61,255,192,0.08);border-radius:5px;margin-bottom:8px;overflow:hidden">'+
+    '<div style="height:100%;width:60%;background:linear-gradient(90deg,rgba(61,255,192,0.3),rgba(61,255,192,0.1));border-radius:5px;animation:mgSweep 1.5s infinite"></div></div>'+
+    '<div style="height:10px;background:rgba(61,255,192,0.08);border-radius:5px;margin-bottom:8px;overflow:hidden">'+
+    '<div style="height:100%;width:80%;background:linear-gradient(90deg,rgba(61,255,192,0.3),rgba(61,255,192,0.1));border-radius:5px;animation:mgSweep 1.5s .3s infinite"></div></div>'+
+    '<div style="height:10px;background:rgba(61,255,192,0.08);border-radius:5px;overflow:hidden">'+
+    '<div style="height:100%;width:45%;background:linear-gradient(90deg,rgba(61,255,192,0.3),rgba(61,255,192,0.1));border-radius:5px;animation:mgSweep 1.5s .6s infinite"></div></div>'+
+    '</div>';
 }
 
 function getCategoryLabel(cat) {
@@ -4140,6 +4400,20 @@ function generateReport(){
   document.getElementById('reportContainer').innerHTML=html;
   document.getElementById('reportBtns').style.display='flex';
   document.getElementById('gformBanner').style.display='flex';
+
+  // ── 리포트 내 AI 전략 포인트 비동기 교체
+  var _r = analyzeSangkwon(state.info.storeRegion, state.info.category, state.info.storeGu);
+  if (_r) {
+    (async function() {
+      var promptData = buildPromptData(_r);
+      var aiPoints = await callMitgeulAI(promptData);
+      var el = document.getElementById('mitgeulAILoadingReport');
+      if (el) {
+        var points = aiPoints && aiPoints.length ? aiPoints : _r.strategyPoints;
+        el.outerHTML = makeStratHTML(points);
+      }
+    })();
+  }
 }
 
 function getReportSections(grade,score,strong,weak,info,yesCount,noCount,hasBlog,blogRecent){
