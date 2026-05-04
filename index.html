@@ -223,23 +223,77 @@
   @media print{
     @page{size:A4;margin:15mm 15mm 18mm 15mm;}
     *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
+
+    /* ── 기본 배경/글자 ── */
     body{background:#fff!important;color:#1a1a2e!important;}
     .header,.step-nav,.btn-row,#reportBtns,.gform-banner{display:none!important;}
     #sec0,#sec1,#sec2,#sec3,#sec4,#sec5,#sec6{display:none!important;}
     #sec7{display:block!important;margin:0;padding:0;}
+
+    /* ── 카드/섹션 ── */
     .card{background:#fff!important;border:1px solid #c8cce8!important;border-radius:6px!important;page-break-inside:avoid;break-inside:avoid;margin-bottom:10px;}
     .report-header{background:#1E2370!important;color:#fff!important;border-radius:8px!important;padding:16px 20px!important;margin-bottom:12px;}
     .report-title{color:#fff!important;font-size:18pt!important;}
     .report-meta{color:#ccd!important;}
-    .report-card-section{background:#fff!important;border:1px solid #b0b8e0!important;border-left:4px solid #1E2370!important;border-radius:0 6px 6px 0!important;padding:12px 16px 12px 14px!important;margin-bottom:12px;page-break-inside:avoid;break-inside:avoid;}
+    .report-card-section{background:#f8f9ff!important;border:1px solid #b0b8e0!important;border-left:4px solid #1E2370!important;border-radius:0 6px 6px 0!important;padding:12px 16px 12px 14px!important;margin-bottom:12px;page-break-inside:avoid;break-inside:avoid;}
     .report-sec-label{color:#1E2370!important;font-size:10pt!important;}
-    .report-sec-body{color:#333!important;font-size:10pt!important;line-height:1.8!important;}
+    .report-sec-body{color:#222!important;font-size:10pt!important;line-height:1.8!important;}
     .r-list-item{color:#222!important;border-bottom:1px solid #eee;}
     .r-num{background:#e8f0ff!important;color:#1E2370!important;}
-    .r-action-box{background:#f0fff8!important;border-left:3px solid #3DFFC0!important;color:#0a4030!important;}
-    .strength-item{background:#f0fff8!important;border:1px solid #3DFFC0!important;color:#0a4030!important;}
-    .weakness-item{background:#fff0f0!important;border:1px solid #f43f5e!important;color:#8b1a2a!important;}
-    :root{--accent:#1E2370;--text:#1a1a2e;--text2:#444;--text3:#777;}
+    .r-action-box{background:#f0fff8!important;border-left:3px solid #1E6650!important;color:#0a4030!important;}
+    .strength-item{background:#f0fff8!important;border:1px solid #1E6650!important;color:#0a4030!important;}
+    .weakness-item{background:#fff0f0!important;border:1px solid #c0392b!important;color:#7b1a1a!important;}
+
+    /* ── 인라인 스타일 흰 글자 → 어두운 색으로 강제 교체 ── */
+    #sec7 *[style*="color:#fff"],
+    #sec7 *[style*="color: #fff"],
+    #sec7 *[style*="color:white"],
+    #sec7 *[style*="color:#e2e8f0"],
+    #sec7 *[style*="color:#94a3b8"],
+    #sec7 *[style*="color:#64748b"],
+    #sec7 *[style*="color:var(--text)"],
+    #sec7 *[style*="color:var(--text2)"],
+    #sec7 *[style*="color:var(--text3)"] { color:#1a1a2e!important; }
+
+    /* ── 밝은 색 글자(accent) → 네이비로 ── */
+    #sec7 *[style*="color:#3DFFC0"],
+    #sec7 *[style*="color:var(--accent)"] { color:#1E2370!important; }
+
+    #sec7 *[style*="color:#f59e0b"],
+    #sec7 *[style*="color:var(--accent3)"] { color:#92600a!important; }
+
+    #sec7 *[style*="color:#f43f5e"],
+    #sec7 *[style*="color:var(--accent4)"] { color:#9b1c2e!important; }
+
+    /* ── 어두운 배경 → 흰색/연회색으로 ── */
+    #sec7 *[style*="background:rgba(15,20,60"],
+    #sec7 *[style*="background:rgba(30,35,112"],
+    #sec7 *[style*="background:rgba(61,255,192"],
+    #sec7 *[style*="background:rgba(25,32,100"],
+    #sec7 *[style*="background:linear-gradient"] { background:#f8f9ff!important; }
+
+    /* ── DM Mono 수치 글자 ── */
+    #sec7 *[style*="font-family:DM Mono"],
+    #sec7 *[style*="font-family:'DM Mono'"] { color:#1E2370!important; }
+
+    /* ── 점수/등급 원형 ── */
+    .score-circle { background:#f0f2ff!important; border-color:#b0b8e0!important; }
+    .score-num { color:#1a1a2e!important; }
+
+    /* ── 진행 바 ── */
+    .score-bar-track { background:#e8eaf0!important; }
+    .score-bar-fill  { background:#1E2370!important; }
+
+    /* ── 벤치마크 테이블 ── */
+    .bench-table th { background:#f0f2ff!important; color:#1E2370!important; }
+    .bench-table td { color:#222!important; }
+    .bench-val.top  { color:#1E2370!important; }
+    .bench-val.mine { color:#1a1a2e!important; }
+    .bench-tag.high { background:#e8f0e8!important; color:#1E6650!important; }
+    .bench-tag.mid  { background:#fff3e0!important; color:#92600a!important; }
+    .bench-tag.low  { background:#fce8e8!important; color:#9b1c2e!important; }
+
+    :root{--accent:#1E2370;--text:#1a1a2e;--text2:#333;--text3:#555;}
   }
 
   @keyframes mgPulse {
@@ -671,17 +725,31 @@ function renderSangkwonSection() {
     stratHTML+
     (top3?'<div style="margin-top:16px;padding:12px 14px;background:rgba(255,255,255,0.02);border-radius:8px;font-size:12px;color:#64748b">'+r.regionLabel+' 최다 경쟁 지역: '+top3+'</div>':'')
     +'</div>';
-  // ── AI 비동기 호출: 프리미엄 블로그 마케팅 차별화 포인트 교체
-  (async function() {
-    var promptData = buildPromptData(r);
-    var aiPoints = await callMitgeulAI(promptData);
+  // ── 프리미엄 블로그 마케팅 차별화 포인트
+  // 1. 즉시 fallback 렌더 (항상 내용 표시 보장)
+  (function() {
     var loadingEl = document.getElementById('mitgeulAILoading');
     if (loadingEl) {
-      var points = aiPoints && aiPoints.length
-        ? aiPoints
-        : r.strategyPoints; // API 실패 시 하드코딩 fallback
-      loadingEl.outerHTML = makeStratHTML(points);
+      loadingEl.outerHTML = makeStratHTML(r.strategyPoints);
     }
+  })();
+  // 2. API 성공 시 교체 (선택적 강화)
+  (async function() {
+    try {
+      var promptData = buildPromptData(r);
+      var aiPoints = await callMitgeulAI(promptData);
+      if (aiPoints && aiPoints.length) {
+        // AI 결과로 교체 — stratHTML은 이미 렌더됐으므로 전체 섹션 재탐색
+        var container = document.getElementById('sangkwonContainer');
+        if (container) {
+          var items = container.querySelectorAll('.r-list-item');
+          if (items.length) {
+            var parent = items[0].parentNode;
+            parent.innerHTML = makeStratHTML(aiPoints);
+          }
+        }
+      }
+    } catch(e) { /* API 실패 시 fallback 유지 */ }
   })();
 
   // 동 단위 분석 섹션 추가
@@ -1550,17 +1618,30 @@ function generateReport(){
   document.getElementById('reportBtns').style.display='flex';
   document.getElementById('gformBanner').style.display='flex';
 
-  // ── 리포트 내 AI 전략 포인트 비동기 교체
+  // ── 리포트 내 AI 전략 포인트
   var _r = analyzeSangkwon(state.info.storeRegion, state.info.category, state.info.storeGu);
   if (_r) {
-    (async function() {
-      var promptData = buildPromptData(_r);
-      var aiPoints = await callMitgeulAI(promptData);
+    // 1. 즉시 fallback 렌더
+    (function() {
       var el = document.getElementById('mitgeulAILoadingReport');
-      if (el) {
-        var points = aiPoints && aiPoints.length ? aiPoints : _r.strategyPoints;
-        el.outerHTML = makeStratHTML(points);
-      }
+      if (el) el.outerHTML = makeStratHTML(_r.strategyPoints);
+    })();
+    // 2. API 성공 시 교체
+    (async function() {
+      try {
+        var promptData = buildPromptData(_r);
+        var aiPoints = await callMitgeulAI(promptData);
+        if (aiPoints && aiPoints.length) {
+          var container = document.getElementById('reportContainer');
+          if (container) {
+            var items = container.querySelectorAll('.r-list-item');
+            if (items.length) {
+              var parent = items[0].parentNode;
+              parent.innerHTML = makeStratHTML(aiPoints);
+            }
+          }
+        }
+      } catch(e) { /* fallback 유지 */ }
     })();
   }
 }
