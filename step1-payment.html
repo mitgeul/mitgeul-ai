@@ -107,8 +107,9 @@
     </div>
 
     <ul class="includes">
+      <li>상권 분석</li>
+      <li>매장 자가 진단 (20문항)</li>
       <li>사업 기준 점검 (15문항)</li>
-      <li>매장 자가진단 (20문항)</li>
       <li>점수 · 업종별 벤치마크</li>
       <li>맞춤 실행 솔루션</li>
       <li>통합 진단 리포트</li>
@@ -145,7 +146,7 @@
           method: "CARD",              // 카드 결제
           amount: { currency: "KRW", value: 30000 },
           orderId: orderId,
-          orderName: "믿글 STEP 1 · 사업 기준 자가진단",
+          orderName: "믿글 STEP 1 · 기준점검",
           customerName: "고객",        // 필요 시 입력 받아서 넣기
           successUrl: window.location.origin + "/step1-success.html?orderId=" + orderId,
           failUrl:    window.location.origin + "/payment.html?fail=1",
