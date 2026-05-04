@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MITGEUL v2.0 — 사업 기준 · 매장 자가진단 + 상권분석 통합 시스템</title>
+<title>MITGEUL v1.0 — 사업 기준 · 매장 자가진단 + 상권분석 통합 시스템</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=DM+Mono:wght@400;500&family=Pretendard:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -198,7 +198,7 @@
       </svg>
       <span class="mitgeul-wordmark">MITGEUL<span>2026</span></span>
     </div>
-    <div class="header-badge">DIAGNOSIS SYSTEM · v2.0</div>
+    <div class="header-badge">DIAGNOSIS SYSTEM · v1.0</div>
     <h1>사업 기준 · 매장 자가진단<br><span>+ 상권분석 통합 시스템</span></h1>
     <p>기본정보 → 매장 자가진단 → 사업 기준 점검 → 진단 → 기준표 → 솔루션 → 리포트<br>소진공 실측 데이터 기반 수도권 상권분석 포함</p>
   </div>
@@ -341,7 +341,7 @@
   <div class="section" id="sec4">
     <div class="section-header">
       <div class="section-icon">🤖</div>
-      <div><div class="section-title">MITGEUL v2.0 기준 진단</div><div class="section-sub">업종별 5단계 점수 + 강점/약점 분석</div></div>
+      <div><div class="section-title">MITGEUL v1.0 기준 진단</div><div class="section-sub">업종별 5단계 점수 + 강점/약점 분석</div></div>
     </div>
     <div class="card">
       <div class="score-overview">
@@ -363,7 +363,7 @@
   <div class="section" id="sec5">
     <div class="section-header">
       <div class="section-icon">📊</div>
-      <div><div class="section-title">업종별 기준표 대조</div><div class="section-sub">MITGEUL v2.0 권장 목표치와 내 매장 비교</div></div>
+      <div><div class="section-title">업종별 기준표 대조</div><div class="section-sub">MITGEUL v1.0 권장 목표치와 내 매장 비교</div></div>
     </div>
     <div id="benchmarkContainer"><div class="alert alert-info">💡 업종을 선택하면 업종별 기준표가 표시됩니다.</div></div>
     <div class="btn-row"><button class="btn btn-primary" onclick="state.stepDone[5]=true;goStep(6)">맞춤 실행 솔루션 보기 →</button></div>
@@ -390,7 +390,7 @@
   <div class="section" id="sec7">
     <div class="section-header">
       <div class="section-icon">📄</div>
-      <div><div class="section-title">통합 진단 리포트</div><div class="section-sub">MITGEUL v2.0가 생성하는 맞춤 분석 리포트</div></div>
+      <div><div class="section-title">통합 진단 리포트</div><div class="section-sub">MITGEUL v1.0가 생성하는 맞춤 분석 리포트</div></div>
     </div>
     <div id="reportContainer"><div class="alert alert-info">💡 실행 솔루션 단계에서 리포트 생성 버튼을 눌러주세요.</div></div>
     <div class="btn-row" id="reportBtns" style="display:none">
@@ -3838,12 +3838,12 @@ function getDongSectionHTML(dong, gu, region, category, storeName) {
 
 
 // ══════════════════════════════════════
-// MITGEUL v2.0 · Claude API 연동
+// MITGEUL v1.0 · Claude API 연동
 // ══════════════════════════════════════
 
 async function callMitgeulAI(promptData) {
   try {
-    var systemPrompt = `당신은 MITGEUL v2.0 시스템의 블로그 마케팅 전략 전문가입니다.
+    var systemPrompt = `당신은 MITGEUL v1.0 시스템의 블로그 마케팅 전략 전문가입니다.
 소상공인 매장의 상권 데이터와 진단 결과를 바탕으로
 실행 가능한 블로그 마케팅 차별화 포인트를 제공합니다.
 
@@ -4234,7 +4234,7 @@ function calcBizCheck(){
   var r=yes>=12?BIZ_RESULTS.high:yes>=7?BIZ_RESULTS.mid:BIZ_RESULTS.low;
   state.bizResult=r;
   document.getElementById('bizResultCard').innerHTML=
-    '<div style="font-family:DM Mono,monospace;font-size:11px;letter-spacing:2px;color:var(--accent);margin-bottom:14px">MITGEUL v2.0 · STEP 1-C · 사업 기준 점검 결과</div>'+
+    '<div style="font-family:DM Mono,monospace;font-size:11px;letter-spacing:2px;color:var(--accent);margin-bottom:14px">MITGEUL v1.0 · STEP 1-C · 사업 기준 점검 결과</div>'+
     '<div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:12px">'+
     '<div style="font-family:DM Mono,monospace;font-size:48px;font-weight:700;color:'+r.color+';line-height:1">'+yes+'<span style="font-size:16px;color:var(--text3)">/15</span></div>'+
     '<div><div style="display:inline-block;padding:4px 12px;border-radius:16px;font-size:11px;font-weight:700;font-family:DM Mono,monospace;background:rgba(61,255,192,0.08);color:'+r.color+';border:1px solid '+r.color+';margin-bottom:6px">'+r.grade+'</div>'+
@@ -4363,8 +4363,8 @@ function generateReport(){
   var html='<div class="report-header">'+
     '<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">'+
     '<svg width="28" height="28" viewBox="0 0 42 42" fill="none"><rect width="42" height="42" rx="12" fill="#252c8a"/><rect width="42" height="42" rx="12" stroke="#3DFFC0" stroke-width="1.5" stroke-opacity="0.4" fill="none"/><text x="21" y="30" text-anchor="middle" font-family="DM Mono,monospace" font-size="22" font-weight="700" fill="#3DFFC0">M</text><circle cx="34" cy="9" r="3.5" fill="#3DFFC0" opacity="0.9"/></svg>'+
-    '<span style="font-family:DM Mono,monospace;font-size:12px;letter-spacing:3px;color:var(--accent)">MITGEUL v2.0 REPORT</span></div>'+
-    '<div class="report-title">MITGEUL v2.0 통합 진단 리포트</div>'+
+    '<span style="font-family:DM Mono,monospace;font-size:12px;letter-spacing:3px;color:var(--accent)">MITGEUL v1.0 REPORT</span></div>'+
+    '<div class="report-title">MITGEUL v1.0 통합 진단 리포트</div>'+
     '<div class="report-meta" style="margin-top:8px;display:flex;flex-wrap:wrap;gap:14px">'+
     '<span>📌 '+storeName+'</span><span>🏷 '+(info.category||'—')+'</span>'+
     (info.storeRegion&&info.storeGu?'<span>📍 '+info.storeRegion+' '+info.storeGu+'</span>':'')+
@@ -4484,14 +4484,14 @@ window.onload=function(){renderChecklist();renderBizCheck();renderActionPlan();}
     overlay.style.cssText='position:fixed;inset:0;z-index:99999;background:#1E2370;display:flex;align-items:center;justify-content:center;font-family:Pretendard,sans-serif;overflow:hidden';
     overlay.innerHTML='<div style="width:100%;max-width:400px;padding:0 24px;text-align:center">'+
       '<svg width="48" height="48" viewBox="0 0 42 42" fill="none" style="margin-bottom:20px"><rect width="42" height="42" rx="12" fill="#252c8a"/><rect width="42" height="42" rx="12" stroke="#3DFFC0" stroke-width="1.5" stroke-opacity="0.4" fill="none"/><text x="21" y="30" text-anchor="middle" font-family="DM Mono,monospace" font-size="22" font-weight="700" fill="#3DFFC0">M</text><circle cx="34" cy="9" r="3.5" fill="#3DFFC0" opacity="0.9"/></svg>'+
-      '<div style="font-family:DM Mono,monospace;font-size:11px;letter-spacing:3px;color:#3DFFC0;margin-bottom:10px">MITGEUL v2.0</div>'+
+      '<div style="font-family:DM Mono,monospace;font-size:11px;letter-spacing:3px;color:#3DFFC0;margin-bottom:10px">MITGEUL v1.0</div>'+
       '<div style="font-size:18px;font-weight:700;color:#fff;margin-bottom:6px">사업 기준 · 매장 자가진단 + 상권분석</div>'+
       '<div style="font-size:13px;color:#64748b;margin-bottom:24px">접근 코드를 입력해주세요</div>'+
       '<input id="pwInput" type="password" placeholder="접근 코드" autocomplete="off" style="width:100%;background:#171d5e;border:1px solid #2d3580;border-radius:10px;color:#e2e8f0;font-family:Pretendard,sans-serif;font-size:15px;padding:13px 16px;outline:none;text-align:center;letter-spacing:4px;margin-bottom:12px;box-sizing:border-box"/>'+
       '<button id="pwBtn" style="width:100%;background:#3DFFC0;color:#111850;border:none;border-radius:10px;font-size:14px;font-weight:700;padding:13px;cursor:pointer;font-family:Pretendard,sans-serif;margin-bottom:12px">입력 확인</button>'+
       '<div id="pwErr" style="font-size:12px;color:#f43f5e;min-height:18px;margin-bottom:28px"></div>'+
       '<div style="background:rgba(61,255,192,0.06);border:1px solid rgba(61,255,192,0.2);border-radius:12px;padding:18px 20px;margin-bottom:16px;text-align:center">'+
-      '<div style="font-size:10px;font-family:DM Mono,monospace;letter-spacing:2px;color:#3DFFC0;margin-bottom:10px">MITGEUL v2.0 · 파일럿 특가</div>'+
+      '<div style="font-size:10px;font-family:DM Mono,monospace;letter-spacing:2px;color:#3DFFC0;margin-bottom:10px">MITGEUL v1.0 · 파일럿 특가</div>'+
       '<div style="display:flex;align-items:baseline;gap:10px;justify-content:center;margin-bottom:8px"><span style="font-size:13px;color:#f43f5e;text-decoration:line-through">100,000원</span><span style="font-family:DM Mono,monospace;font-size:28px;font-weight:700;color:#3DFFC0">30,000원</span></div>'+
       '<div style="font-size:12px;color:#94a3b8;line-height:1.7">상권분석 + 매장 자가진단 + 사업 기준 점검<br>결과 리포트 제공<br>접근 코드는 결제 후 카카오톡으로 전달됩니다.</div><div style="border-top:1px solid rgba(255,255,255,0.1);margin-top:10px;padding-top:10px;font-size:12px;color:#3DFFC0;line-height:1.8">🎁 결과 저장 시 1:1 코칭 이용권 증정<br>(정가 30만원) 선착순 10명</div></div>'+
       '<a href="http://pf.kakao.com/_ftVan" target="_blank" style="display:block;width:100%;background:transparent;border:1px solid #3DFFC0;border-radius:10px;color:#3DFFC0;font-size:13px;font-weight:600;padding:11px;text-align:center;text-decoration:none;box-sizing:border-box;font-family:Pretendard,sans-serif;">카카오톡으로 결제 문의하기 →</a>'+
