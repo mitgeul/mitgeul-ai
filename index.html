@@ -670,7 +670,7 @@ function getSangkwonReportSection(region, category, gu) {
   var gbd = r.grade==='과열'?'rgba(244,63,94,0.25)':r.grade==='보통'?'rgba(245,158,11,0.25)':'rgba(61,255,192,0.25)';
   var rankPct = Math.round((r.rank/r.gu_count)*100);
   var posLabel = rankPct<=20?'상위 20% — 매우 높은 경쟁':rankPct<=50?'상위 50% — 평균 경쟁':'하위 50% — 낮은 경쟁';
-  var stratHTML = makeLoadingHTML(); // AI 로딩 상태로 초기 렌더
+  var stratHTML = makeStratHTML(r.strategyPoints); // 즉시 렌더 (API 성공 시 교체)
   var catData = SANGKWON_DATA[region]&&SANGKWON_DATA[region][category];
   var top3 = catData?catData.by_gu.slice(0,3).map(function(g){return '<strong style="color:#94a3b8">'+g.구+' '+g.점포수.toLocaleString()+'개</strong>';}).join(' · '):'';
   return '<div class="report-card-section"><div class="report-sec-label">06 · 상권 분석 — 소진공 실측 데이터 기반 ('+r.dataSource+')</div><div class="report-sec-body">'+
@@ -708,7 +708,7 @@ function renderSangkwonSection() {
   var gbd = r.grade==='과열'?'rgba(244,63,94,0.25)':r.grade==='보통'?'rgba(245,158,11,0.25)':'rgba(61,255,192,0.25)';
   var rankPct = Math.round((r.rank/r.gu_count)*100);
   var posLabel = rankPct<=20?'상위 20% — 매우 높은 경쟁':rankPct<=50?'상위 50% — 평균 경쟁':'하위 50% — 낮은 경쟁';
-  var stratHTML = makeLoadingHTML().replace('id="mitgeulAILoading"', 'id="mitgeulAILoadingReport"'); // 리포트용 AI 로딩
+  var stratHTML = makeStratHTML(r.strategyPoints); // 즉시 렌더
   var catData = SANGKWON_DATA[region]&&SANGKWON_DATA[region][category];
   var top3 = catData?catData.by_gu.slice(0,3).map(function(g){return '<strong style="color:#94a3b8">'+g.구+' '+g.점포수.toLocaleString()+'개</strong>';}).join(' · '):'';
   con.innerHTML = '<div class="card">'+
@@ -725,31 +725,21 @@ function renderSangkwonSection() {
     stratHTML+
     (top3?'<div style="margin-top:16px;padding:12px 14px;background:rgba(255,255,255,0.02);border-radius:8px;font-size:12px;color:#64748b">'+r.regionLabel+' 최다 경쟁 지역: '+top3+'</div>':'')
     +'</div>';
-  // ── 프리미엄 블로그 마케팅 차별화 포인트
-  // 1. 즉시 fallback 렌더 (항상 내용 표시 보장)
-  (function() {
-    var loadingEl = document.getElementById('mitgeulAILoading');
-    if (loadingEl) {
-      loadingEl.outerHTML = makeStratHTML(r.strategyPoints);
-    }
-  })();
-  // 2. API 성공 시 교체 (선택적 강화)
+  // ── AI 분석으로 전략 포인트 강화 (API 성공 시에만 교체)
   (async function() {
     try {
       var promptData = buildPromptData(r);
       var aiPoints = await callMitgeulAI(promptData);
       if (aiPoints && aiPoints.length) {
-        // AI 결과로 교체 — stratHTML은 이미 렌더됐으므로 전체 섹션 재탐색
         var container = document.getElementById('sangkwonContainer');
         if (container) {
           var items = container.querySelectorAll('.r-list-item');
           if (items.length) {
-            var parent = items[0].parentNode;
-            parent.innerHTML = makeStratHTML(aiPoints);
+            items[0].parentNode.innerHTML = makeStratHTML(aiPoints);
           }
         }
       }
-    } catch(e) { /* API 실패 시 fallback 유지 */ }
+    } catch(e) { /* strategyPoints 유지 */ }
   })();
 
   // 동 단위 분석 섹션 추가
@@ -1618,15 +1608,9 @@ function generateReport(){
   document.getElementById('reportBtns').style.display='flex';
   document.getElementById('gformBanner').style.display='flex';
 
-  // ── 리포트 내 AI 전략 포인트
+  // ── 리포트 AI 전략 포인트 강화
   var _r = analyzeSangkwon(state.info.storeRegion, state.info.category, state.info.storeGu);
   if (_r) {
-    // 1. 즉시 fallback 렌더
-    (function() {
-      var el = document.getElementById('mitgeulAILoadingReport');
-      if (el) el.outerHTML = makeStratHTML(_r.strategyPoints);
-    })();
-    // 2. API 성공 시 교체
     (async function() {
       try {
         var promptData = buildPromptData(_r);
@@ -1636,12 +1620,11 @@ function generateReport(){
           if (container) {
             var items = container.querySelectorAll('.r-list-item');
             if (items.length) {
-              var parent = items[0].parentNode;
-              parent.innerHTML = makeStratHTML(aiPoints);
+              items[0].parentNode.innerHTML = makeStratHTML(aiPoints);
             }
           }
         }
-      } catch(e) { /* fallback 유지 */ }
+      } catch(e) { /* strategyPoints 유지 */ }
     })();
   }
 }
