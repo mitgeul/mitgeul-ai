@@ -1086,7 +1086,7 @@ ${promptData.dong ? '- 동 단위 경쟁 등급: ' + promptData.dongGrade : ''}
 
 위 정보를 바탕으로 이 매장에 딱 맞는 블로그 마케팅 차별화 포인트 4개를 JSON으로 제공하세요.`;
 
-    var response = await fetch('https://api.anthropic.com/v1/messages', {
+    var response = await fetch('https://mitgeul-api.mitgeul.workers.dev', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
