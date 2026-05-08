@@ -510,10 +510,12 @@
       <button class="plan-tab active" data-tab="today" onclick="switchPlan('today')">⚡ 오늘 할 일</button>
       <button class="plan-tab" data-tab="week" onclick="switchPlan('week')">📅 이번 주</button>
       <button class="plan-tab" data-tab="month" onclick="switchPlan('month')">📈 이번 달</button>
+      <button class="plan-tab" data-tab="posting" onclick="switchPlan('posting')">📝 포스팅 설계</button>
     </div>
     <div id="planToday" class="plan-content active"></div>
     <div id="planWeek" class="plan-content"></div>
     <div id="planMonth" class="plan-content"></div>
+    <div id="planPosting" class="plan-content"></div>
     <div class="btn-row"><button class="btn btn-primary" onclick="generateReport()">통합 진단 리포트 생성 →</button></div>
   </div>
 
@@ -1522,6 +1524,7 @@ function renderActionPlan(){
   renderPlanContent('today',ACTION_PLANS.today,'planToday');
   renderPlanContent('week',ACTION_PLANS.week,'planWeek');
   renderPlanContent('month',ACTION_PLANS.month,'planMonth');
+  renderPostingGuide('planPosting');
 }
 function renderPlanContent(period,data,id){
   var con=document.getElementById(id);if(!con)return;
@@ -1548,7 +1551,9 @@ function switchPlan(tab){
   document.querySelectorAll('.plan-tab').forEach(function(b){b.classList.remove('active');});
   document.querySelectorAll('.plan-content').forEach(function(c){c.classList.remove('active');});
   document.querySelector('.plan-tab[data-tab="'+tab+'"]').classList.add('active');
-  document.getElementById('plan'+tab.charAt(0).toUpperCase()+tab.slice(1)).classList.add('active');
+  var idMap = {today:'planToday',week:'planWeek',month:'planMonth',posting:'planPosting'};
+  var elId = idMap[tab] || ('plan'+tab.charAt(0).toUpperCase()+tab.slice(1));
+  document.getElementById(elId).classList.add('active');
 }
 
 // ===================== STEP 7: 리포트 생성 =====================
@@ -1654,7 +1659,71 @@ function getReportSections(grade,score,strong,weak,info,yesCount,noCount,hasBlog
     '<div class="report-card-section"><div class="report-sec-label">02 · 지금 당장 실행 가능한 것 (오늘 완료 목표)</div><div class="report-sec-body">'+doNowHTML+'</div></div>'+
     '<div class="report-card-section"><div class="report-sec-label">03 · 업종별 특화 조언</div><div class="report-sec-body">'+adviceHTML+'</div></div>'+
     '<div class="report-card-section"><div class="report-sec-label">04 · 30일 성과 예측</div><div class="report-sec-body">'+(predMap[grade]||predMap['B'])+'</div></div>'+
-    '<div class="report-card-section"><div class="report-sec-label">05 · 최우선 실행 과제 TOP 3</div><div class="report-sec-body">'+act3+'</div></div>';
+    '<div class="report-card-section"><div class="report-sec-label">05 · 최우선 실행 과제 TOP 3</div><div class="report-sec-body">'+act3+'</div></div>'+
+    getPostingGuideReportSection(info);
+}
+
+function getPostingGuideReportSection(info) {
+  var cat = info.category || 'cafe';
+  var gu = info.storeGu || '';
+  var dong = info.storeDong || '';
+  var loc = dong || gu;
+  var catLabel = getCategoryLabel(cat);
+
+  var titleMap = {
+    cafe:       [loc+' 노트북 카페 추천 — 혼자 와도 눈치 없는 곳 기준 + 직접 가본 후기', loc+'에서 오래 앉아도 되는 카페를 찾는다면 확인할 것 3가지'],
+    restaurant: [loc+' 혼밥 가능한 식당 — 눈치 없이 혼자 먹기 좋은 곳 직접 가봤어요', loc+'에서 웨이팅 없이 갈 수 있는 맛집 고르는 기준'],
+    beauty:     [loc+' 말 안 걸어도 되는 미용실 — 내향인이 단골 된 이유 3가지', loc+'에서 예약 시간 잘 지키는 헤어샵 찾는 기준'],
+    edu:        [loc+' 직장인 영어학원 — 퇴근 후 다닐 수 있는 곳 직접 다녀봤습니다', loc+'에서 소수 정예 학원 고르는 기준 + 3개월 후기'],
+    fitness:    [loc+' 초보자 필라테스 — 아무것도 몰라도 되는 곳 직접 가봤어요', loc+'에서 직장인 PT 선택하는 기준 + 3개월 결과'],
+    medical:    [loc+' 대기 짧은 병원 — 점심시간에 다녀온 후기', loc+'에서 과잉진료 없는 병원 찾는 기준'],
+    retail:     [loc+' 구경하기 좋은 곳 — 혼자 쇼핑하기 좋은 매장', loc+'에서 선물 사기 좋은 곳 기준'],
+    service:    [loc+' 믿을 수 있는 업체 — 단골 된 이유', loc+'에서 가성비 좋은 곳 고르는 기준']
+  };
+
+  var titles = titleMap[cat] || titleMap['cafe'];
+  var numMap = {
+    cafe:'좌석 수·1인석 비율·콘센트 여부·혼잡 시간대',
+    restaurant:'가격대·좌석 수·웨이팅·주차 여부',
+    beauty:'시술 시간·가격대·예약 방법·재방문 간격',
+    edu:'수업 인원·강사 경력·수강료·체험 여부',
+    fitness:'정원 수·PT 가격·강사 자격·샤워 시설',
+    medical:'평균 대기·진료 과목·주차·진료 시간',
+    retail:'브랜드 수·가격대·교환 정책·포장 서비스',
+    service:'처리 시간·가격 범위·AS 기간·출장 여부'
+  };
+
+  var sangkwonLine = '';
+  if (info.storeRegion && gu && cat) {
+    var r = analyzeSangkwon(info.storeRegion, cat, gu);
+    if (r) {
+      sangkwonLine = '<div style="margin-bottom:10px;padding:9px 12px;border-radius:8px;background:rgba(61,255,192,0.05);border:1px solid rgba(61,255,192,0.12);font-size:12px;color:#64748b">'+
+        '📊 소진공 실측 데이터 활용 — '+r.regionLabel+' '+gu+' '+catLabel+' <strong style="color:#3DFFC0">'+r.myCount.toLocaleString()+'개</strong> ('+r.grade+' 지역) · 포스팅 본문에 직접 인용하세요'+
+      '</div>';
+    }
+  }
+
+  return '<div class="report-card-section"><div class="report-sec-label">08 · 맞춤 포스팅 설계 가이드 (SEO + GEO)</div><div class="report-sec-body">'+
+    sangkwonLine +
+    '<div style="font-size:12px;color:#64748b;margin-bottom:14px">'+loc+' · '+catLabel+' 기준으로 자동 생성된 포스팅 구조입니다. 믿글컴퍼니는 이 구조로 포스팅을 설계합니다.</div>'+
+    '<div style="margin-bottom:14px">'+
+      '<div style="font-size:11px;font-family:DM Mono,monospace;color:#3DFFC0;letter-spacing:1px;margin-bottom:8px">추천 제목 (SEO + GEO 이중 설계)</div>'+
+      '<div style="padding:10px 12px;border-radius:8px;background:rgba(61,255,192,0.05);border:1px solid rgba(61,255,192,0.15);font-size:12px;color:#e2e8f0;line-height:2;margin-bottom:6px">'+
+        '📍 SEO: "'+titles[0]+'"<br>🤖 GEO: "'+titles[1]+'"'+
+      '</div>'+
+    '</div>'+
+    '<div style="margin-bottom:14px">'+
+      '<div style="font-size:11px;font-family:DM Mono,monospace;color:#3DFFC0;letter-spacing:1px;margin-bottom:8px">본문 필수 요소 3가지</div>'+
+      '<div class="r-list-item"><span class="r-num">1</span><span><strong style="color:#fff">수치 기반 문장</strong> — '+numMap[cat]||'구체적 숫자로 표현'+' → AI가 인용하기 좋은 형태로 작성</span></div>'+
+      '<div class="r-list-item"><span class="r-num">2</span><span><strong style="color:#fff">상황-브랜드 등식</strong> — "'+loc+'에서 [상황]일 때 → 이 매장" 패턴으로 반복 설계</span></div>'+
+      '<div class="r-list-item"><span class="r-num">3</span><span><strong style="color:#fff">FAQ 구조</strong> — 포스팅 하단 Q&A 3개 이상 → 네이버 스니펫 + AI 답변 동시 노출</span></div>'+
+    '</div>'+
+    '<div style="padding:12px 14px;border-radius:8px;background:rgba(61,255,192,0.04);border-left:3px solid #3DFFC0;font-size:12px;color:#94a3b8;line-height:1.8">'+
+      '이 구조로 작성된 포스팅은 네이버 검색 상단과 챗GPT·퍼플렉시티 등 AI 답변 모두에서 인용될 가능성이 높습니다.<br>'+
+      '<strong style="color:#fff">믿글컴퍼니 프리미엄 블로그 마케팅</strong>은 소진공 실측 데이터 + 이 구조를 결합해 일반 블로거 대행과 다른 포스팅을 만듭니다.'+
+    '</div>'+
+    '<a href="http://pf.kakao.com/_ftVan" target="_blank" style="display:block;margin-top:12px;text-align:center;padding:10px;border-radius:8px;background:transparent;border:1px solid rgba(61,255,192,0.3);color:#3DFFC0;font-size:12px;font-weight:600;text-decoration:none">프리미엄 블로그 마케팅 문의하기 →</a>'+
+  '</div></div>';
 }
 
 // ===================== 구글폼 =====================
@@ -1685,7 +1754,211 @@ function submitToGoogleForm(){
     .then(function(){btn.textContent='✅ 저장 완료!';btn.style.background='var(--accent)';btn.disabled=false;if(statusEl){statusEl.style.color='var(--accent)';statusEl.innerHTML=userName+'님의 결과가 저장되었습니다! 🎉<br><span style="color:#fff;">카카오톡 채널을 친구추가 후 저장 여부 알려주세요. 1:1 비대면 코칭 30분 이용권(정가 30만원)을 드립니다.</span><br><a href="http://pf.kakao.com/_ftVan" target="_blank" style="display:inline-block;margin-top:8px;padding:8px 20px;background:#FAE100;color:#3C1E1E;font-weight:700;font-size:13px;border-radius:6px;text-decoration:none;">카카오톡 채널 친구추가 →</a><br><span style="font-size:11px;color:#94a3b8;margin-top:6px;display:block;">친구추가 후 1~2 영업일 내 이용권을 발송해드립니다.</span>';}})
     .catch(function(){btn.textContent='❌ 저장 실패';btn.disabled=false;if(statusEl){statusEl.style.color='#f43f5e';statusEl.textContent='저장 실패. 다시 시도해주세요.';}});
 }
+  
+// ===================== 포스팅 설계 가이드 =====================
+function renderPostingGuide(containerId) {
+  var con = document.getElementById(containerId);
+  if (!con) return;
+  var info = state.info;
+  var cat = info.category || 'cafe';
+  var gu = info.storeGu || '';
+  var dong = info.storeDong || '';
+  var catLabel = getCategoryLabel(cat);
 
+  // 업종별 SEO 제목 키워드
+  var seoKwMap = {
+    cafe:       ['노트북 카페','혼자 가기 좋은 카페','데이트 카페','브런치 카페','조용한 카페','오래 앉아도 되는 카페'],
+    restaurant: ['혼밥 가능한 식당','회식 장소','웨이팅 없는 맛집','주차 되는 맛집','점심 맛집','소개팅 식당'],
+    beauty:     ['말 안 걸어도 되는 미용실','예약 시간 잘 지키는 헤어샵','처음 가기 좋은 헤어샵','과한 권유 없는 피부샵','민감성 피부 네일샵'],
+    edu:        ['직장인 영어학원','소수 정예 학원','단기 속성 학원','주말 수업 학원','성인 영어 학원'],
+    fitness:    ['초보자 필라테스','직장인 PT','다이어트 PT','체형 교정 필라테스','소그룹 운동'],
+    medical:    ['대기 짧은 병원','친절한 병원','점심시간 병원','설명 잘 해주는 병원','과잉진료 없는 병원'],
+    retail:     ['구경하기 좋은 곳','선물 사기 좋은 곳','혼자 쇼핑','가성비 쇼핑'],
+    service:    ['믿을 수 있는 업체','빠른 처리 가능','가격 합리적인 곳','단골 되기 좋은 곳']
+  };
+
+  // 업종별 수치 요소
+  var numericMap = {
+    cafe:       ['총 좌석 중 1인석 비율(%)','영업시간 및 혼잡 시간대','콘센트 보유 좌석 수','주차 가능 여부 및 인근 주차장 요금'],
+    restaurant: ['평균 식사 시간','좌석 수 및 단체석 여부','주차 가능 대수','가격대(1인 기준)'],
+    beauty:     ['평균 시술 시간','가격대','예약 가능 시간대','시술 후 관리 기간'],
+    edu:        ['수업 인원(최대)','강사 경력 연차','합격·성과 사례 수','수강료 범위'],
+    fitness:    ['수업 정원 수','PT 횟수 및 가격','운동 공간 면적(평)','강사 자격증 보유 수'],
+    medical:    ['평균 대기 시간','진료 과목 수','주차 가능 대수','진료 가능 시간'],
+    retail:     ['취급 브랜드 수','가격대 범위','재입고 주기','포장 서비스 여부'],
+    service:    ['평균 처리 시간','서비스 가능 지역','가격 범위','A/S 보장 기간']
+  };
+
+  // 업종별 FAQ
+  var faqMap = {
+    cafe: [
+      {q: (dong||gu)+' '+catLabel+', 노트북 작업해도 되나요?', a:'콘센트와 와이파이 환경, 평균 체류 시간 기준으로 설명'},
+      {q: '주말에도 자리 있나요?', a:'요일·시간대별 혼잡도와 추천 방문 시간 안내'},
+      {q: '주차는 가능한가요?', a:'주차 가능 여부, 인근 공영주차장 위치와 요금 안내'}
+    ],
+    restaurant: [
+      {q: (dong||gu)+' '+catLabel+', 혼자 방문해도 괜찮나요?', a:'1인석 구성과 혼밥 분위기에 대해 구체적으로 설명'},
+      {q: '단체 예약은 가능한가요?', a:'단체석 규모, 예약 방법, 최소 인원 기준 안내'},
+      {q: '주차는 어떻게 하나요?', a:'주차 공간 유무, 인근 주차장 위치 안내'}
+    ],
+    beauty: [
+      {q: (dong||gu)+' '+catLabel+', 당일 예약도 되나요?', a:'예약 방법과 당일 가능 여부, 추천 예약 시간대 안내'},
+      {q: '처음 방문인데 어떤 시술부터 받으면 좋을까요?', a:'초보자 추천 시술과 가격대 안내'},
+      {q: '민감성 피부도 괜찮은가요?', a:'사용 제품 성분과 민감성 피부 대응 방식 설명'}
+    ],
+    edu: [
+      {q: (dong||gu)+' '+catLabel+', 성인도 등록 가능한가요?', a:'성인 수업 운영 여부와 시간대 안내'},
+      {q: '수업 인원은 몇 명인가요?', a:'최대 정원과 실제 평균 수강 인원 안내'},
+      {q: '체험 수업이 있나요?', a:'무료 또는 할인 체험 수업 운영 여부 안내'}
+    ],
+    fitness: [
+      {q: (dong||gu)+' '+catLabel+', 초보자도 할 수 있나요?', a:'초보자 커리큘럼과 첫 수업 준비물 안내'},
+      {q: 'PT는 몇 회부터 등록 가능한가요?', a:'최소 등록 횟수와 가격 구성 안내'},
+      {q: '샤워실이 있나요?', a:'샤워 시설 여부와 이용 방법 안내'}
+    ],
+    medical: [
+      {q: (dong||gu)+' '+catLabel+', 예약 없이 방문해도 되나요?', a:'예약 여부와 평균 대기 시간 안내'},
+      {q: '점심시간에도 진료하나요?', a:'점심 진료 여부와 진료 시간 안내'},
+      {q: '주차는 가능한가요?', a:'주차 공간과 인근 주차 안내'}
+    ],
+    retail:  [{q:'환불·교환 정책은 어떻게 되나요?',a:'교환 기간과 조건 안내'},{q:'선물 포장이 되나요?',a:'포장 서비스 종류와 가격 안내'},{q:'주차는 가능한가요?',a:'주차 안내'}],
+    service: [{q:'작업 기간은 얼마나 걸리나요?',a:'평균 처리 기간 안내'},{q:'AS 보장이 되나요?',a:'보증 기간과 조건 안내'},{q:'출장 서비스도 되나요?',a:'출장 가능 지역과 추가 비용 안내'}]
+  };
+
+  var seoKws = (seoKwMap[cat]||[]).slice(0,4);
+  var numItems = (numericMap[cat]||[]);
+  var faqs = (faqMap[cat]||[]);
+
+  // 소진공 데이터 연동
+  var sangkwonContext = '';
+  if (state.info.storeRegion && state.info.storeGu && cat) {
+    var r = analyzeSangkwon(state.info.storeRegion, cat, state.info.storeGu);
+    if (r) {
+      sangkwonContext = '<div style="padding:12px 14px;border-radius:8px;background:rgba(61,255,192,0.04);border:1px solid rgba(61,255,192,0.12);font-size:12px;color:#64748b;line-height:1.9;margin-bottom:18px">'+
+        '💡 <strong style="color:#3DFFC0">소진공 데이터 자동 연동</strong> — '+r.regionLabel+' '+gu+' '+catLabel+' '+r.myCount.toLocaleString()+'개 ('+r.grade+' 지역)<br>'+
+        '아래 수치 기반 문장에 이 데이터를 직접 활용하세요. 일반 블로거는 절대 쓸 수 없는 공신력 있는 숫자입니다.'+
+        '</div>';
+    }
+  }
+
+  // 제목 예시 생성
+  var loc = dong || gu;
+  var titleSEO = loc ? '"'+loc+' '+seoKws[0]+' — '+seoKws[1]+' 직접 가봤습니다"' : '"'+seoKws[0]+' — '+seoKws[1]+' 직접 가봤습니다"';
+  var titleGEO = loc ? '"'+loc+'에서 '+seoKws[0]+'를 찾는다면 확인할 것 3가지"' : '"'+seoKws[0]+'를 찾는다면 확인할 것 3가지"';
+  var titleCombo = loc ? '"'+loc+' '+catLabel+' 추천 — '+seoKws[2]+' 직접 가본 후기"' : '"'+catLabel+' 추천 — '+seoKws[2]+' 직접 가본 후기"';
+
+  function makeTag(txt, color, bg, border) {
+    return '<span style="display:inline-block;padding:4px 12px;border-radius:20px;border:1px solid '+border+';background:'+bg+';font-size:12px;font-family:DM Mono,monospace;color:'+color+';margin:3px 3px 3px 0">'+txt+'</span>';
+  }
+
+  var seoTagHTML = seoKws.map(function(k){ return makeTag(k,'#3DFFC0','rgba(61,255,192,0.07)','rgba(61,255,192,0.3)'); }).join('');
+  var numHTML = numItems.map(function(n,i){
+    return '<div style="display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:13px;color:var(--text2)"><span style="width:20px;height:20px;border-radius:5px;background:rgba(61,255,192,0.12);color:#3DFFC0;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+(i+1)+'</span><span>'+n+' — <em style="color:#64748b;font-style:normal">숫자로 표현하면 AI와 네이버 모두 인용 가능성 상승</em></span></div>';
+  }).join('');
+  var faqHTML = faqs.map(function(f){
+    return '<div style="padding:12px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:8px">'+
+      '<div style="font-size:12px;font-weight:700;color:#3DFFC0;margin-bottom:4px">Q. '+f.q+'</div>'+
+      '<div style="font-size:12px;color:#64748b">A. '+f.a+'</div>'+
+    '</div>';
+  }).join('');
+
+  con.innerHTML =
+    // 헤더
+    '<div style="padding:16px 18px;border-radius:12px;background:linear-gradient(135deg,rgba(61,255,192,0.08),rgba(30,35,112,0.5));border:1px solid rgba(61,255,192,0.2);margin-bottom:20px">'+
+      '<div style="font-family:DM Mono,monospace;font-size:10px;letter-spacing:2px;color:#3DFFC0;margin-bottom:6px">SEO + GEO · POSTING DESIGN</div>'+
+      '<div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:4px">네이버 검색과 AI 모두에 노출되는 포스팅 구조</div>'+
+      '<div style="font-size:12px;color:#94a3b8">믿글컴퍼니 프리미엄 블로그 마케팅은 이 구조로 포스팅을 설계합니다</div>'+
+    '</div>'+
+
+    // 소진공 데이터 연동 안내
+    sangkwonContext +
+
+    // 제목 설계
+    '<div style="margin-bottom:24px">'+
+      '<div style="font-size:11px;font-family:DM Mono,monospace;color:#3DFFC0;letter-spacing:1px;margin-bottom:12px">① 제목 설계 — SEO와 GEO를 동시에 잡는 3가지 공식</div>'+
+      '<div style="display:flex;flex-direction:column;gap:10px">'+
+        '<div style="padding:12px 14px;border-radius:10px;background:rgba(61,255,192,0.05);border:1px solid rgba(61,255,192,0.2)">'+
+          '<div style="font-size:10px;font-family:DM Mono,monospace;color:#3DFFC0;letter-spacing:1px;margin-bottom:5px">📍 SEO 제목 — 네이버 키워드 상단 목표</div>'+
+          '<div style="font-size:13px;color:#fff;font-weight:500">'+titleSEO+'</div>'+
+          '<div style="font-size:11px;color:#64748b;margin-top:4px">지역명 + 상황 키워드 + 구체적 정보 조합</div>'+
+        '</div>'+
+        '<div style="padding:12px 14px;border-radius:10px;background:rgba(245,158,11,0.05);border:1px solid rgba(245,158,11,0.2)">'+
+          '<div style="font-size:10px;font-family:DM Mono,monospace;color:#f59e0b;letter-spacing:1px;margin-bottom:5px">🤖 GEO 제목 — AI 답변 인용 목표</div>'+
+          '<div style="font-size:13px;color:#fff;font-weight:500">'+titleGEO+'</div>'+
+          '<div style="font-size:11px;color:#64748b;margin-top:4px">지역 + 상황 질문 + 답변 예고 구조 → AI가 인용하기 좋은 형태</div>'+
+        '</div>'+
+        '<div style="padding:12px 14px;border-radius:10px;background:rgba(148,163,184,0.05);border:1px solid rgba(148,163,184,0.15)">'+
+          '<div style="font-size:10px;font-family:DM Mono,monospace;color:#94a3b8;letter-spacing:1px;margin-bottom:5px">⚡ 실전 조합 — SEO + GEO 동시 커버</div>'+
+          '<div style="font-size:13px;color:#fff;font-weight:500">'+titleCombo+'</div>'+
+          '<div style="font-size:11px;color:#64748b;margin-top:4px">키워드 선점 + 정보성 결합 → 네이버·AI 이중 노출 전략</div>'+
+        '</div>'+
+      '</div>'+
+    '</div>'+
+
+    // 상황 키워드 태그
+    '<div style="margin-bottom:24px">'+
+      '<div style="font-size:11px;font-family:DM Mono,monospace;color:#3DFFC0;letter-spacing:1px;margin-bottom:8px">제목에 활용할 상황 키워드</div>'+
+      '<div style="font-size:11px;color:#64748b;margin-bottom:10px">고객이 업종을 모르고 자신의 상황으로 검색하는 키워드 — 경쟁이 적고 전환율이 높습니다</div>'+
+      seoTagHTML +
+    '</div>'+
+
+    // 본문 필수 요소 3가지
+    '<div style="margin-bottom:24px">'+
+      '<div style="font-size:11px;font-family:DM Mono,monospace;color:#3DFFC0;letter-spacing:1px;margin-bottom:14px">② 본문 필수 요소 3가지</div>'+
+
+      // 요소 1: 수치 기반
+      '<div style="margin-bottom:14px;padding:14px 16px;border-radius:10px;background:var(--bg2);border:1px solid var(--border)">'+
+        '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">'+
+          '<span style="width:22px;height:22px;border-radius:6px;background:rgba(61,255,192,0.15);color:#3DFFC0;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">1</span>'+
+          '<span style="font-size:13px;font-weight:600;color:#fff">수치 기반 문장</span>'+
+          '<span style="font-size:11px;color:#64748b">— AI는 구체적 숫자가 있는 문장을 인용합니다</span>'+
+        '</div>'+
+        '<div style="display:flex;gap:10px;margin-bottom:10px;font-size:12px">'+
+          '<div style="flex:1;padding:8px 10px;border-radius:8px;background:rgba(244,63,94,0.06);border:1px solid rgba(244,63,94,0.15)"><span style="color:#f43f5e;font-weight:600">❌ 일반</span><br><span style="color:#94a3b8">자리가 많아서 앉기 편해요</span></div>'+
+          '<div style="flex:1;padding:8px 10px;border-radius:8px;background:rgba(61,255,192,0.06);border:1px solid rgba(61,255,192,0.2)"><span style="color:#3DFFC0;font-weight:600">✅ 최적화</span><br><span style="color:#94a3b8">총 32석 중 1인석이 22석(68%)입니다</span></div>'+
+        '</div>'+
+        '<div style="font-size:11px;color:#64748b;margin-bottom:8px">이 매장에서 사용할 수 있는 수치 요소:</div>'+
+        numHTML +
+      '</div>'+
+
+      // 요소 2: 상황-브랜드 등식
+      '<div style="margin-bottom:14px;padding:14px 16px;border-radius:10px;background:var(--bg2);border:1px solid var(--border)">'+
+        '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">'+
+          '<span style="width:22px;height:22px;border-radius:6px;background:rgba(245,158,11,0.15);color:#f59e0b;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">2</span>'+
+          '<span style="font-size:13px;font-weight:600;color:#fff">상황-브랜드 등식 문장</span>'+
+          '<span style="font-size:11px;color:#64748b">— AI는 이 패턴을 학습합니다</span>'+
+        '</div>'+
+        '<div style="font-size:12px;color:#64748b;margin-bottom:8px">구조: <span style="color:#f59e0b">[지역]에서 [구체적 상황]일 때 → [매장명/업종]</span></div>'+
+        '<div style="padding:10px 12px;border-radius:8px;background:rgba(245,158,11,0.05);border:1px solid rgba(245,158,11,0.15);font-size:12px;color:#94a3b8;line-height:1.9">'+
+          (loc ? '"<strong style="color:#fff">'+loc+'</strong>에서 '+seoKws[0]+'를 찾는다면 이 매장이 선택지가 되는 이유"<br>' : '')+
+          '"<strong style="color:#fff">'+catLabel+'</strong> 중에서 '+seoKws[1]+'를 찾는 분들이 단골이 되는 이유"'+
+        '</div>'+
+      '</div>'+
+
+      // 요소 3: FAQ
+      '<div style="padding:14px 16px;border-radius:10px;background:var(--bg2);border:1px solid var(--border)">'+
+        '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">'+
+          '<span style="width:22px;height:22px;border-radius:6px;background:rgba(148,163,184,0.15);color:#94a3b8;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">3</span>'+
+          '<span style="font-size:13px;font-weight:600;color:#fff">FAQ 구조</span>'+
+          '<span style="font-size:11px;color:#64748b">— 네이버 스니펫 + AI 답변 동시 노출</span>'+
+        '</div>'+
+        '<div style="font-size:11px;color:#64748b;margin-bottom:10px">포스팅 하단에 3개 이상 배치. 고객이 실제로 검색하는 질문을 그대로 씁니다.</div>'+
+        faqHTML +
+      '</div>'+
+    '</div>'+
+
+    // 믿글 차별점 배너
+    '<div style="padding:16px 18px;border-radius:12px;background:rgba(15,20,60,0.6);border:1px solid rgba(61,255,192,0.15);margin-top:4px">'+
+      '<div style="font-size:10px;font-family:DM Mono,monospace;color:#3DFFC0;letter-spacing:1px;margin-bottom:10px">📌 믿글컴퍼니 프리미엄 블로그 마케팅이 다른 이유</div>'+
+      '<div style="display:flex;flex-direction:column;gap:8px;font-size:12px;color:#94a3b8;line-height:1.7">'+
+        '<div style="display:flex;gap:8px"><span style="color:#3DFFC0;flex-shrink:0">01</span><span>사전 인터뷰로 매장 기준을 파악하고 메시지 가이드라인을 먼저 만듭니다</span></div>'+
+        '<div style="display:flex;gap:8px"><span style="color:#3DFFC0;flex-shrink:0">02</span><span>소진공 실측 데이터를 포스팅에 직접 활용합니다 — 일반 블로거는 불가능한 차별점</span></div>'+
+        '<div style="display:flex;gap:8px"><span style="color:#3DFFC0;flex-shrink:0">03</span><span>위의 SEO+GEO 구조로 설계된 포스팅은 네이버 상단과 AI 인용을 동시에 노립니다</span></div>'+
+        '<div style="display:flex;gap:8px"><span style="color:#3DFFC0;flex-shrink:0">04</span><span>포스팅이 쌓일수록 "이 지역 이 업종 = 이 매장"이라는 등식이 AI에 학습됩니다</span></div>'+
+      '</div>'+
+      '<a href="http://pf.kakao.com/_ftVan" target="_blank" style="display:block;margin-top:14px;text-align:center;padding:11px;border-radius:10px;background:transparent;border:1px solid #3DFFC0;color:#3DFFC0;font-size:13px;font-weight:600;text-decoration:none;font-family:Pretendard,sans-serif">프리미엄 블로그 마케팅 문의하기 →</a>'+
+    '</div>';
+}
 // ===================== 초기화 =====================
 window.onload=function(){renderChecklist();renderBizCheck();renderActionPlan();};
 
