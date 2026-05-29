@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<!--
+  ══════════════════════════════════════════════════════════════
+  MITGEUL v1.0 — 수정 스니펫 완성본
+  
+  기존 mitgeul_main.html 에서 아래 3곳을 교체/추가하세요.
+  Ctrl+F 로 찾아서 교체하면 됩니다.
+  ══════════════════════════════════════════════════════════════
+-->
+
+<!-- ══════════════════════════════════════════════════
+  수정 1 of 3 : buildOverlay() 함수
+  
+  Ctrl+F: '카카오톡으로 결제 문의하기 →</a>'
+  이 문장이 포함된 <a> 태그 바로 위에 아래 블록 삽입
+════════════════════════════════════════════════════ -->
+<!--
+아래를 복사해서 buildOverlay() 함수 안,
+기존 카카오 링크 바로 위 + 연결 연산자(+)로 붙이세요.
+
+--- 붙여넣을 코드 (시작) ---
+
++
+'<div style="margin-bottom:10px;padding:14px 16px;border-radius:12px;background:rgba(61,255,192,0.04);border:1px solid rgba(61,255,192,0.15)">' +
+  '<div style="font-family:DM Mono,monospace;font-size:10px;letter-spacing:2px;color:#3DFFC0;margin-bottom:8px">FREE · 무료 키워드 진단</div>' +
+  '<div style="font-size:13px;color:#e2e8f0;font-weight:600;margin-bottom:4px">결제 전 먼저 내 동네 키워드 확인하기</div>' +
+  '<div style="font-size:11px;color:#64748b;margin-bottom:10px;line-height:1.7">동네+업종 입력 → 경쟁 등급·선점 키워드 즉시 확인<br>로그인 없음 · 30초면 충분</div>' +
+  '<a href="mitgeul_free_keyword.html" style="display:block;width:100%;background:rgba(61,255,192,0.1);border:1px solid rgba(61,255,192,0.35);border-radius:10px;color:#3DFFC0;font-size:13px;font-weight:700;padding:11px;text-align:center;text-decoration:none;box-sizing:border-box;font-family:Pretendard,sans-serif;margin-bottom:6px">무료 키워드 진단 →</a>' +
+'</div>' +
+'<div style="margin-bottom:10px;padding:0;border-radius:12px;border:1px solid rgba(61,255,192,0.12);overflow:hidden">' +
+  '<div style="padding:9px 14px;background:rgba(61,255,192,0.05);font-family:DM Mono,monospace;font-size:10px;letter-spacing:2px;color:#3DFFC0">SAMPLE · 카페 기준표 미리보기</div>' +
+  '<div style="padding:6px 14px 10px">' +
+    '<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:11px"><span style="color:#64748b">블로그 리뷰 수</span><span style="font-family:DM Mono,monospace;color:#3DFFC0">권장 50개+</span></div>' +
+    '<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:11px"><span style="color:#64748b">방문자 리뷰 수</span><span style="font-family:DM Mono,monospace;color:#3DFFC0">권장 200개+</span></div>' +
+    '<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:11px"><span style="color:#64748b">등록 사진 수</span><span style="font-family:DM Mono,monospace;color:#3DFFC0">권장 40장+</span></div>' +
+    '<div style="display:flex;justify-content:space-between;padding:6px 0;font-size:11px"><span style="color:#64748b">체험단 수</span><span style="font-family:DM Mono,monospace;color:#3DFFC0">권장 월 3건+</span></div>' +
+  '</div>' +
+  '<div style="padding:8px 14px;font-size:11px;color:#475569;text-align:center;border-top:1px solid rgba(255,255,255,0.04)">전체 진단 시 업종별 맞춤 기준표로 내 매장과 1:1 대조</div>' +
+'</div>' +
+
+--- 붙여넣을 코드 (끝) ---
+-->
+
+
+<!-- ══════════════════════════════════════════════════
+  수정 2 of 3 : sec2 HTML (STEP 1-B 매장 자가진단)
+
+  Ctrl+F: '<div class="alert alert-info">💡 <div>체크하기 전'
+  이 줄 바로 위에 아래 HTML 블록을 삽입하세요.
+════════════════════════════════════════════════════ -->
+<div id="placeOpenBar" style="position:sticky;top:0;z-index:100;margin-bottom:16px;padding:12px 16px;background:rgba(23,29,94,0.97);border:1px solid rgba(61,255,192,0.2);border-radius:14px;backdrop-filter:blur(12px);display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+  <div style="flex:1;min-width:160px;">
+    <div style="font-size:12px;font-weight:600;color:#fff;margin-bottom:2px;">📱 체크 전 플레이스를 먼저 열어두세요</div>
+    <div style="font-size:11px;color:#64748b;">각 항목을 직접 눈으로 확인하며 YES / NO 체크합니다</div>
+  </div>
+  <div style="display:flex;gap:8px;align-items:center;flex-shrink:0;">
+    <div id="placeUrlIndicator" style="font-size:11px;font-family:'DM Mono',monospace;padding:4px 10px;border-radius:20px;background:rgba(61,255,192,0.08);color:#64748b;border:1px solid rgba(61,255,192,0.15);">URL 미입력</div>
+    <button id="openPlaceBtn" onclick="openMyPlace()" style="background:#3DFFC0;color:#111850;border:none;border-radius:10px;font-size:13px;font-weight:700;padding:10px 20px;cursor:pointer;font-family:'Pretendard',sans-serif;white-space:nowrap;transition:all .2s;">
+      플레이스 열기 →
+    </button>
+  </div>
+  <div id="placeNoUrlWarn" style="display:none;font-size:11px;color:#f59e0b;width:100%;padding-top:4px;">
+    ⚠️ 기본 정보 탭에서 플레이스 URL을 먼저 입력해주세요.
+    <button onclick="goStep(0)" style="background:transparent;border:none;color:#3DFFC0;font-size:11px;cursor:pointer;text-decoration:underline;font-family:'Pretendard',sans-serif;padding:0;margin-left:4px;">← 기본 정보로 이동</button>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════
+  수정 3 of 3 : JavaScript 추가 + saveInfo() 수정
+
+  기존 <script> 태그 안에 아래 함수들을 추가하세요.
+  (window.onload 근처에 추가하면 편합니다)
+  
+  그리고 saveInfo() 함수 안
+  goStep(1); 바로 위에
+  updatePlaceBarLabel();
+  한 줄 추가하세요.
+════════════════════════════════════════════════════ -->
+<script>
+// ── 플레이스 열기 함수
+function openMyPlace() {
+  var url = (state.info && state.info.storeUrl) ? state.info.storeUrl.trim() : '';
+  if (!url) {
+    var warn = document.getElementById('placeNoUrlWarn');
+    if (warn) { warn.style.display='block'; setTimeout(function(){ warn.style.display='none'; }, 3000); }
+    return;
+  }
+  if (!url.startsWith('http')) url = 'https://' + url;
+  window.open(url, '_blank');
+  
+  var btn = document.getElementById('openPlaceBtn');
+  if (btn) {
+    var orig = btn.textContent;
+    btn.textContent = '✓ 열렸습니다!';
+    btn.style.cssText = 'background:rgba(61,255,192,0.15);color:#3DFFC0;border:1px solid rgba(61,255,192,0.4);border-radius:10px;font-size:13px;font-weight:700;padding:10px 20px;cursor:pointer;font-family:Pretendard,sans-serif;white-space:nowrap;transition:all .2s;';
+    setTimeout(function(){
+      btn.textContent = orig;
+      btn.style.cssText = 'background:#3DFFC0;color:#111850;border:none;border-radius:10px;font-size:13px;font-weight:700;padding:10px 20px;cursor:pointer;font-family:Pretendard,sans-serif;white-space:nowrap;transition:all .2s;';
+    }, 2000);
+  }
+}
+
+// ── 플레이스 바 URL 상태 업데이트
+function updatePlaceBarLabel() {
+  var url = (state.info && state.info.storeUrl) ? state.info.storeUrl.trim() : '';
+  var indicator = document.getElementById('placeUrlIndicator');
+  var btn = document.getElementById('openPlaceBtn');
+  
+  if (indicator) {
+    if (url) {
+      var short = url.replace(/^https?:\/\//, '').replace(/\?.*/, '');
+      if (short.length > 22) short = short.substring(0, 22) + '…';
+      indicator.textContent = '✓ ' + short;
+      indicator.style.color = '#3DFFC0';
+      indicator.style.borderColor = 'rgba(61,255,192,0.35)';
+      indicator.style.background = 'rgba(61,255,192,0.08)';
+    } else {
+      indicator.textContent = 'URL 미입력';
+      indicator.style.color = '#64748b';
+      indicator.style.borderColor = 'rgba(61,255,192,0.15)';
+      indicator.style.background = 'rgba(61,255,192,0.04)';
+    }
+  }
+  if (btn) {
+    btn.style.opacity = url ? '1' : '0.7';
+  }
+}
+
+// ── saveInfo() 함수 안 goStep(1) 바로 위에 추가:
+// updatePlaceBarLabel();
+</script>
+
+<!--
+  ══════════════════════════════════════════════
+  적용 요약:
+  
+  1. buildOverlay() 안 카카오 링크 바로 위에
+     → 무료 키워드 진단 배너 + 기준표 미리보기 블록 삽입
+  
+  2. sec2 HTML 안 alert-info 바로 위에
+     → placeOpenBar div 삽입
+  
+  3. <script> 안에
+     → openMyPlace() + updatePlaceBarLabel() 함수 추가
+  
+  4. saveInfo() 함수 안 goStep(1) 위에
+     → updatePlaceBarLabel(); 한 줄 추가
+  ══════════════════════════════════════════════
+-->
