@@ -297,7 +297,7 @@
         </div>
         <div class="form-group">
           <label>매장 위치 — 시도</label>
-          <select id="storeRegion">
+          <select id="storeRegion" onchange="onRegionChange()">
             <option value="">시도 선택 (수도권)</option>
             <option value="서울특별시">서울특별시</option>
             <option value="경기도">경기도</option>
@@ -882,28 +882,7 @@ function submitToGoogleForm(){
     .catch(function(){btn.textContent='❌ 저장 실패';btn.disabled=false;});
 }
 
-window.onload=function(){
-  renderChecklist();
-  renderBizCheck();
-  var regionEl=document.getElementById('storeRegion');
-  var guEl=document.getElementById('storeGu');
-  if(regionEl){
-    regionEl.addEventListener('change',function(){
-      var region=this.value;
-      if(!guEl)return;
-      guEl.innerHTML='<option value="">구/시 선택</option>';
-      if(region&&GU_OPTIONS[region]){
-        GU_OPTIONS[region].forEach(function(gu){
-          var o=document.createElement('option');
-          o.value=gu;o.textContent=gu;
-          guEl.appendChild(o);
-        });
-      }
-      var prev=document.getElementById('guPreview');
-      if(prev)prev.innerHTML='';
-    });
-  }
-};
+window.onload=function(){renderChecklist();renderBizCheck();renderActionPlan();};
 </script>
 </body>
 </html>
