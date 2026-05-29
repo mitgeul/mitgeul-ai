@@ -4,7 +4,7 @@
 <script>
 // ── 접근 게이트 ──────────────────────────────────────────────
 (function(){
-  var PASS = 'MITGEUL';
+  var PASS = 'MITGEUL2026';
 
   function buildOverlay() {
     var el = document.createElement('div');
@@ -576,7 +576,7 @@ function saveInfo(){
   };
   state.stepDone[0]=true;
   updatePlaceBarLabel();
-  renderSangkwonSection();
+  try { renderSangkwonSection(); } catch(e) { console.warn(e); }
   goStep(1);
 }
 function updateCategory(){}
