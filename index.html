@@ -329,57 +329,12 @@
   <div class="step-nav">
     <button class="step-btn active" onclick="goStep(0)"><span class="step-num">0</span> 기본 정보</button>
     <button class="step-btn" onclick="goStep(1)"><span class="step-num">1A</span> 상권 분석</button>
-    <button class="step-btn" onclick="goStep(2)"><span class="step-num">1B</span> 자가진단 🔒</button>
-    <button class="step-btn" onclick="goStep(3)"><span class="step-num">1C</span> 사업기준 🔒</button>
-    <button class="step-btn" onclick="goStep(4)"><span class="step-num">2</span> 종합진단 🔒</button>
-    <button class="step-btn" onclick="goStep(5)"><span class="step-num">3</span> 기준표 🔒</button>
-    <button class="step-btn" onclick="goStep(6)"><span class="step-num">4</span> 솔루션 🔒</button>
-    <button class="step-btn" onclick="goStep(7)"><span class="step-num">5</span> 리포트 🔒</button>
-  </div>
-
-  <!-- 🔒 결제 안내 배너 -->
-  <div style="
-    margin-bottom:24px;
-    padding:14px 18px;
-    border-radius:14px;
-    background:linear-gradient(135deg,rgba(61,255,192,0.07),rgba(23,29,94,0.7));
-    border:1px solid rgba(61,255,192,0.25);
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:14px;
-    flex-wrap:wrap;
-  ">
-    <div>
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;">
-        <span style="font-size:16px;">🔒</span>
-        <span style="font-family:'DM Mono',monospace;font-size:13px;font-weight:700;color:#fff;letter-spacing:.5px;">전체 진단은 결제 후 진행됩니다</span>
-      </div>
-      <div style="font-size:12px;color:#94a3b8;line-height:1.8;">
-        STEP 0 기본정보 · STEP 1-A 상권분석은 <strong style="color:#3DFFC0;">무료</strong>로 제공됩니다.<br>
-        STEP 1-B 자가진단부터는 <span style="color:#f43f5e;font-weight:700;">30,000원</span>
-        <span style="font-size:11px;color:#475569;text-decoration:line-through;margin-left:4px;">100,000원</span>
-        결제 후 받은 접근 코드 입력 시 이용 가능합니다.
-      </div>
-    </div>
-    <a href="http://pf.kakao.com/_ftVan" target="_blank" style="
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      padding:10px 20px;
-      background:#3DFFC0;
-      color:#111850;
-      font-size:13px;
-      font-weight:700;
-      font-family:'Pretendard',sans-serif;
-      border-radius:10px;
-      text-decoration:none;
-      white-space:nowrap;
-      flex-shrink:0;
-      transition:opacity .2s;
-    " onmouseover="this.style.opacity='.82'" onmouseout="this.style.opacity='1'">
-      결제 문의하기 →
-    </a>
+    <button class="step-btn" onclick="goStep(2)"><span class="step-num">1B</span> 매장 자가진단</button>
+    <button class="step-btn" onclick="goStep(3)"><span class="step-num">1C</span> 사업 기준 점검</button>
+    <button class="step-btn" onclick="goStep(4)"><span class="step-num">2</span> 종합 진단</button>
+    <button class="step-btn" onclick="goStep(5)"><span class="step-num">3</span> 기준표</button>
+    <button class="step-btn" onclick="goStep(6)"><span class="step-num">4</span> 실행 솔루션</button>
+    <button class="step-btn" onclick="goStep(7)"><span class="step-num">5</span> 통합 리포트</button>
   </div>
 
   <!-- SEC 0: 기본 정보 -->
@@ -425,7 +380,7 @@
         </div>
         <div class="form-group">
           <label>매장 위치 — 시군구</label>
-          <select id="storeGu" onchange="onGuChange()"><option value="" disabled selected>시도를 먼저 선택하세요</option></select>
+          <select id="storeGu" onchange="onGuChange()"><option value="">시도를 먼저 선택하세요</option></select>
           <div id="guPreview"></div>
         </div>
         <div class="form-group"><label>매장 URL (플레이스)</label><input type="text" id="storeUrl" placeholder="https://map.naver.com/v5/entry/..."/></div>
@@ -577,7 +532,7 @@
       <div class="gform-banner-text">
         <strong>📊 진단 결과 저장 시 혜택 제공</strong>
         결과를 저장하시면 <strong style="color:#3DFFC0;">1:1 비대면 코칭 30분 이용권(정가 30만원)</strong>을 카카오톡으로 보내드립니다.<br>
-        <span style="font-size:12px;color:#f43f5e;font-weight:600;">⏰ 파일럿 기간 한정 · 선착순 10명 · 2026년 6월 30일까지</span><br><br>
+        <span style="font-size:12px;color:#f43f5e;font-weight:600;">⏰ 파일럿 기간 한정 · 선착순 10명 · 2026년 5월 31일까지</span><br><br>
         이용권은 진단 결과 저장 확인 후 1~2 영업일 내 카카오톡으로 발송됩니다.<br><br>
         수집된 정보는 서비스 개선 및 이용권 발송 목적으로만 사용되며 제3자에게 제공되지 않습니다.
         <div style="margin-top:12px;display:flex;align-items:flex-start;gap:8px;">
@@ -630,22 +585,16 @@ function onRegionChange() {
   var region = document.getElementById('storeRegion')?.value;
   var guSelect = document.getElementById('storeGu');
   if (!guSelect) return;
-  guSelect.innerHTML = '<option value="" disabled selected>구/시 선택</option>';
+  guSelect.innerHTML = '<option value="">구/시 선택</option>';
   if (region && GU_OPTIONS[region]) {
     GU_OPTIONS[region].forEach(function(gu) {
       var o = document.createElement('option');
       o.value = gu; o.textContent = gu;
       guSelect.appendChild(o);
     });
-    guSelect.disabled = false;
-  } else {
-    guSelect.disabled = true;
   }
   var prev = document.getElementById('guPreview');
   if (prev) prev.innerHTML = '';
-  // 동 프리뷰도 초기화
-  var dongPrev = document.getElementById('dongPreview');
-  if (dongPrev) dongPrev.innerHTML = '';
 }
 
 function onGuChange() {
@@ -1356,7 +1305,87 @@ const GFORM_ENTRIES={agree:"entry.1096758769",name:"entry.878763656",phone:"entr
 var state={info:{},checks:{},bizChecks:{},bizYesCount:0,bizResult:null,score:0,catScores:{},stepDone:[false,false,false,false,false,false,false,false]};
 
 // ===================== NAVIGATION =====================
-function goStep(n){
+// ===================== 결제 잠금 오버레이 =====================
+function showPaywallOverlay(targetStep) {
+  // 이미 있으면 제거
+  var existing = document.getElementById('paywallOverlay');
+  if (existing) existing.parentNode.removeChild(existing);
+
+  var el = document.createElement('div');
+  el.id = 'paywallOverlay';
+  el.style.cssText = 'position:fixed;inset:0;z-index:99990;background:rgba(10,12,40,0.97);display:flex;align-items:center;justify-content:center;padding:24px;';
+  el.innerHTML =
+    '<div style="width:100%;max-width:420px;text-align:center;">' +
+    // 로고
+    '<svg width="42" height="42" viewBox="0 0 42 42" fill="none" style="margin-bottom:18px"><rect width="42" height="42" rx="12" fill="#252c8a"/><rect width="42" height="42" rx="12" stroke="#3DFFC0" stroke-width="1.5" stroke-opacity="0.4" fill="none"/><text x="21" y="30" text-anchor="middle" font-family="DM Mono,monospace" font-size="22" font-weight="700" fill="#3DFFC0">M</text><circle cx="34" cy="9" r="3.5" fill="#3DFFC0" opacity="0.9"/></svg>' +
+    '<div style="font-family:DM Mono,monospace;font-size:10px;letter-spacing:3px;color:#3DFFC0;margin-bottom:12px;">MITGEUL v1.0 · 결제 전용 구간</div>' +
+    '<div style="font-size:20px;font-weight:700;color:#fff;margin-bottom:8px;">🔒 이 단계는 결제 후 이용 가능합니다</div>' +
+    '<div style="font-size:13px;color:#94a3b8;line-height:1.8;margin-bottom:24px;">STEP 1-B 자가진단부터 리포트까지는<br>접근 코드 입력 후 진행할 수 있습니다.<br>결제 완료 시 카카오톡으로 코드를 보내드립니다.</div>' +
+    // 가격
+    '<div style="background:rgba(61,255,192,0.06);border:1px solid rgba(61,255,192,0.2);border-radius:12px;padding:16px 20px;margin-bottom:20px;">' +
+      '<div style="font-size:11px;font-family:DM Mono,monospace;letter-spacing:2px;color:#3DFFC0;margin-bottom:8px;">파일럿 특가</div>' +
+      '<div style="display:flex;align-items:baseline;gap:10px;justify-content:center;margin-bottom:8px;">' +
+        '<span style="font-size:14px;color:#f43f5e;text-decoration:line-through;">100,000원</span>' +
+        '<span style="font-family:DM Mono,monospace;font-size:32px;font-weight:700;color:#3DFFC0;">30,000원</span>' +
+      '</div>' +
+      '<div style="font-size:12px;color:#94a3b8;line-height:1.7;">상권분석 + 매장 자가진단 + 사업기준 점검<br>종합진단 + 기준표 + 솔루션 + 통합 리포트</div>' +
+      '<div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.08);font-size:12px;color:#3DFFC0;">🎁 결과 저장 시 1:1 코칭 이용권(정가 30만원) 선착순 10명</div>' +
+    '</div>' +
+    // 접근 코드 입력
+    '<div style="margin-bottom:12px;">' +
+      '<input id="paywallCodeInput" type="password" placeholder="접근 코드 입력" autocomplete="off" ' +
+        'style="width:100%;background:#171d5e;border:1px solid #2d3580;border-radius:10px;color:#e2e8f0;' +
+        'font-family:Pretendard,sans-serif;font-size:15px;padding:13px 16px;outline:none;text-align:center;' +
+        'letter-spacing:4px;margin-bottom:10px;box-sizing:border-box;" ' +
+        'onkeydown="if(event.key===\'Enter\')window.__mgPaywallAttempt(' + targetStep + ')"/>' +
+      '<button onclick="window.__mgPaywallAttempt(' + targetStep + ')" ' +
+        'style="width:100%;background:#3DFFC0;color:#111850;border:none;border-radius:10px;font-size:14px;' +
+        'font-weight:700;padding:13px;cursor:pointer;font-family:Pretendard,sans-serif;margin-bottom:8px;">코드 입력 확인</button>' +
+      '<div id="paywallErr" style="font-size:12px;color:#f43f5e;min-height:18px;margin-bottom:8px;"></div>' +
+    '</div>' +
+    // 버튼 2개
+    '<div style="display:flex;gap:10px;">' +
+      '<a href="http://pf.kakao.com/_ftVan" target="_blank" ' +
+        'style="flex:1;display:block;background:transparent;border:1px solid #3DFFC0;border-radius:10px;' +
+        'color:#3DFFC0;font-size:13px;font-weight:600;padding:12px;text-align:center;text-decoration:none;' +
+        'font-family:Pretendard,sans-serif;">카카오톡 결제 문의 →</a>' +
+      '<button onclick="window.__mgPaywallClose()" ' +
+        'style="flex:1;background:transparent;border:1px solid #2d3580;border-radius:10px;' +
+        'color:#64748b;font-size:13px;padding:12px;cursor:pointer;font-family:Pretendard,sans-serif;">← 상권분석으로</button>' +
+    '</div>' +
+    '</div>';
+
+  document.body.appendChild(el);
+  document.body.style.overflow = 'hidden';
+  setTimeout(function(){ var inp = document.getElementById('paywallCodeInput'); if(inp) inp.focus(); }, 100);
+}
+
+window.__mgPaywallAttempt = function(targetStep) {
+  var PASS = 'MITGEUL';
+  var input = document.getElementById('paywallCodeInput');
+  var err   = document.getElementById('paywallErr');
+  if (!input) return;
+  if (input.value === PASS) {
+    // 인증 성공 — 오버레이 제거 후 해당 스텝으로
+    window.__mgAuthed = true;
+    window.__mgPaywallClose();
+    _goStepInternal(targetStep);
+  } else {
+    if (err) err.textContent = '접근 코드가 올바르지 않습니다.';
+    input.value = '';
+    input.style.borderColor = '#f43f5e';
+    setTimeout(function(){ input.style.borderColor = '#2d3580'; if(err) err.textContent = ''; }, 1800);
+  }
+};
+
+window.__mgPaywallClose = function() {
+  var el = document.getElementById('paywallOverlay');
+  if (el) { el.style.opacity = '0'; el.style.transition = 'opacity .25s'; setTimeout(function(){ if(el.parentNode) el.parentNode.removeChild(el); }, 280); }
+  document.body.style.overflow = '';
+};
+
+// 실제 스텝 이동 내부 함수
+function _goStepInternal(n){
   for(var i=0;i<=7;i++){var s=document.getElementById('sec'+i);if(s)s.classList.toggle('active',i===n);}
   document.querySelectorAll('.step-btn').forEach(function(b,i){
     b.classList.remove('active','done');
@@ -1379,16 +1408,20 @@ function goStep(n){
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
+function goStep(n){
+  // STEP 2 이상은 인증 필요
+  if(n >= 2 && !window.__mgAuthed){
+    showPaywallOverlay(n);
+    return;
+  }
+  _goStepInternal(n);
+}
+
 // ===================== STEP 0 =====================
 function saveInfo(){
   var name=document.getElementById('storeName').value.trim();
   var cat=document.getElementById('storeCategory').value;
-  if(!name||!cat){
-    alert('매장명과 업종은 필수 입력 항목입니다.');
-    if(!name) document.getElementById('storeName').focus();
-    else document.getElementById('storeCategory').focus();
-    return;
-  }
+  if(!name||!cat){alert('매장명과 업종은 필수 입력 항목입니다.');return;}
   state.info={
     storeName:name,category:cat,
     storeRegion:document.getElementById('storeRegion')?.value||'',
@@ -1743,14 +1776,7 @@ function submitToGoogleForm(){
 }
 
 // ===================== 초기화 =====================
-window.onload=function(){
-  // 시군구 드롭다운: 시도 선택 전엔 비활성
-  var guSel = document.getElementById('storeGu');
-  if (guSel) guSel.disabled = true;
-  renderChecklist();
-  renderBizCheck();
-  renderActionPlan();
-};
+window.onload=function(){renderChecklist();renderBizCheck();renderActionPlan();};
 
 </script>
 
