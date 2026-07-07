@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MITGEUL — 2026 AI 전환의 시대, 당신의 매장은 살아남을 수 있습니까?</title>
+<meta name="description" content="소상공인 5년 생존율 30%. AI 전환의 시대, 내 매장의 생존 가능성을 지금 진단하세요.">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=DM+Mono:wght@400;500&family=Pretendard:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#1E2370;--bg2:#171d5e;--bg3:#1c2268;--card:#181e62;--border:#2d3580;--accent:#3DFFC0;--accent2:#00cfff;--accent3:#f59e0b;--accent4:#f43f5e;--text:#e2e8f0;--text2:#94a3b8;--text3:#64748b;}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{background:#1E2370 !important;-webkit-text-size-adjust:100%;}
+body{color:#e2e8f0 !important;font-family:'Pretendard',sans-serif;min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(61,255,192,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(61,255,192,0.03) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;z-index:0;}
+.bg-glow{position:fixed;pointer-events:none;z-index:0;}
+.bg-glow-1{top:-200px;left:-200px;width:600px;height:600px;background:radial-gradient(circle,rgba(61,255,192,0.07) 0%,transparent 70%);}
+.bg-glow-2{bottom:-100px;right:-100px;width:500px;height:500px;background:radial-gradient(circle,rgba(0,207,255,0.05) 0%,transparent 70%);}
+
+.wrap{position:relative;z-index:1;max-width:680px;margin:0 auto;padding:40px 20px 80px;}
+
+.logo{display:inline-flex;align-items:center;gap:10px;margin-bottom:48px;padding:10px 20px 10px 14px;border-radius:14px;border:1px solid rgba(61,255,192,0.18);background:rgba(61,255,192,0.04);}
+.wordmark{font-family:'DM Mono',monospace;font-size:15px;font-weight:500;letter-spacing:4px;color:#fff;}
+.wordmark span{color:var(--accent);}
+
+.hero{text-align:center;padding:0 0 56px;}
+.year-badge{display:inline-flex;align-items:center;gap:8px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:3px;color:var(--accent4);border:1px solid rgba(244,63,94,0.35);padding:7px 18px;border-radius:20px;background:rgba(244,63,94,0.07);margin-bottom:32px;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(244,63,94,0.25);}50%{box-shadow:0 0 0 8px rgba(244,63,94,0);}}
+
+.hero-title{font-family:'Noto Serif KR',serif;font-weight:700;line-height:1.4;color:#fff;margin-bottom:24px;word-break:keep-all;}
+.hero-title .line1{display:block;font-size:clamp(16px,4vw,22px);color:var(--text2);margin-bottom:6px;}
+.hero-title .line2{display:block;font-size:clamp(28px,6vw,46px);color:var(--accent4);margin-bottom:4px;}
+.hero-title .line3{display:block;font-size:clamp(28px,6vw,46px);color:var(--accent);}
+
+.hero-sub{font-size:14px;color:var(--text2);line-height:2;max-width:480px;margin:0 auto 32px;word-break:keep-all;}
+.hero-sub .em{color:#fff;font-weight:600;}
+
+.counter-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:12px;}
+@media(max-width:480px){.counter-grid{grid-template-columns:1fr;gap:8px;}}
+.counter-item{text-align:center;padding:20px 12px;border-radius:16px;background:var(--card);border:1px solid var(--border);position:relative;overflow:hidden;}
+.counter-item::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.counter-item.red::before{background:linear-gradient(90deg,transparent,var(--accent4),transparent);}
+.counter-item.yellow::before{background:linear-gradient(90deg,transparent,var(--accent3),transparent);}
+.counter-item.green::before{background:linear-gradient(90deg,transparent,var(--accent),transparent);}
+.counter-num{font-family:'DM Mono',monospace;font-size:26px;font-weight:700;line-height:1;margin-bottom:8px;}
+.counter-item.red .counter-num{color:var(--accent4);}
+.counter-item.yellow .counter-num{color:var(--accent3);}
+.counter-item.green .counter-num{color:var(--accent);}
+.counter-label{font-size:11px;color:var(--text3);line-height:1.6;}
+.source-note{font-size:10px;color:var(--text3);text-align:right;margin-bottom:40px;padding-right:4px;font-family:'DM Mono',monospace;}
+
+.quote-section{margin-bottom:48px;}
+.quote-card{background:var(--card);border:1px solid var(--border);border-left:3px solid var(--accent2);border-radius:0 16px 16px 0;padding:20px 22px;margin-bottom:10px;}
+.quote-who{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent2);margin-bottom:10px;}
+.quote-text{font-family:'Noto Serif KR',serif;font-size:14px;color:var(--text);line-height:1.9;word-break:keep-all;}
+.quote-text strong{color:var(--accent);}
+
+.stat-section{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:12px;}
+.stat-title{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:2px;color:var(--accent);margin-bottom:20px;}
+.stat-row{margin-bottom:16px;}
+.stat-row-label{display:flex;justify-content:space-between;align-items:flex-start;font-size:12px;color:var(--text2);margin-bottom:7px;gap:8px;}
+.stat-row-label .stat-name{flex:1;line-height:1.5;}
+.stat-row-label .stat-pct{font-family:'DM Mono',monospace;flex-shrink:0;}
+.stat-track{height:6px;background:rgba(255,255,255,0.05);border-radius:3px;overflow:hidden;}
+.stat-fill{height:100%;border-radius:3px;width:0;transition:width 1.2s cubic-bezier(.34,1.56,.64,1);}
+.stat-fill.red{background:linear-gradient(90deg,#f43f5e,#ff6b8a);}
+.stat-fill.yellow{background:linear-gradient(90deg,#f59e0b,#fcd34d);}
+.stat-fill.green{background:linear-gradient(90deg,#3DFFC0,#00e8a8);}
+.stat-source{font-size:10px;color:var(--text3);text-align:right;margin-top:14px;font-family:'DM Mono',monospace;}
+
+.survival-section{margin-bottom:48px;}
+.survival-title{font-family:'Noto Serif KR',serif;font-size:19px;font-weight:700;color:#fff;text-align:center;margin-bottom:6px;}
+.survival-sub{font-size:13px;color:var(--text3);text-align:center;margin-bottom:20px;}
+.survival-items{display:flex;flex-direction:column;gap:10px;}
+.survival-item{display:flex;align-items:flex-start;gap:14px;padding:16px 18px;border-radius:12px;background:var(--card);border:1px solid var(--border);transition:border-color .2s;}
+.survival-item:hover{border-color:rgba(61,255,192,0.2);}
+.survival-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.survival-icon.danger{background:rgba(244,63,94,0.1);border:1px solid rgba(244,63,94,0.2);}
+.survival-icon.safe{background:rgba(61,255,192,0.1);border:1px solid rgba(61,255,192,0.2);}
+.survival-text{font-size:13px;color:var(--text2);line-height:1.7;word-break:keep-all;}
+.survival-text strong{color:var(--text);display:block;margin-bottom:4px;font-size:14px;}
+
+.cta-section{text-align:center;padding:36px 24px;background:linear-gradient(135deg,rgba(61,255,192,0.08),rgba(23,29,94,0.7));border:1px solid rgba(61,255,192,0.2);border-radius:24px;margin-bottom:24px;}
+.cta-badge{display:inline-block;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--accent);border:1px solid rgba(61,255,192,0.3);padding:5px 14px;border-radius:20px;background:rgba(61,255,192,0.05);margin-bottom:18px;}
+.cta-title{font-family:'Noto Serif KR',serif;font-weight:700;color:#fff;line-height:1.5;margin-bottom:10px;word-break:keep-all;}
+.cta-title .line1{display:block;font-size:clamp(14px,3vw,17px);color:var(--text2);margin-bottom:4px;}
+.cta-title .line2{display:block;font-size:clamp(22px,4.5vw,30px);}
+.cta-title .line2 span{color:var(--accent);}
+.cta-desc{font-size:12px;color:var(--text2);line-height:1.9;margin-bottom:22px;word-break:keep-all;}
+.cta-price{display:flex;align-items:baseline;gap:12px;justify-content:center;margin-bottom:18px;}
+.cta-old{font-size:14px;color:var(--accent4);text-decoration:line-through;}
+.cta-new{font-family:'DM Mono',monospace;font-size:36px;font-weight:700;color:var(--accent);}
+.btn-start{display:inline-flex;align-items:center;gap:10px;background:var(--accent);color:#111850;border:none;border-radius:14px;font-size:15px;font-weight:700;padding:16px 36px;cursor:pointer;font-family:'Pretendard',sans-serif;text-decoration:none;transition:all .25s;margin-bottom:12px;}
+.btn-start:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(61,255,192,0.3);}
+.btn-free{display:inline-block;padding:11px 24px;background:transparent;border:1px solid rgba(61,255,192,0.25);border-radius:12px;color:var(--accent);font-size:13px;font-weight:600;text-decoration:none;font-family:'Pretendard',sans-serif;transition:all .2s;margin-left:8px;}
+.btn-free:hover{background:rgba(61,255,192,0.07);}
+@media(max-width:480px){.btn-free{display:block;margin:8px 0 0;}}
+.cta-gift{margin-top:16px;padding:13px 16px;border-radius:12px;background:rgba(61,255,192,0.05);border:1px solid rgba(61,255,192,0.15);font-size:12px;color:var(--text2);line-height:1.9;}
+.cta-gift strong{color:#fff;}
+
+.footer{text-align:center;padding:24px 0;border-top:1px solid rgba(61,255,192,0.08);margin-top:20px;font-size:12px;color:var(--text3);line-height:1.9;}
+
+.fade-up{opacity:0;transform:translateY(20px);transition:opacity .6s ease,transform .6s ease;}
+.fade-up.visible{opacity:1;transform:translateY(0);}
+</style>
+</head>
+<body>
+<div class="bg-glow bg-glow-1"></div>
+<div class="bg-glow bg-glow-2"></div>
+
+<div class="wrap">
+
+  <div class="logo">
+    <svg width="30" height="30" viewBox="0 0 42 42" fill="none">
+      <rect width="42" height="42" rx="12" fill="url(#lg1)"/>
+      <rect width="42" height="42" rx="12" stroke="#3DFFC0" stroke-width="1.5" stroke-opacity="0.4" fill="none"/>
+      <text x="21" y="30" text-anchor="middle" font-family="DM Mono,monospace" font-size="22" font-weight="700" fill="#3DFFC0">M</text>
+      <circle cx="34" cy="9" r="3.5" fill="#3DFFC0" opacity="0.9"/>
+      <defs><linearGradient id="lg1" x1="0" y1="0" x2="42" y2="42" gradientUnits="userSpaceOnUse"><stop stop-color="#252c8a"/><stop offset="1" stop-color="#1a2078"/></linearGradient></defs>
+    </svg>
+    <span class="wordmark">MITGEUL<span>2026</span></span>
+  </div>
+
+  <div class="hero fade-up">
+    <div class="year-badge">⚡ 2026 · AI 전환의 시대</div>
+    <h1 class="hero-title">
+      <span class="line1">AI가 모든 것을 바꾸는 시대,</span>
+      <span class="line2">당신의 매장은</span>
+      <span class="line3">살아남을 수 있습니까?</span>
+    </h1>
+    <p class="hero-sub">
+      소상공인 5년 생존율 단 30%.<br>
+      <span class="em">살아남는 매장은 지금 다르게 움직이고 있습니다.</span><br>
+      내 매장의 생존 가능성을 지금 진단하세요.
+    </p>
+  </div>
+
+  <div class="counter-grid fade-up">
+    <div class="counter-item red">
+      <div class="counter-num" id="cnt1">0%</div>
+      <div class="counter-label">소상공인<br>5년 생존율</div>
+    </div>
+    <div class="counter-item yellow">
+      <div class="counter-num" id="cnt2">0만</div>
+      <div class="counter-label">네이버 플레이스<br>월간 사용자</div>
+    </div>
+    <div class="counter-item green">
+      <div class="counter-num" id="cnt3">0%</div>
+      <div class="counter-label">소비자 구매 전<br>온라인 검색 비율</div>
+    </div>
+  </div>
+  <div class="source-note">출처: 소진공 소상공인 실태조사 · 네이버 공식 발표 · DMC미디어 2024</div>
+
+  <div class="quote-section fade-up">
+    <div class="quote-card">
+      <div class="quote-who">RAY KURZWEIL · 구글 기술이사 · 특이점이 온다 저자</div>
+      <div class="quote-text">"2029년까지 AI는 인간 수준의 지능에 도달한다.<br><strong>준비되지 않은 비즈니스는 도태된다.</strong><br>살아남는 것은 AI를 두려워하지 않고,<br>AI와 함께 움직이는 사람들이다."</div>
+    </div>
+    <div class="quote-card">
+      <div class="quote-who">WEF 세계경제포럼 · 미래 일자리 보고서 2025</div>
+      <div class="quote-text">"2026년까지 전 세계 8,500만 개 일자리가 자동화로 대체된다.<br>동시에 <strong>9,700만 개의 새로운 역할</strong>이 창출된다.<br>차이는 단 하나 — 준비했느냐, 하지 않았느냐."</div>
+    </div>
+    <div class="quote-card">
+      <div class="quote-who">MARTIN FORD · 로봇의 부상 저자</div>
+      <div class="quote-text">"살아남는 소상공인은<br><strong>AI가 대체할 수 없는 인간적 경험을 설계하는 사람</strong>들이다.<br>검색에 보이지 않는 매장, 리뷰가 없는 매장은<br>이미 반쯤 사라진 것이다."</div>
+    </div>
+  </div>
+
+  <div class="stat-section fade-up">
+    <div class="stat-title">📊 소상공인 디지털 생존 현황</div>
+    <div class="stat-row">
+      <div class="stat-row-label">
+        <span class="stat-name">소상공인 창업 후 5년 내 폐업률</span>
+        <span class="stat-pct" style="color:#f43f5e">70%</span>
+      </div>
+      <div class="stat-track"><div class="stat-fill red" data-width="70"></div></div>
+    </div>
+    <div class="stat-row">
+      <div class="stat-row-label">
+        <span class="stat-name">소비자 방문 전 온라인 정보 탐색 비율</span>
+        <span class="stat-pct" style="color:#f59e0b">87%</span>
+      </div>
+      <div class="stat-track"><div class="stat-fill yellow" data-width="87"></div></div>
+    </div>
+    <div class="stat-row">
+      <div class="stat-row-label">
+        <span class="stat-name">네이버 플레이스 월간 사용자 수</span>
+        <span class="stat-pct" style="color:#3DFFC0">3,400만</span>
+      </div>
+      <div class="stat-track"><div class="stat-fill green" data-width="85"></div></div>
+    </div>
+    <div class="stat-row" style="margin-bottom:0">
+      <div class="stat-row-label">
+        <span class="stat-name">스마트폰으로 로컬 검색 후 매장 방문율</span>
+        <span class="stat-pct" style="color:#3DFFC0">76%</span>
+      </div>
+      <div class="stat-track"><div class="stat-fill green" data-width="76"></div></div>
+    </div>
+    <div class="stat-source">출처: 소진공 소상공인 실태조사 2023 · DMC미디어 2024 · 네이버 공식 발표 · Google 로컬 검색 보고서 2024</div>
+  </div>
+
+  <div class="survival-section fade-up">
+    <div class="survival-title">살아남는 매장 vs 사라지는 매장</div>
+    <div class="survival-sub">지금 내 매장은 어느 쪽에 가깝습니까?</div>
+    <div class="survival-items">
+      <div class="survival-item">
+        <div class="survival-icon danger">⚠️</div>
+        <div class="survival-text"><strong>검색해도 내 매장이 안 보인다</strong>소비자 87%가 방문 전 온라인으로 정보를 탐색합니다.<br>검색에 없는 매장은 선택지에 들어오지 못합니다.</div>
+      </div>
+      <div class="survival-item">
+        <div class="survival-icon danger">⚠️</div>
+        <div class="survival-text"><strong>왜 우리 매장을 선택해야 하는지 설명할 수 없다</strong>AI가 수천 개의 대안을 0.1초 만에 제시하는 시대.<br>차별점 없는 매장은 알고리즘에서 밀려납니다.</div>
+      </div>
+      <div class="survival-item">
+        <div class="survival-icon danger">⚠️</div>
+        <div class="survival-text"><strong>리뷰가 없거나 사진이 오래됐다</strong>로컬 검색 후 76%가 실제 방문으로 이어집니다.<br>첫인상이 곧 매출입니다.</div>
+      </div>
+      <div class="survival-item">
+        <div class="survival-icon safe">✓</div>
+        <div class="survival-text"><strong>살아남는 매장은 지금 이것을 하고 있습니다</strong>상권 분석 → 플레이스 최적화 → 사업기준 명확화 → 콘텐츠 전략.<br>순서대로, 기준대로 움직입니다.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cta-section fade-up">
+    <div class="cta-badge">MITGEUL v1.0 · 소상공인 생존 진단 시스템</div>
+    <h2 class="cta-title">
+      <span class="line1">지금 내 매장의</span>
+      <span class="line2"><span>생존 가능성</span>을 진단하세요</span>
+    </h2>
+    <p class="cta-desc">
+      상권분석 → 매장 자가진단 → 사업기준 점검 → 통합 리포트<br>
+      소진공 실측 데이터 기반 · 믿글컴퍼니 독자 알고리즘
+    </p>
+    <div class="cta-price">
+      <span class="cta-old">100,000원</span>
+      <span class="cta-new">30,000원</span>
+    </div>
+    <div style="margin-bottom:6px">
+      <a class="btn-start" href="index.html">생존 진단 시작하기 →</a>
+      <a class="btn-free" href="free/index.html">무료 상권분석 먼저 해보기</a>
+    </div>
+    <div class="cta-gift">
+      🎁 진단 결과 저장 시 <strong>1:1 비대면 코칭 30분 이용권(정가 30만원)</strong> 증정<br>
+      <span style="font-size:11px;color:var(--text3)">파일럿 기간 한정 · 선착순 10명 · 카카오톡으로 발송</span>
+    </div>
+  </div>
+
+  <div style="text-align:center;margin-bottom:40px;">
+    <a href="http://pf.kakao.com/_ftVan" target="_blank" style="font-size:13px;color:#64748b;text-decoration:none;border:1px solid rgba(255,255,255,0.08);padding:11px 24px;border-radius:10px;display:inline-block;transition:all .2s;" onmouseover="this.style.color='#3DFFC0';this.style.borderColor='rgba(61,255,192,0.2)'" onmouseout="this.style.color='#64748b';this.style.borderColor='rgba(255,255,255,0.08)'">카카오톡으로 결제 문의하기 →</a>
+  </div>
+
+</div>
+
+<div class="footer">
+  © 2026 믿글컴퍼니. All Rights Reserved.<br>
+  본 페이지의 통계는 소진공·DMC미디어·네이버·Google 등 공개 보고서를 기반으로 작성되었습니다.
+</div>
+
+<script>
+function animateCounter(el,target,suffix,duration){
+  var start=0,step=target/60;
+  var timer=setInterval(function(){
+    start+=step;
+    if(start>=target){start=target;clearInterval(timer);}
+    el.textContent=Math.floor(start)+suffix;
+  },duration/60);
+}
+var observer=new IntersectionObserver(function(entries){
+  entries.forEach(function(e){
+    if(e.isIntersecting){
+      e.target.classList.add('visible');
+      e.target.querySelectorAll('.stat-fill[data-width]').forEach(function(bar){
+        setTimeout(function(){bar.style.width=bar.getAttribute('data-width')+'%';},200);
+      });
+    }
+  });
+},{threshold:0.15});
+document.querySelectorAll('.fade-up').forEach(function(el){observer.observe(el);});
+window.addEventListener('load',function(){
+  setTimeout(function(){
+    animateCounter(document.getElementById('cnt1'),30,'%',1200);
+    animateCounter(document.getElementById('cnt2'),3400,'만',1200);
+    animateCounter(document.getElementById('cnt3'),87,'%',1200);
+  },400);
+});
+</script>
+</body>
+</html>
