@@ -462,10 +462,10 @@
     <div class="alert alert-info">💡 <div>이 점검은 실행력 테스트가 아닙니다. <strong style="color:var(--accent)">답이 바로 떠오르지 않거나 멈칫하는 문항</strong>이 있다면, 그 지점이 지금 상태입니다.</div></div>
     <div id="bizCheckContainer"></div>
     <div class="card">
-      <div class="progress-header"><span class="progress-label">사업 기준 점검 진행률</span><span class="progress-val" id="bizCheckProgress">0 / 15</span></div>
+      <div class="progress-header"><span class="progress-label">사업 기준 점검 진행률</span><span class="progress-val" id="bizCheckProgress">0 / 16</span></div>
       <div class="progress-track"><div class="progress-fill" id="bizCheckProgressBar" style="width:0%"></div></div>
     </div>
-    <div class="btn-row"><button class="btn btn-primary" onclick="calcBizCheck()">15문항 완료 → 결과 확인 →</button></div>
+    <div class="btn-row"><button class="btn btn-primary" onclick="calcBizCheck()">16문항 완료 → 결과 확인 →</button></div>
   </div>
 
   <!-- SEC 4: 종합 진단 -->
@@ -1157,9 +1157,9 @@ const CHECKLIST_DATA = [
     {id:"c2",text:"우리 매장의 대표 서비스(또는 대표 상품)가 플레이스에 명확하게 표시되어 있다",sub:"방문 전 고객이 무엇을 기대해야 하는지 명확한지 확인",score:4},
   ]},
   {cat:"플레이스 정보 영역 (03–06)",icon:"📌",items:[
-    {id:"c3",text:"플레이스 소개글이 300자 이상 작성되어 있다",sub:"매장 특징·분위기·차별점·행동유도 문구까지 충분히 담겨 있는지 확인",score:3},
+    {id:"c3",text:"플레이스 소개글이 매장의 특징·분위기·차별점을 충분히 담고 있다",sub:"300자 이상 + 행동유도 문구 포함 여부 확인",score:3},
     {id:"c4",text:"매장의 운영시간, 위치, 연락처 정보가 빠짐없이 등록되어 있다",sub:"요일별 시간, 정확한 주소, 대표번호 포함 여부 확인",score:3},
-    {id:"c5",text:"메뉴 / 서비스 항목이 10개 이상 등록되어 있다",sub:"가격 포함 여부도 함께 확인",score:3},
+    {id:"c5",text:"메뉴나 서비스를 보면 우리 매장의 강점이 느껴진다",sub:"10개 이상 등록 + 가격 포함 + 설명이 강점을 전달하는지 확인",score:3},
     {id:"c6",text:"플레이스를 처음 보는 사람이 매장을 방문하는 모습을 상상할 수 있다",sub:"정보만 보고 방문 결정을 내릴 수 있는 수준인지 확인",score:4},
   ]},
   {cat:"리뷰 구조 영역 (07–11)",icon:"⭐",items:[
@@ -1187,28 +1187,29 @@ const CHECKLIST_DATA = [
 ];
 
 const BIZ_CHECK_DATA = [
-  {cat:"사업 기준 (01–04)",icon:"🎯",items:[
-    {id:"b1",text:"우리 사업을 한 문장으로 설명할 수 있다"},
-    {id:"b2",text:"우리 사업이 누구에게 필요한지 알고 있다"},
-    {id:"b3",text:"우리 매장이 해결하는 고객 문제를 알고 있다"},
-    {id:"b4",text:"경쟁 매장과 차이를 설명할 수 있다"},
+  {cat:"사업 기준 (01–05)",icon:"🎯",items:[
+    {id:"b1",text:"어떤 마케팅이 우리 사업에 맞는지 판단할 수 있다"},
+    {id:"b2",text:"우리 사업을 한 문장으로 설명할 수 있다"},
+    {id:"b3",text:"우리 사업이 누구에게 필요한지 알고 있다"},
+    {id:"b4",text:"우리 매장이 해결하는 고객 문제를 알고 있다"},
+    {id:"b5",text:"경쟁 매장과 차이를 설명할 수 있다"},
   ]},
-  {cat:"고객 기준 (05–08)",icon:"👥",items:[
-    {id:"b5",text:"우리 매장의 핵심 고객이 누구인지 알고 있다"},
-    {id:"b6",text:"고객이 어떤 이유로 우리 매장을 찾는지 알고 있다"},
-    {id:"b7",text:"고객이 매장을 방문하기 전에 어떤 정보를 찾는지 알고 있다"},
-    {id:"b8",text:"고객이 자주 묻는 질문에 답할 수 있다"},
+  {cat:"고객 기준 (06–09)",icon:"👥",items:[
+    {id:"b6",text:"우리 매장의 핵심 고객이 누구인지 알고 있다"},
+    {id:"b7",text:"고객이 어떤 이유로 우리 매장을 찾는지 알고 있다"},
+    {id:"b8",text:"고객이 매장을 방문하기 전에 어떤 정보를 찾는지 알고 있다"},
+    {id:"b9",text:"고객이 자주 묻는 질문에 답할 수 있다"},
   ]},
-  {cat:"운영 기준 (09–12)",icon:"⚙️",items:[
-    {id:"b9",text:"어떤 마케팅이 우리 사업에 맞는지 판단할 수 있다"},
+  {cat:"운영 기준 (10–12)",icon:"⚙️",items:[
     {id:"b10",text:"콘텐츠를 올릴 때 방향과 목적을 알고 올린다"},
     {id:"b11",text:"매장의 강점을 콘텐츠로 설명할 수 있다"},
     {id:"b12",text:"매장의 메시지가 일관되게 전달되고 있다"},
   ]},
-  {cat:"판단 기준 (13–15)",icon:"⚖️",items:[
+  {cat:"판단 기준 (13–16)",icon:"⚖️",items:[
     {id:"b13",text:"새로운 마케팅 제안을 받으면 우리 기준으로 판단할 수 있다"},
     {id:"b14",text:"지금 사업에서 무엇이 문제인지 스스로 진단할 수 있다"},
     {id:"b15",text:"앞으로 사업을 어떤 방향으로 운영할지 설명할 수 있다"},
+    {id:"b16",text:"우리 매장에서만 느낄 수 있는 경험이 있다"},
   ]}
 ];
 
@@ -1431,7 +1432,7 @@ function setBizCheck(id,val){
   el.querySelector('.yn-btn.'+val).classList.add('active');
   var done=Object.keys(state.bizChecks).length;
   document.getElementById('bizCheckProgress').textContent=done+' / 15';
-  document.getElementById('bizCheckProgressBar').style.width=(done/15*100)+'%';
+  document.getElementById('bizCheckProgressBar').style.width=(done/16*100)+'%';
 }
 
 function calcBizCheck(){
